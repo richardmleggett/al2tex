@@ -1,0 +1,2 @@
+Java tool to produce LaTeX alignment diagrams from PSL (Blat) files and from
+MUMmer files. May be extended to other alignment formats in the future!
