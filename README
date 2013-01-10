@@ -1,2 +1,9 @@
+al2tex
+Richard.Leggett@tgac.ac.uk
+
 Java tool to produce LaTeX alignment diagrams from PSL (Blat) files and from
-MUMmer files. May be extended to other alignment formats in the future!
+MUMmer files.
+
+May be extended to other alignment formats in the future!
+
+There may be a manual in the future too!
