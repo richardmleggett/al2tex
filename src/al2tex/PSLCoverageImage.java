@@ -45,14 +45,26 @@ public class PSLCoverageImage {
     }
         
     public void saveImageFile(String filename, HeatMapScale heatMap) {
-        BufferedImage bImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
+        double multiplier = 1.0;
+        int imageWidth = targetWidth;
+        
+        if (targetWidth > 10000) {
+            multiplier = 10000.0/targetWidth;
+            System.out.println("Multiplier "+multiplier);
+            imageWidth = (int)((double)targetWidth * multiplier);
+        }
+        
+        
+        System.out.println("Width "+imageWidth+" Height "+targetHeight);
+        BufferedImage bImage = new BufferedImage(imageWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
+        
         Graphics g = bImage.getGraphics();
         g.setColor(new Color(200, 200, 200));
         g.fillRect(0, 0, targetWidth, targetHeight);
 
         for (int x=0; x<targetWidth; x++) {
             for (int y=0; y<targetHeight; y++) {
-                bImage.setRGB(x, y, heatMap.getRGBColour(coverage[x]));
+                bImage.setRGB((int)((double)x*multiplier), y, heatMap.getRGBColour(coverage[x]));
             }
         }        
         

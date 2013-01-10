@@ -1,4 +1,4 @@
-// AlDiTex
+// Al2Tex
 //
 // Alignment Diagrams in LaTeX
 //
@@ -13,6 +13,7 @@ import java.util.*;
 import java.io.*;
 
 public class TexFileWriter {
+    private final static int MAX_OVERHANG = 200;
     private String filename;
     private BufferedWriter bw;
     private float unit;
@@ -26,6 +27,10 @@ public class TexFileWriter {
     
     public TexFileWriter(String f) {
         filename = f;
+        
+        if (!filename.endsWith(".tex") && !filename.endsWith(".Tex") && !filename.endsWith(".TEX")) {
+            filename += ".tex";
+        }
     }
     
     public void openFile() {
@@ -118,6 +123,25 @@ public class TexFileWriter {
             System.exit(-1);
         }
 
+        
+        if (x1 < -MAX_OVERHANG) {
+            x1 = -MAX_OVERHANG;
+            try {
+                bw.write("\\node [anchor=east] at ("+(-MAX_OVERHANG-10)+","+y1+") {"+"+"+(-from)+"};"); bw.newLine();
+            } catch (IOException e) {
+                System.out.println(e);
+            }
+        }
+        
+        if (x2 > (targetWidth+MAX_OVERHANG)) {
+            x2 = targetWidth+MAX_OVERHANG;
+            try {
+                bw.write("\\node [anchor=west] at ("+(targetWidth + MAX_OVERHANG + 10)+","+y1+") {"+"+"+(to-targetSize)+"};"); bw.newLine();
+            } catch (IOException e) {
+                System.out.println(e);
+            }
+        }
+                
         try {
             bw.write("\\draw("+x1+", "+y1+") -- ("+x2+","+y1+");"); bw.newLine();
         } catch (IOException e) {

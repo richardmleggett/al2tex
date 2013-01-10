@@ -1,4 +1,4 @@
-// Al2Tex
+// AlDiTex
 //
 // Alignment Diagrams in LaTeX
 //
@@ -13,44 +13,42 @@ import java.util.*;
 import java.io.*;
 import java.lang.*;
 
-public class MummerFile {
-    private ArrayList<MummerAlignment> alignments = new ArrayList();
+public class SAMFile implements AlignmentFile {
+    private ArrayList<SAMAlignment> alignments = new ArrayList();
     private Hashtable<String,Integer> targetHits = new Hashtable();
     
-    public MummerFile(String filename, int type) {
+    public SAMFile(String filename, int tSize) {
         String line;
                 
         try
         {
             BufferedReader br = new BufferedReader(new FileReader(filename));
             
-            // Skip header
-            //do {
-            //    line = br.readLine();
-            //}
-            //while ((line != null) && (!line.startsWith("=========")));
-
-            // Now read entries
             line = br.readLine();
             while (line != null) {
-                MummerAlignment a = new MummerAlignment(line, type);
-                if (a != null) {
-                    alignments.add(a);
-                }
-                
-                Integer count = targetHits.get(a.getTargetName());
-                
-                if (count == null) {
-                    count = new Integer(1);
-                } else {
-                    count = new Integer(count.intValue() + 1);
-                }
-                
-                targetHits.put(a.getTargetName(), count);
-                
-                line = br.readLine();
-            }
+                String[] fields = line.split("\\t");
 
+                if (fields.length >= 11) {                
+                    SAMAlignment a = new SAMAlignment(line, tSize, false);
+                    if (a != null) {
+                        alignments.add(a);
+                    }
+
+                    Integer count = targetHits.get(a.getTargetName());
+
+                    if (count == null) {
+                        count = new Integer(1);
+                    } else {
+                        count = new Integer(count.intValue() + 1);
+                    }
+
+                    targetHits.put(a.getTargetName(), count);
+                } else {
+                    System.out.println("Line not recognised: "+line);
+                }
+
+                line = br.readLine();
+            } 
             br.close();
         } catch (Exception ioe) {
             System.out.println("Exception:");
@@ -64,7 +62,7 @@ public class MummerFile {
         return alignments.size();
     }
     
-    public MummerAlignment getAlignment(int i) {
+    public SAMAlignment getAlignment(int i) {
         return alignments.get(i);
     }
     
@@ -81,5 +79,9 @@ public class MummerFile {
         }
 
         return a.intValue();
-    }    
+    }
+    
+    public void sortByTargetStart() {
+        //Collections.sort(alignments, new PSLAlignmentPositionComparator());
+    }
 }

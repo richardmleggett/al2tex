@@ -23,7 +23,7 @@ public class MummerAlignmentDiagram {
         alignmentFile = f;
    }
  
-   public void writeTexFile(String outputDirectory, String filename) {
+   public void writeTexFile(String filename) {
         String previousTarget = new String("");
         String finalTarget = alignmentFile.getAlignment(alignmentFile.getNumberOfAlignments() - 1).getTargetName();
         TexFileWriter tfw = new TexFileWriter(filename);

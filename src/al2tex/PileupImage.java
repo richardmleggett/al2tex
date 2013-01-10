@@ -11,22 +11,23 @@ import java.lang.*;
 public class PileupImage {
     private static final int MAX_COVERAGE=500;
     private BufferedImage bImage = null;
-    private int rowHeight = 8;
-    private int chromosomeGap = 48;
-    private int heatMapHeight = 64;
-    private int imageWidth = 3000;
-    private int labelWidth = imageWidth / 12;
-    private int width = imageWidth - labelWidth-16;
-    private int heatMapWidth = imageWidth / 4;
-    private int heatMapX = imageWidth - (imageWidth/4) - (imageWidth/16);
-    private int heatMapY = heatMapHeight;
-    private int barOffset = labelWidth;
-    private int imageHeight = 0;
+    private int rowHeight;
+    private int barHeight;
+    private int chromosomeGap;
+    private int heatMapHeight;
+    private int imageWidth;
+    private int labelWidth;
+    private int barWidth;
+    private int heatMapWidth;
+    private int heatMapX;
+    private int heatMapY;
+    private int barOffset;
+    private int imageHeight;
     private int nContigs = 0;
     private int chrStart = 0;
     private double pixelMultiplier;
     private int unitWidth;
-    private int y = heatMapHeight + heatMapHeight + chromosomeGap + (2 * rowHeight);
+    private int y;
     private HeatMapScale heatMap;
     private DiagramOptions options;
     
@@ -40,10 +41,9 @@ public class PileupImage {
         }
         
         heatMap = new HeatMapScale(heatMapSize);
-        imageHeight = (2*heatMapHeight) + (n*rowHeight) + (nc * chromosomeGap) + chromosomeGap;
-        pixelMultiplier = (double)width / (double)hp;
-        unitWidth = (int)(Math.ceil(pixelMultiplier));
-        
+
+        setupSizes(n, nc);
+        calculatePixelMultiplier(hp);        
         storeStart();
         
         bImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
@@ -61,10 +61,34 @@ public class PileupImage {
         heatMap.plotHeatMap(bImage, heatMapX, heatMapY, heatMapWidth, heatMapHeight, options.getMaxCoverage() > 0 ? true:false);
     }
     
-    public void addContig(PileupContig contig) {
-        Graphics g = bImage.getGraphics();
-        pixelMultiplier = (double)width / (double)contig.getSize();
+    private void setupSizes(int numberOfGenes, int numberOfChromosomes) {
+        rowHeight = 9;
+        imageWidth = 3000;
+        labelWidth = 250;
+        imageHeight = (2*heatMapHeight) + (numberOfGenes*rowHeight) + (numberOfChromosomes * chromosomeGap) + chromosomeGap;
+        barWidth = imageWidth-labelWidth-16;
+        barHeight = rowHeight-3;
+        barOffset = labelWidth;
+        chromosomeGap = 48;        
+        heatMapWidth = imageWidth / 4;
+        heatMapHeight = 64;
+        heatMapX = imageWidth - (imageWidth/4) - (imageWidth/16);
+        heatMapY = heatMapHeight;
+        y = heatMapHeight + heatMapHeight + chromosomeGap + (2 * rowHeight);
+    }
+    
+    private void calculatePixelMultiplier(int s) {
+        pixelMultiplier = (double)barWidth / (double)s;
         unitWidth = (int)(Math.ceil(pixelMultiplier));
+    }
+    
+    private int getXCoord(int p) {
+        return barOffset + (int)((double)p * pixelMultiplier);
+    }
+    
+    public void addContig(PileupContig contig, DomainInfo di) {
+        Graphics g = bImage.getGraphics();
+        calculatePixelMultiplier(contig.getSize());
         
         if (options.isNewHeatMapForEachContig()) {
             int hc = contig.getHighestCoverage();
@@ -77,13 +101,47 @@ public class PileupImage {
         }
         
         for (int i=0; i<contig.getSize(); i++) {
-            int xStart = barOffset + (int)((double)i * pixelMultiplier);
+            int xStart = getXCoord(i);
             int xEnd = xStart + unitWidth;
             g.setColor(heatMap.getColour(contig.getCoverage(i)));
-            g.fillRect(xStart, y, unitWidth, rowHeight - 2);
+            g.fillRect(xStart, y, unitWidth, barHeight);
         }
+        
+        if (di != null) {
+            if (di.getNBARCStart() > 0) {
+                g.setColor(Color.BLACK);
+                plotDomain(di.getNBARCStart(), di.getNBARCEnd(), g);
+            }
+
+            if (di.getLRRStart() > 0) {
+                g.setColor(Color.BLACK);
+                plotDomain(di.getLRRStart(), di.getLRREnd(), g);
+            }        
+        }
+        
         nContigs++;
         y+=rowHeight;
+    }
+    
+    private void plotDomain(int start, int end, Graphics g) {
+        int startX = getXCoord(start);
+        int endX = getXCoord(end);
+        
+        g.drawLine(startX, y-1, startX, y+barHeight);
+        g.drawLine(endX, y-1, endX, y+barHeight);
+        g.drawLine(startX, y-1, endX, y-1);
+        g.drawLine(startX, y+barHeight, endX, y+barHeight);        
+        //plotTri(start, g);
+        //plotTri(end, g);
+        //g.drawLine(startX, y-4, endX, y-4);
+        //g.drawLine(startX, y-3, endX, y-3);
+    }
+    
+    private void plotTri(int x, Graphics g) {
+        int xpos = getXCoord(x);
+        int[] xs = {xpos, xpos-4, xpos+5};
+        int[] ys = {y+4, y-4, y-4};
+        g.fillPolygon(xs, ys, 3);
     }
     
     public void saveImageFile(String filename) {

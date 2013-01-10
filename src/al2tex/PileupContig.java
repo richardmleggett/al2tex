@@ -8,7 +8,7 @@ import java.util.regex.*;
 public class PileupContig {
     String identifier;
     int chromosome;
-    public final static int MAX_SIZE = 10000;
+    public final static int MAX_SIZE = 20000;
     int[] coverage = new int[MAX_SIZE];
     int highestCoverage = 0;
     int size = 0;
@@ -23,9 +23,10 @@ public class PileupContig {
             String c = id.substring(3, u);
             chromosome = Integer.parseInt(c);
             //System.out.println("Chromosome is "+chromosome);
-        } else {        
-            System.out.println("Invalid id: "+id);
-            System.exit(0);
+        } else {
+            chromosome = 0;
+            //System.out.println("Invalid id: "+id);
+            //System.exit(0);
         }
         
         for (int i=0; i<MAX_SIZE; i++) {

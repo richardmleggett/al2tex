@@ -1,4 +1,4 @@
-// AlDiTex
+// Al2Tex
 //
 // Alignment Diagrams in LaTeX
 //
@@ -25,8 +25,7 @@ public class PSLAlignmentDiagram {
         f.sortByTargetStart();
    }
  
-   public void writeTexFile(String outputDirectory) {
-        String filename = new String(outputDirectory+"/alignment_diagram.tex");
+   public void writeTexFile(String filename) {
         String previousTarget = new String("");
         String finalTarget = alignmentFile.getAlignment(alignmentFile.getNumberOfAlignments() - 1).getTargetName();
         TexFileWriter tfw = new TexFileWriter(filename);

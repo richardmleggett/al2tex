@@ -1,4 +1,4 @@
-// AlDiTex
+// Al2Tex
 //
 // Alignment Diagrams in LaTeX
 //
@@ -13,7 +13,7 @@ import java.util.*;
 import java.io.*;
 import java.lang.*;
 
-public class PSLFile {
+public class PSLFile implements AlignmentFile {
     private ArrayList<PSLAlignment> alignments = new ArrayList();
     private Hashtable<String,Integer> targetHits = new Hashtable();
     

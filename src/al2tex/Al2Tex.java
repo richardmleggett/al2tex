@@ -1,4 +1,4 @@
-// AlDiTex
+// Al2Tex
 //
 // Alignment Diagrams in LaTeX
 //
@@ -16,7 +16,7 @@ public class Al2Tex {
     public static void main(String[] args) {
         DiagramOptions options = new DiagramOptions();
 
-        System.out.println("AlDiTex\n");
+        System.out.println("al2tex\n");
         options.parseArgs(args);
     
         if ((options.getInputFormat().equals("pileup")) &&
@@ -25,12 +25,26 @@ public class Al2Tex {
             PileupFile pileupFile = new PileupFile(options.getInputFilename(), options.getListFilename());
             System.out.println("Building coverage diagram");
             PileupCoverageDiagram pileupCoverageDiagram = new PileupCoverageDiagram(options, pileupFile);
+            if (options.getDomainsFilename() != null) {
+                System.out.println("Loading domain information");
+                pileupCoverageDiagram.addDomainInfo(options.getDomainsFilename());
+            }
             System.out.println("Making bitmaps");
             pileupCoverageDiagram.makeBitmaps();
             
         } else if (options.getInputFormat().equals("psl")) {
             System.out.println("\nOpening PSL file");
             PSLFile pslFile = new PSLFile(options.getInputFilename());
+            
+            if ((options.getDiagramType().equals("coveragemap"))  ||
+                (options.getDiagramType().equals("all"))) {
+                System.out.println("Building coverage map diagram");
+                CoverageMapDiagram coverageDiagram = new CoverageMapDiagram(options);
+                System.out.println("Making bitmaps");
+                coverageDiagram.makeBitmapsFromFile(pslFile, options.getOutputDirectory());
+                System.out.println("Writing LaTeX files");
+                coverageDiagram.writeTexFile(options.getOutputFilePath());
+            }
             
             if ((options.getDiagramType().equals("coverage")) ||
                 (options.getDiagramType().equals("all"))) {
@@ -39,7 +53,7 @@ public class Al2Tex {
                 System.out.println("Making bitmaps");
                 pslCoverageDiagram.makeBitmaps(pslFile, options.getOutputDirectory());
                 System.out.println("Writing LaTeX files");
-                pslCoverageDiagram.writeTexFile();
+                pslCoverageDiagram.writeTexFile(options.getOutputFilePath());
             }
 
             if ((options.getDiagramType().equals("alignment"))  ||
@@ -47,8 +61,21 @@ public class Al2Tex {
                 System.out.println("Building alignment diagram");
                 PSLAlignmentDiagram pslAlignmentDiagram = new PSLAlignmentDiagram(options, pslFile);
                 System.out.println("Writing LaTeX files");
-                pslAlignmentDiagram.writeTexFile(options.getOutputDirectory());
+                pslAlignmentDiagram.writeTexFile(options.getOutputFilePath());
             }
+        } else if (options.getInputFormat().equals("sam")) {
+            System.out.println("\nOpening SAM file");
+            SAMFile samFile = new SAMFile(options.getInputFilename(), options.getTargetSize());
+
+            if ((options.getDiagramType().equals("coveragemap"))  ||
+                (options.getDiagramType().equals("all"))) {
+                System.out.println("Building coverage map diagram");
+                CoverageMapDiagram coverageDiagram = new CoverageMapDiagram(options);
+                System.out.println("Making bitmaps");
+                coverageDiagram.makeBitmapsFromFile(samFile, options.getOutputDirectory());
+                System.out.println("Writing LaTeX files");
+                coverageDiagram.writeTexFile(options.getOutputFilePath());
+            }            
         } else if (options.getInputFormat().equals("coords") || options.getInputFormat().equals("tiling")) {
             int type = 0;
             if (options.getInputFormat().equals("coords")) {
@@ -64,7 +91,7 @@ public class Al2Tex {
                 System.out.println("Building alignment diagram");
                 MummerAlignmentDiagram nucmerAlignmentDiagram = new MummerAlignmentDiagram(options, alignmentFile);
                 System.out.println("Writing LaTeX files");
-                nucmerAlignmentDiagram.writeTexFile(options.getOutputDirectory(), options.getOutputDirectory()+"/"+File.separatorChar+options.getInputFilenameLeaf()+".tex");
+                nucmerAlignmentDiagram.writeTexFile(options.getOutputFilePath());
             }            
         }
         System.out.println("Done");

@@ -1,4 +1,4 @@
-// AlDiTex
+// Al2Tex
 //
 // Alignment Diagrams in LaTeX
 //
@@ -11,7 +11,7 @@ package al2tex;
 
 import java.util.*;
 
-public class PSLAlignment implements Comparable {
+public class PSLAlignment implements Comparable, Alignment {
     private int matches;
     private int misMatches;
     private int repMatches;
@@ -59,6 +59,10 @@ public class PSLAlignment implements Comparable {
         blockSizes = new int[blockCount];
         qStarts = new int[blockCount];
         tStarts = new int[blockCount];
+        
+        tName=tName.replace("|", "");
+        tName=tName.replace(".", "");
+        tName=tName.replace("_", "");
         
         String[] bs = fields[18].split(",");
         String[] qs = fields[19].split(",");

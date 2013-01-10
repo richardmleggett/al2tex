@@ -1,4 +1,4 @@
-// AlDiTex
+// Al2Tex
 //
 // Alignment Diagrams in LaTeX
 //
@@ -11,7 +11,7 @@ package al2tex;
 
 import java.util.*;
 
-public class MummerAlignment implements Comparable {
+public class MummerAlignment implements Comparable, Alignment {
     public final static int SHOW_COORDS = 1;
     public final static int SHOW_TILING = 2;
     private int referenceStart;
@@ -112,9 +112,34 @@ public class MummerAlignment implements Comparable {
     public String getQueryName() { return queryId; }
     public int getTargetSize() { return referenceLength; }
     public int getQuerySize() { return queryLength; }
+
+    public int getLength() { return referenceEnd - referenceStart + 1; };
+    public int getBlockCount() { return 1; };
+    
+    public int getBlockSize(int i) {
+        if (i != 1) {
+            System.out.println("Something went wrong: block number for MummerAlignment should always be 1!\n");
+            System.exit(-1);
+        }
+        return this.getLength();
+    }
+
+    public int getBlockTargetStart(int i) {
+        if (i != 1) {
+            System.out.println("Something went wrong: block number for MummerAlignment should always be 1!\n");
+            System.exit(-1);
+        }
+        return this.getReferenceStart();
+    }
     
     @Override
     public int compareTo(Object o) {
-        return referenceId.compareTo(((MummerAlignment)o).getReferenceId());
-    }    
+        int td = referenceId.compareTo(((MummerAlignment)o).getReferenceId());
+        
+        if (td != 0) {
+            return td;
+        }
+        
+        return referenceStart - ((MummerAlignment)o).getTargetStart();
+    }        
 }

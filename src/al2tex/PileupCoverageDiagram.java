@@ -6,6 +6,7 @@ public class PileupCoverageDiagram {
     DiagramOptions options;
     PileupFile pileupFile;
     PileupImage pileupImage;
+    DomainInfoFile diFile = null;
         
     public PileupCoverageDiagram(DiagramOptions o, PileupFile f) {
         options = o;
@@ -18,6 +19,10 @@ public class PileupCoverageDiagram {
                                       options);        
     }
     
+    public void addDomainInfo(String filename) {
+        diFile = new DomainInfoFile(filename);
+    }
+    
     public void makeBitmaps() {
         int currentChromosome = -1;
         int chrStart = 0;
@@ -26,6 +31,7 @@ public class PileupCoverageDiagram {
         
         for (int i=0; i<pileupFile.getTotalNumberOfContigs(); i++) {
             PileupContig c = pileupFile.getContig(i);
+            DomainInfo di = null;
             
             if (c.getChromosome() != currentChromosome) {
                 if (currentChromosome != -1) {
@@ -40,8 +46,12 @@ public class PileupCoverageDiagram {
                 
                 currentChromosome = c.getChromosome();
             }
+            
+            if (diFile != null) {
+                di = diFile.getDomainInfo(c.getId());
+            }
                                     
-            pileupImage.addContig(c);
+            pileupImage.addContig(c, di);
         }
 
         if (currentChromosome != -1) {

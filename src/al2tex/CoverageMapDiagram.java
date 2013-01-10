@@ -12,65 +12,62 @@ package al2tex;
 import java.util.*;
 import java.io.*;
 
-public class PSLCoverageDiagram
+public class CoverageMapDiagram
 {
     private static final int NUM_DIVIDERS = 4;
-    private PSLFile pslFile;
+    private AlignmentFile alignmentFile;
     private DiagramOptions options;
     private String outputDirectory;
-    private int pictureWidth = 220;                  // Width of picture
-    private int targetWidth = 180;                   // Width of reference (target) bar, in mm
+    private int pictureWidth = 160;                  // Width of picture
+    private int targetWidth = 120;                   // Width of reference (target) bar, in mm
+    private int imageOffset = 7;
+    private int targetHeight = targetWidth;
     private int rowHeight = 2;                       // Height of bar, in mm
     private int yStep = (int)(rowHeight * 1.5);      // Allow for gap
     private int pictureHeight = (int)(rowHeight * 2.5);                // Calculated later, based on number of alignments
-    private int rowsPerPage = (140 - (2 * yStep)) / yStep;
+    private int nRows;
     private int largestCoverage = 0;
     private HeatMapScale heatMapScale = new HeatMapScale();   // Heat map colours
     
-    public PSLCoverageDiagram(DiagramOptions o) {
+    public CoverageMapDiagram(DiagramOptions o) {
         options = o;
     }
     
-    public void makeBitmaps(PSLFile p, String o) {        
+    public void makeBitmapsFromFile(AlignmentFile f, String o) {        
         outputDirectory = o;
-        pslFile = p;
+        alignmentFile = f;
         
         File imagesDir = new File(outputDirectory+"/images");
         imagesDir.mkdir();
         
         for (int pass=0; pass<2; pass++) {
-            PSLCoverageImage pslImage = null;
+            CoverageMapImage mapImage = null;
             String previousTarget = new String("");
             
-            for (int i=0; i<pslFile.getNumberOfAlignments(); i++) {
-                PSLAlignment a = pslFile.getAlignment(i);
+            for (int i=0; i<alignmentFile.getNumberOfAlignments(); i++) {
+                Alignment a = alignmentFile.getAlignment(i);
 
                 if (a.getTargetName().compareTo(previousTarget) != 0) {
-                    if (pslImage != null) {
-                        if (pass > 0) {
-                            String filename = outputDirectory + "/images/" + previousTarget + ".png";
-                            pslImage.saveImageFile(filename, heatMapScale);
-                        }
-                        
-                        if (pslImage.getLargestCoverage() > largestCoverage) {
-                            largestCoverage = pslImage.getLargestCoverage();
-                        }
+                    if (mapImage == null) {
+                        mapImage = new CoverageMapImage(options, a.getTargetSize());                    
+                    } else {
+                        System.out.println("Only one target allowed for this diagram");
+                        break;
                     }
-
-                    pslImage = new PSLCoverageImage(options, a.getTargetSize());
                 }
 
-                pslImage.addAlignment(a);
+                mapImage.addAlignment(a);
                 previousTarget = a.getTargetName();
             }        
 
-            if (pslImage != null) {
-                String filename = outputDirectory + "/images/" + previousTarget + ".png";
-                pslImage.saveImageFile(filename, heatMapScale);
-
-                if (pslImage.getLargestCoverage() > largestCoverage) {
-                    largestCoverage = pslImage.getLargestCoverage();
-                }                
+            if (mapImage != null) {
+               if (pass > 0) {
+                    String filename = outputDirectory + "/images/" + previousTarget + "covmap.png";
+                    mapImage.saveImageFile(filename, heatMapScale);
+                    nRows = mapImage.getNumberOfRows();
+                }
+                        
+                largestCoverage = mapImage.getLargestCoverage();
             }
 
             System.out.println("          Heatmap size was: " + heatMapScale.getHeatMapSize());
@@ -87,13 +84,13 @@ public class PSLCoverageDiagram
         try
         {
             String previousTarget = new String("");
-            String finalTarget = pslFile.getAlignment(pslFile.getNumberOfAlignments() - 1).getTargetName();
+            String finalTarget = alignmentFile.getAlignment(alignmentFile.getNumberOfAlignments() - 1).getTargetName();
             BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
             
             writeTexHeader(bw);
             
-            for (int i=0; i<pslFile.getNumberOfAlignments(); i++) {
-                PSLAlignment a = pslFile.getAlignment(i);
+            for (int i=0; i<alignmentFile.getNumberOfAlignments(); i++) {
+                Alignment a = alignmentFile.getAlignment(i);
 
                 if (a.getTargetName().compareTo(previousTarget) != 0) {
                     writeNewImage(bw, a.getTargetName(), a.getTargetSize());
@@ -134,7 +131,7 @@ public class PSLCoverageDiagram
 
             bw.write("\\begin{tikzpicture}[x=1mm,y=1mm]"); bw.newLine();
             bw.write("\\node[anchor=south west, inner sep=0pt, outer sep=0pt] at (0,0) {\\includegraphics[width="+targetWidth/2+"mm,height="+rowHeight+"mm]{heatmap.png}};"); bw.newLine();
-            bw.write("\\node [anchor=west] at ("+((targetWidth/2) + 5)+","+(pictureHeight-(rowHeight * 2))+") {Scale};"); bw.newLine();
+            bw.write("\\node [anchor=west] at (25,"+(pictureHeight-(rowHeight / 2))+") {Coverage};"); bw.newLine();
             bw.write("\\node at (0,"+(pictureHeight-(rowHeight / 2))+") {0};"); bw.newLine();
             bw.write("\\node at ("+(targetWidth / 2)+","+(pictureHeight-(rowHeight / 2))+") {"+heatMapScale.getHeatMapSize()+"};"); bw.newLine();
             bw.write("\\end{tikzpicture}"); bw.newLine();
@@ -158,19 +155,33 @@ public class PSLCoverageDiagram
         double unit = (double)targetWidth / targetSize;                
 
         try {
-            String filename = "images/" + targetName + ".png";
+            String filename = "images/" + targetName + "covmap.png";
 
             bw.write("\\begin{tikzpicture}[x=1mm,y=1mm]"); bw.newLine();
-            for (int i=0; i<=NUM_DIVIDERS; i++) {
-                int num = i == NUM_DIVIDERS ? targetSize: (int)((targetSize / NUM_DIVIDERS) * i);
-                int pos = (int)((double)num * unit);
+            //for (int i=0; i<=NUM_DIVIDERS; i++) {
+            //    int num = i == NUM_DIVIDERS ? targetSize: (int)((targetSize / NUM_DIVIDERS) * i);
+            //    int pos = (int)((double)num * unit);
                 
                 //bw.write("\\draw [dashed] ("+pos+", 0) -- ("+pos+","+(pictureHeight - yStep)+");"); bw.newLine();
-                bw.write("\\node at ("+pos+","+(pictureHeight-(rowHeight / 2))+") {"+num+"};"); bw.newLine();
+            //    bw.write("\\node at ("+pos+","+(pictureHeight-(rowHeight / 2))+") {"+num+"};"); bw.newLine();
+            //}
+            
+            double rowSize = (double)targetSize / (double)nRows;
+            for (int r=0; r<nRows; r+=50) {
+                int rowY = targetHeight - (int)((double)r * ((double)targetHeight / (double)nRows));
+                //bw.write("\\draw [dashed] (0,"+rowY+") -- ("+imageOffset+","+rowY+");"); bw.newLine();
+                bw.write("\\node at (0,"+rowY+") {"+(int)((double)r*rowSize)+"};"); bw.newLine();
             }
             
-            bw.write("\\node[anchor=south west, inner sep=0pt, outer sep=0pt] at (0,0) {\\includegraphics[width="+targetWidth+"mm,height="+rowHeight+"mm]{"+filename+"}};"); bw.newLine();
-            bw.write("\\node [anchor=west] at ("+(targetWidth + 5)+","+(pictureHeight-(rowHeight * 2))+") {"+targetName+"};"); bw.newLine();
+            //bw.write("\\node at (0,"+targetHeight+") {0};"); bw.newLine();
+            int rowY = targetHeight - (int)((double)(nRows) * ((double)targetHeight / (double)nRows));
+            //bw.write("\\node at ("+(targetWidth+imageOffset+7)+","+rowY+") {"+targetSize+"};"); bw.newLine();
+            bw.write("\\node at (0,"+rowY+") {"+targetSize+"};"); bw.newLine();
+            
+            bw.write("\\node[anchor=south west, inner sep=0pt, outer sep=0pt] at ("+imageOffset+",0) {\\includegraphics[width="+targetWidth+"mm,height="+targetHeight+"mm]{"+filename+"}};"); bw.newLine();
+            //bw.write("\\node [anchor=west] at ("+(targetWidth + 5)+","+(pictureHeight-(rowHeight * 2))+") {"+targetName+"};"); bw.newLine();
+            bw.write("\\node at (70, -5) {Each row represents "+(int)rowSize+" nt};"); bw.newLine();
+            bw.write("\\node[rotate=90] at (-10,60) {Position in genome (nt)};"); bw.newLine();
             bw.write("\\end{tikzpicture}"); bw.newLine();
         } catch (IOException e) {
             System.out.println(e);

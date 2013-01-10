@@ -33,7 +33,11 @@ public class PileupFile {
                     System.out.println("Error: null contig");
                     System.exit(0);
                 }
-                                
+                               
+                if (position >= PileupContig.MAX_SIZE) {
+                    System.out.println("Error in " + line);
+                }
+                
                 contig.addPositionInfo(position, count);
                 
                 if (count > highestCoverage) {
