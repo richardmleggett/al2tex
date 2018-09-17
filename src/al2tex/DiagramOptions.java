@@ -30,6 +30,9 @@ public class DiagramOptions {
     private int rowHeight = 10;
     private int rowSpacer = 0;
     private boolean newHeatMapForEachContig = false;
+    private double minPAFAlignmentProp = 0.01;
+    private String alignmentQueryName = null;
+    private String alignmentRefName = null;
     
     public void parseArgs(String[] args) {
         int i=0;
@@ -56,8 +59,9 @@ public class DiagramOptions {
                 if ((!diagramType.equals("coverage")) &&
                    (!diagramType.equals("coveragemap")) &&
                    (!diagramType.equals("alignment")) &&
+                   (!diagramType.equals("contigalignment")) &&
                    (!diagramType.equals("all"))) {
-                    System.out.println("Error: type must be 'all', 'coverage', 'coveragemap' or 'alignment'.");
+                    System.out.println("Error: type must be 'all', 'coverage', 'coveragemap', 'contigalignment' or 'alignment'.");
                     System.exit(0);
                 }
                                 
@@ -68,8 +72,9 @@ public class DiagramOptions {
                     (!inputFormat.equals("coords")) &&
                     (!inputFormat.equals("pileup")) &&
                     (!inputFormat.equals("sam")) &&
+                    (!inputFormat.equals("paf")) &&
                     (!inputFormat.equals("tiling"))) {
-                    System.out.println("Error: inputfmt must be 'psl', 'coords', 'pileup', 'sam' or 'tiling'.");
+                    System.out.println("Error: inputfmt must be 'psl', 'coords', 'pileup', 'sam', 'paf' or 'tiling'.");
                     System.exit(0);
                 }
             } else if (args[i].equalsIgnoreCase("-in")) {
@@ -102,6 +107,15 @@ public class DiagramOptions {
             } else if (args[i].equalsIgnoreCase("-rowspacer")) {
                 rowSpacer = Integer.parseInt(args[i+1]);
                 System.out.println("      Row spacer: " + rowSpacer);
+            } else if (args[i].equalsIgnoreCase("-minPAFAlignmentProp")) {
+                minPAFAlignmentProp = Double.parseDouble(args[i+1]);
+                System.out.println("      Min Alignment Proportion for PAF alignments: " + minPAFAlignmentProp);
+            } else if (args[i].equalsIgnoreCase("-alignmentQueryName")) {
+                alignmentQueryName = args[i+1];
+                System.out.println("   Query name for alignment diagram: " + alignmentQueryName);
+            } else if (args[i].equalsIgnoreCase("-alignmentRefName")) {
+                alignmentRefName = args[i+1];
+                System.out.println("   Ref name for alignment diagram: " + alignmentRefName);
             } else {
                 System.out.println("Unknown paramter: " + args[i]);
                 System.exit(0);
@@ -232,5 +246,17 @@ public class DiagramOptions {
     
     public int getRowSpacer() {
         return rowSpacer;
+    }
+    
+    public double getMinPAFAlignmentProp() {
+        return minPAFAlignmentProp;
+    }
+    
+    public String getAlignmentQueryName() {
+        return alignmentQueryName;
+    }
+    
+    public String getAlignmentRefName() {
+        return alignmentRefName;
     }
 }

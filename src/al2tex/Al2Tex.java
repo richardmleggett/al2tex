@@ -93,6 +93,10 @@ public class Al2Tex {
                 System.out.println("Writing LaTeX files");
                 nucmerAlignmentDiagram.writeTexFile(options.getOutputFilePath());
             }            
+        } else if (options.getInputFormat().equals("paf") && options.getDiagramType().equals("contigalignment")) {
+            PAFFile pafFile = new PAFFile(options.getInputFilename());
+            ContigAlignmentDiagram contigAlignmentDiagram = new ContigAlignmentDiagram(pafFile, options.getOutputFilePath(), options.getMinPAFAlignmentProp());
+            contigAlignmentDiagram.writeTexFile(options);
         }
         System.out.println("Done");
     }
