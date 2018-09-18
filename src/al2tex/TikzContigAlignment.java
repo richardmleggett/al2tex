@@ -23,6 +23,8 @@ public class TikzContigAlignment extends TikzPicture
     private int m_contigDrawLength;
     private int m_contigDrawHeight;
     private int m_refContigDrawHeight;
+    private int m_numKeysPerLine;
+    private int m_minYStart;
     private TreeMap<String, String> m_coloursMap;
     private int m_colourCounter;
     private boolean m_coloursSet;
@@ -36,6 +38,8 @@ public class TikzContigAlignment extends TikzPicture
         m_coloursMap = new TreeMap();
         m_coloursSet = false;
         m_colourCounter = 0;
+        m_numKeysPerLine = 7;
+        m_minYStart = 0;
     }
     
     public void setColourForContig(String refContig, Color colour)
@@ -63,7 +67,7 @@ public class TikzContigAlignment extends TikzPicture
         m_coloursSet = true;
     }
     
-    void drawContig(ArrayList<PAFAlignment> alignments, int x, int y)
+    void drawContig(ArrayList<DetailedAlignment> alignments, int x, int y)
     {
         if(alignments.size() <= 0)
         {
@@ -73,20 +77,20 @@ public class TikzContigAlignment extends TikzPicture
         try 
         {
             String contigName = alignments.get(0).getQueryName();
-            int contigLength = alignments.get(0).getQueryContigLength();
+            int contigLength = alignments.get(0).getQuerySize();
             
             // fill in the alignments
-            int bpLength = alignments.get(0).getQueryContigLength();
+            //int bpLength = alignments.get(0).getQueryContigLength();
             double alignmentHeight = (double)m_contigDrawHeight / alignments.size();
             for(int i = 0; i < alignments.size(); i++)
             {
-                PAFAlignment alignment = alignments.get(i);
+                DetailedAlignment alignment = alignments.get(i);
                 assert(alignment.getQueryName().equals(contigName));
-                double start = (double)alignment.getQueryStartPos() * m_contigDrawLength / bpLength;
-                double end = (double)alignment.getQueryEndPos() * m_contigDrawLength / bpLength;
+                double start = (double)alignment.getQueryStart() * m_contigDrawLength / contigLength;
+                double end = (double)alignment.getQueryEnd() * m_contigDrawLength / contigLength;
                     
-                double refStartPC = 100 * (double)alignment.getRefStartPos() / alignment.getRefContigLength();
-                double refEndPC = 100 * (double)alignment.getRefEndPos() / alignment.getRefContigLength();
+                double refStartPC = 100 * (double)alignment.getTargetStart() / alignment.getTargetSize();
+                double refEndPC = 100 * (double)alignment.getTargetEnd() / alignment.getTargetSize();
                 if(alignment.isReverseAlignment())
                 {
                     double temp = refStartPC;
@@ -94,7 +98,7 @@ public class TikzContigAlignment extends TikzPicture
                     refEndPC = temp;                            
                 }
                 
-                String colour = m_coloursMap.get(alignment.getRefName());
+                String colour = m_coloursMap.get(alignment.getTargetName());
                 bw.write(  "\\shade[draw=" + colour + ", thick, "
                                 + "left color=" + colour + "!" + (int)refStartPC + "!white,"
                                 + "right color="+ colour + "!" + (int)refEndPC + "!white] "
@@ -124,11 +128,18 @@ public class TikzContigAlignment extends TikzPicture
         try 
         {
             int i = 0;
-            double delta = (double)m_contigDrawLength / m_coloursMap.size();
+            int j = -1;
+            double delta = (double)m_contigDrawLength / m_numKeysPerLine;
             for(Map.Entry<String, String> entry : m_coloursMap.entrySet())
             {
+                if(i % m_numKeysPerLine == 0)
+                {
+                    i = 0;
+                    j++;
+                }
+                                
                 double xPos = x + i * delta;
-                double yPos = y;
+                double yPos = y + j * m_contigDrawHeight;
                 String colour = entry.getValue();
                 String name = entry.getKey();
                 bw.write("\\node (rect) at (" + xPos + "," + yPos + ") " + 
@@ -137,6 +148,8 @@ public class TikzContigAlignment extends TikzPicture
                 bw.newLine();
                 i++;
             }
+            
+            m_minYStart = y + (j+1) * m_contigDrawHeight;
         }
         catch (IOException e) 
         {
@@ -144,64 +157,67 @@ public class TikzContigAlignment extends TikzPicture
         }
     }
     
-    public void drawAlignmentDiagram(ArrayList<PAFAlignment> alignments, int x, int y)
+    public void drawAlignmentDiagram(ArrayList<DetailedAlignment> alignments, int x, int y)
     {
         if(alignments.size() <= 0)
         {
             return;
         }
         drawContig(alignments, x, y);
-        String refName = alignments.get(0).getRefName();
-        int refLength = alignments.get(0).getRefContigLength();
+        String refName = alignments.get(0).getTargetName();
+        int refLength = alignments.get(0).getTargetSize();
         
-        int refContigYStart = y - 2 * 175; // TODO: Magic numbers
+        int refContigYStart = y - 3 * 150; // TODO: Magic numbers
         int refContigYEnd = refContigYStart + m_refContigDrawHeight;
         
-        drawReferenceContig(0, refContigYStart, refName, 0, refLength, true);
+        double refLengthProp = 0.7;
+        int refContigXStart = (int)((1-refLengthProp) * m_contigDrawLength * 0.5);
+        drawReferenceContig(refContigXStart, refContigYStart, refName, 0, refLength, true, refLengthProp);
         int minRef = refLength;
         int maxRef = 0;        
         for(int i = 0; i < alignments.size(); i++)
         {
-            PAFAlignment alignment = alignments.get(i);
-            if(alignment.getRefStartPos() < minRef)
+            DetailedAlignment alignment = alignments.get(i);
+            if(alignment.getTargetStart() < minRef)
             {
-                minRef = alignment.getRefStartPos();
+                minRef = alignment.getTargetStart();
             }
-            if(alignment.getRefEndPos() > maxRef)
+            if(alignment.getTargetEnd() > maxRef)
             {
-                maxRef = alignment.getRefEndPos();
+                maxRef = alignment.getTargetEnd();
             }               
         }
-        int zoomRefContigYStart = refContigYStart + 100;
+        int zoomRefContigYStart = refContigYStart + 150;
         int zoomRefContigYEnd = zoomRefContigYStart + m_refContigDrawHeight;
                 
-        drawReferenceContig(0, zoomRefContigYStart, refName, minRef, maxRef, false);
+        drawReferenceContig(x, zoomRefContigYStart, refName, minRef, maxRef, false, 1);
         
         try
         {
             // draw the "zoom lines"
-            double minRefX = (double)minRef * m_contigDrawLength / refLength;
-            double maxRefX = (double)maxRef * m_contigDrawLength / refLength;
-            bw.write("\\draw[dashed] ( 0," + zoomRefContigYStart + ") -- (" + minRefX + "," + refContigYEnd + ") node[anchor=north, yshift=-4ex] {" + minRef + "};");
+            int refContigDrawLength = (int)(m_contigDrawLength * refLengthProp);
+            double minRefX = (double)minRef * refContigDrawLength / refLength;
+            double maxRefX = (double)maxRef * refContigDrawLength / refLength;
+            bw.write("\\draw[dashed] ( 0," + zoomRefContigYStart + ") -- (" + (refContigXStart + minRefX) + "," + refContigYEnd + ") node[anchor=south, yshift=1ex] {" + minRef + "};");
             bw.newLine();
-            bw.write("\\draw[dashed] (" + m_contigDrawLength + "," + zoomRefContigYStart + ") -- (" + maxRefX + "," + refContigYEnd + ") node[anchor=north, yshift=-4ex] {" + maxRef + "};");
+            bw.write("\\draw[dashed] (" + m_contigDrawLength + "," + zoomRefContigYStart + ") -- (" + (refContigXStart + maxRefX) + "," + refContigYEnd + ") node[anchor=south, yshift=1ex] {" + maxRef + "};");
             bw.newLine();
                     
             double zoomRefLength = maxRef - minRef;
-            int queryLength = alignments.get(0).getQueryContigLength();
+            int queryLength = alignments.get(0).getQuerySize();
             for(int i = 0; i < alignments.size(); i++)
             {
-                PAFAlignment alignment = alignments.get(i);
-                double queryStart = x + (double)alignment.getQueryStartPos() * m_contigDrawLength / queryLength;
-                double queryEnd = x + (double)alignment.getQueryEndPos() * m_contigDrawLength / queryLength;
+                DetailedAlignment alignment = alignments.get(i);
+                double queryStart = x + (double)alignment.getQueryStart() * m_contigDrawLength / queryLength;
+                double queryEnd = x + (double)alignment.getQueryEnd() * m_contigDrawLength / queryLength;
                                 
                 // draw the alignments on the ref
-                double refStart = x + (double)alignment.getRefStartPos() * m_contigDrawLength / refLength;
-                double refEnd = x + (double)alignment.getRefEndPos() * m_contigDrawLength / refLength;
+                double refStart = refContigXStart + (double)alignment.getTargetStart() * refContigDrawLength / refLength;
+                double refEnd = refContigXStart + (double)alignment.getTargetEnd() * refContigDrawLength / refLength;
                 
-                String colour = m_coloursMap.get(alignment.getRefName());
-                double refStartPC = 100 * (double)alignment.getRefStartPos() / alignment.getRefContigLength();
-                double refEndPC = 100 * (double)alignment.getRefEndPos() / alignment.getRefContigLength();
+                String colour = m_coloursMap.get(alignment.getTargetName());
+                double refStartPC = 100 * (double)alignment.getTargetStart() / alignment.getTargetSize();
+                double refEndPC = 100 * (double)alignment.getTargetEnd() / alignment.getTargetSize();
                 bw.write(  "\\shade[draw, "
                                 + "left color=" + colour + "!" + (int)refStartPC + "!white,"
                                 + "right color="+ colour + "!" + (int)refEndPC + "!white] "
@@ -210,8 +226,8 @@ public class TikzContigAlignment extends TikzPicture
                 bw.newLine();
                 
                 //draw the alignments on the zoomed ref
-                double zoomRefStart = x + (double)(alignment.getRefStartPos() - minRef) * m_contigDrawLength / zoomRefLength;
-                double zoomRefEnd = x + (double)(alignment.getRefEndPos() - minRef) * m_contigDrawLength / zoomRefLength;
+                double zoomRefStart = x + (double)(alignment.getTargetStart() - minRef) * m_contigDrawLength / zoomRefLength;
+                double zoomRefEnd = x + (double)(alignment.getTargetEnd() - minRef) * m_contigDrawLength / zoomRefLength;
                 bw.write(  "\\shade[draw, "
                                 + "left color=" + colour + "!" + (int)refStartPC + "!white,"
                                 + "right color="+ colour + "!" + (int)refEndPC + "!white] "
@@ -246,9 +262,9 @@ public class TikzContigAlignment extends TikzPicture
             // draw the outlines of the alignments on the ref again, because they might have been drawn over :(
             for(int i = 0; i < alignments.size(); i++)
             {
-                PAFAlignment alignment = alignments.get(i);
-                double refStart = x + (double)(alignment.getRefStartPos() - minRef) * m_contigDrawLength / zoomRefLength;
-                double refEnd = x + (double)(alignment.getRefEndPos() - minRef) * m_contigDrawLength / zoomRefLength;
+                DetailedAlignment alignment = alignments.get(i);
+                double refStart = x + (double)(alignment.getTargetStart() - minRef) * m_contigDrawLength / zoomRefLength;
+                double refEnd = x + (double)(alignment.getTargetEnd() - minRef) * m_contigDrawLength / zoomRefLength;
                 bw.write("\\draw (" + refStart + "," + zoomRefContigYStart + ") -- (" + refStart + "," + zoomRefContigYEnd + ");");
                 bw.write("\\draw (" + refEnd + "," + zoomRefContigYStart + ") -- (" + refEnd + "," + zoomRefContigYEnd + ");");       
             }
@@ -259,16 +275,18 @@ public class TikzContigAlignment extends TikzPicture
         }
     }
     
-    public void drawReferenceContig(int x, int y, String refName, int refStart, int refEnd, boolean drawLabels)
+    public void drawReferenceContig(int x, int y, String refName, int refStart, int refEnd, boolean drawLabels, double width)
     {
         try
         {
+            assert(0. <= width && width <= 1.);
+            double drawLength = m_contigDrawLength * width;
             // draw the contig rectangle
             String startBPLabel = drawLabels ?  "node[anchor=north] {" + refStart + "}" : "";
             String endBPLabel = drawLabels ?  "node[anchor=north] {" + refEnd + "}" : "";
             bw.write("\\draw (" + x + "," + y + ") " + startBPLabel + " -- " + 
-                    "(" + (x + m_contigDrawLength) +","+ y + ") " + endBPLabel + " -- " +
-                    "(" + (x + m_contigDrawLength) + "," + (y + m_refContigDrawHeight) + ") -- " +
+                    "(" + (x + drawLength) +","+ y + ") " + endBPLabel + " -- " +
+                    "(" + (x + drawLength) + "," + (y + m_refContigDrawHeight) + ") -- " +
                     "(" + x + "," + (y + m_refContigDrawHeight) + ") -- cycle ;");
             bw.newLine();
             if(drawLabels)
@@ -284,4 +302,5 @@ public class TikzContigAlignment extends TikzPicture
     
     public int getContigDrawLength() { return m_contigDrawLength; }
     public int getContigDrawHeight() { return m_contigDrawHeight; }
+    public int getMinYForContig() { return m_minYStart; }
 }

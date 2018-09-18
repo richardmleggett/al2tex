@@ -10,7 +10,7 @@ import java.util.*;
  *
  * @author martins
  */
-public class PAFAlignment implements Alignment, Comparable 
+public class PAFAlignment implements DetailedAlignment, Comparable 
 {
     private String qName;
     private int qLength;
@@ -48,17 +48,17 @@ public class PAFAlignment implements Alignment, Comparable
     }
     
     public String getQueryName() { return qName; };
-    public String getRefName() { return rName; };
-    public int getQueryStartPos() { return qStart; }
-    public int getQueryEndPos() { return qEnd; }
-    public int getRefStartPos() { return rStart; }
-    public int getRefEndPos() { return rEnd; }
-    public int getQueryContigLength() { return qLength; }
+    //public String getRefName() { return rName; };
+    public int getQueryStart() { return qStart; }
+    public int getQueryEnd() { return qEnd; }
+    public int getTargetStart() { return rStart; }
+    public int getTargetEnd() { return rEnd; }
+    public int getQuerySize() { return qLength; }
     public int getQueryAlignmentLength() { return qEnd - qStart; }
     public int getRefContigLength() {return rLength; }
     public int getRefAlignmentLength() { return rEnd - rStart; }
     public boolean isReverseAlignment() { return isReverseAlignment; }
-    public String getTargetName() { return this.getRefName(); };
+    public String getTargetName() { return rName; };
     public int getTargetSize() { return rLength; }
     public int getBlockCount() { return 1; };
     public int getBlockTargetStart(int i) { return rStart; };
@@ -67,13 +67,13 @@ public class PAFAlignment implements Alignment, Comparable
     @Override
     public int compareTo(Object o) 
     {
-        int td = rName.compareTo(((PAFAlignment)o).getRefName());
+        int td = rName.compareTo(((PAFAlignment)o).getTargetName());
         
         if (td != 0) {
             return td;
         }
         
-        return getQueryStartPos() - ((PAFAlignment)o).getQueryStartPos();
+        return getQueryStart() - ((PAFAlignment)o).getQueryStart();
     }   
     
     // compare by query start position
@@ -84,7 +84,7 @@ public class PAFAlignment implements Alignment, Comparable
             {
                 return td;
             }
-            return alignment1.getQueryStartPos() - alignment2.getQueryStartPos();
+            return alignment1.getQueryStart() - alignment2.getQueryStart();
         }
     };
 }
