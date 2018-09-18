@@ -12,7 +12,7 @@ import java.lang.*;
  *
  * @author martins
  */
-public class PAFFile implements AlignmentFile 
+public class PAFFile implements DetailedAlignmentFile 
 {
     private ArrayList<PAFAlignment> alignments = new ArrayList();
     

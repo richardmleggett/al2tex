@@ -33,4 +33,17 @@ public interface DetailedAlignment extends Alignment
             return alignment1.getQueryStart() - alignment2.getQueryStart();
         }
     };
+    
+    public static Comparator<DetailedAlignment> compareByQueryAlignmentLength = new Comparator<DetailedAlignment>(){
+        public int compare(DetailedAlignment alignment1, DetailedAlignment alignment2) {
+            int queryLength1 = Math.abs(alignment1.getQueryEnd() - alignment1.getQueryStart());
+            int queryLength2 = Math.abs(alignment2.getQueryEnd() - alignment2.getQueryStart());
+            int td = alignment1.getQueryName().compareTo(alignment2.getQueryName());
+            if(td != 0)
+            {
+                return td;
+            }
+            return queryLength1 - queryLength2;
+        }
+    };
 }

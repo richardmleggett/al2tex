@@ -13,7 +13,7 @@ import java.util.*;
 import java.io.*;
 import java.lang.*;
 
-public class MummerFile {
+public class MummerFile implements DetailedAlignmentFile {
     private ArrayList<MummerAlignment> alignments = new ArrayList();
     private Hashtable<String,Integer> targetHits = new Hashtable();
     

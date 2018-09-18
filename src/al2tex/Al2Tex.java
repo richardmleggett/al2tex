@@ -30,8 +30,7 @@ public class Al2Tex {
                 pileupCoverageDiagram.addDomainInfo(options.getDomainsFilename());
             }
             System.out.println("Making bitmaps");
-            pileupCoverageDiagram.makeBitmaps();
-            
+            pileupCoverageDiagram.makeBitmaps();           
         } else if (options.getInputFormat().equals("psl")) {
             System.out.println("\nOpening PSL file");
             PSLFile pslFile = new PSLFile(options.getInputFilename());
@@ -63,6 +62,15 @@ public class Al2Tex {
                 System.out.println("Writing LaTeX files");
                 pslAlignmentDiagram.writeTexFile(options.getOutputFilePath());
             }
+            
+            if((options.getDiagramType().equals("contigalignment"))||
+                (options.getDiagramType().equals("all"))) 
+            {
+                System.out.println("Building contig alignment diagram");
+                ContigAlignmentDiagram contigAlignmentDiagram = new ContigAlignmentDiagram(pslFile, options.getOutputFilePath(), options.getMinPAFAlignmentProp());
+                System.out.println("Writing LaTeX files");
+                contigAlignmentDiagram.writeTexFile(options);
+            }
         } else if (options.getInputFormat().equals("sam")) {
             System.out.println("\nOpening SAM file");
             SAMFile samFile = new SAMFile(options.getInputFilename(), options.getTargetSize());
@@ -92,11 +100,25 @@ public class Al2Tex {
                 MummerAlignmentDiagram nucmerAlignmentDiagram = new MummerAlignmentDiagram(options, alignmentFile);
                 System.out.println("Writing LaTeX files");
                 nucmerAlignmentDiagram.writeTexFile(options.getOutputFilePath());
+            }
+            if((options.getDiagramType().equals("contigalignment"))||
+                (options.getDiagramType().equals("all"))) 
+            {
+                System.out.println("Building contig alignment diagram");
+                ContigAlignmentDiagram contigAlignmentDiagram = new ContigAlignmentDiagram(alignmentFile, options.getOutputFilePath(), options.getMinPAFAlignmentProp());
+                System.out.println("Writing LaTeX files");
+                contigAlignmentDiagram.writeTexFile(options);
             }            
-        } else if (options.getInputFormat().equals("paf") && options.getDiagramType().equals("contigalignment")) {
+        } else if (options.getInputFormat().equals("paf")) {
             PAFFile pafFile = new PAFFile(options.getInputFilename());
-            ContigAlignmentDiagram contigAlignmentDiagram = new ContigAlignmentDiagram(pafFile, options.getOutputFilePath(), options.getMinPAFAlignmentProp());
-            contigAlignmentDiagram.writeTexFile(options);
+            if((options.getDiagramType().equals("contigalignment"))||
+                (options.getDiagramType().equals("all"))) 
+            {
+                System.out.println("Building contig alignment diagram");
+                ContigAlignmentDiagram contigAlignmentDiagram = new ContigAlignmentDiagram(pafFile, options.getOutputFilePath(), options.getMinPAFAlignmentProp());
+                System.out.println("Writing LaTeX files");
+                contigAlignmentDiagram.writeTexFile(options);
+            }           
         }
         System.out.println("Done");
     }

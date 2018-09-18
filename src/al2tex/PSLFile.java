@@ -13,7 +13,7 @@ import java.util.*;
 import java.io.*;
 import java.lang.*;
 
-public class PSLFile implements AlignmentFile {
+public class PSLFile implements DetailedAlignmentFile {
     private ArrayList<PSLAlignment> alignments = new ArrayList();
     private Hashtable<String,Integer> targetHits = new Hashtable();
     

@@ -11,7 +11,7 @@ package al2tex;
 
 import java.util.*;
 
-public class MummerAlignment implements Comparable, Alignment {
+public class MummerAlignment implements Comparable, DetailedAlignment {
     public final static int SHOW_COORDS = 1;
     public final static int SHOW_TILING = 2;
     private int referenceStart;
@@ -23,6 +23,7 @@ public class MummerAlignment implements Comparable, Alignment {
     private double pcIdentity;
     private String referenceId;
     private String queryId;
+    private boolean reverseAlignment = false;
     
     public MummerAlignment(String line, int type) {
         if (type == SHOW_COORDS) {
@@ -35,6 +36,7 @@ public class MummerAlignment implements Comparable, Alignment {
         }
         
         if (queryStart > queryEnd) {
+            reverseAlignment = true;
             int temp = queryStart;
             queryStart = queryEnd;
             queryEnd = temp;
@@ -112,6 +114,7 @@ public class MummerAlignment implements Comparable, Alignment {
     public String getQueryName() { return queryId; }
     public int getTargetSize() { return referenceLength; }
     public int getQuerySize() { return queryLength; }
+    public boolean isReverseAlignment() { return reverseAlignment; }
 
     public int getLength() { return referenceEnd - referenceStart + 1; };
     public int getBlockCount() { return 1; };

@@ -17,17 +17,18 @@ public class ContigAlignmentDiagram
     Set<String> m_refNames;
     private TikzContigAlignment m_tca;
     private double m_minAlignmentProp;
+    private static int m_maxAlignmentsPerContig = 20;
     
-    public ContigAlignmentDiagram(PAFFile pafFile, String outFilename, double minAlignmentProp)
+    public ContigAlignmentDiagram(DetailedAlignmentFile alignmentFile, String outFilename, double minAlignmentProp)
     {
         m_alignmentMap = new TreeMap<String, ArrayList<DetailedAlignment>>();
         m_minAlignmentProp = minAlignmentProp;
         m_refNames = new LinkedHashSet();
         // iterate through all the alignments and group by contig name
         // filter out really small alignments
-        for(int i = 0; i < pafFile.getNumberOfAlignments(); ++i)
+        for(int i = 0; i < alignmentFile.getNumberOfAlignments(); ++i)
         {
-            PAFAlignment alignment = pafFile.getAlignment(i);
+            DetailedAlignment alignment = alignmentFile.getAlignment(i);
             int alignmentLength = alignment.getQueryEnd() - alignment.getQueryStart();
             if((double)alignmentLength / alignment.getQuerySize() >= m_minAlignmentProp)
             {
@@ -42,11 +43,19 @@ public class ContigAlignmentDiagram
         }
         
         // sort each array of alignments by start pos
-        for(ArrayList<DetailedAlignment> DetailedAlignments : m_alignmentMap.values())
+        int sum = 0;
+        for(List<DetailedAlignment> detailedAlignments : m_alignmentMap.values())
         {
-            Collections.sort(DetailedAlignments, DetailedAlignment.compareByQueryStart);
+            if(detailedAlignments.size() > m_maxAlignmentsPerContig)
+            {
+                Collections.sort(detailedAlignments, DetailedAlignment.compareByQueryAlignmentLength);
+                List<DetailedAlignment> entriesToRemove = detailedAlignments.subList(0, detailedAlignments.size() - m_maxAlignmentsPerContig);
+                detailedAlignments.removeAll(entriesToRemove);
+            }
+            Collections.sort(detailedAlignments, DetailedAlignment.compareByQueryStart);
+            int numAlignments = detailedAlignments.size();
+            sum += numAlignments;
         }
-        
         // create TikzPicture object
         m_tca = new TikzContigAlignment(outFilename);
     }

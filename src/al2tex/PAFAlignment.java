@@ -73,16 +73,5 @@ public class PAFAlignment implements DetailedAlignment, Comparable
         
         return getQueryStart() - ((PAFAlignment)o).getQueryStart();
     }   
-    
-    // compare by query start position
-    public static Comparator<PAFAlignment> compareByQueryStart = new Comparator<PAFAlignment>(){
-        public int compare(PAFAlignment alignment1, PAFAlignment alignment2) {
-            int td = alignment1.getQueryName().compareTo(alignment2.getQueryName());
-            if(td != 0)
-            {
-                return td;
-            }
-            return alignment1.getQueryStart() - alignment2.getQueryStart();
-        }
-    };
+  
 }

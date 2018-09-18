@@ -11,7 +11,7 @@ package al2tex;
 
 import java.util.*;
 
-public class PSLAlignment implements Comparable, Alignment {
+public class PSLAlignment implements Comparable, DetailedAlignment {
     private int matches;
     private int misMatches;
     private int repMatches;
@@ -95,6 +95,7 @@ public class PSLAlignment implements Comparable, Alignment {
     public int getBlockSize(int i) { return blockSizes[i]; }
     public int getBlockQueryStart(int i) { return qStarts[i]; }
     public int getBlockTargetStart(int i) { return tStarts[i]; }
+    public boolean isReverseAlignment() { return strand.equals("-"); }
     
     @Override
     public int compareTo(Object o) {
