@@ -77,6 +77,11 @@ public class ContigAlignmentDiagram
             String refName = options.getAlignmentRefName();
             ArrayList<DetailedAlignment> alignmentsToDraw = new ArrayList();
             ArrayList<DetailedAlignment> queryAlignments = m_alignmentMap.get(queryName);
+            if(queryAlignments == null)
+            {
+                System.out.println("Could not find query " + queryName + " in file " + options.getInputFilename());
+                System.exit(0);
+            }
             for(int i = 0; i < queryAlignments.size(); i++)
             {
                 DetailedAlignment alignment = queryAlignments.get(i);
@@ -84,6 +89,11 @@ public class ContigAlignmentDiagram
                 {
                     alignmentsToDraw.add(alignment);
                 }
+            }
+            if(alignmentsToDraw.isEmpty())
+            {
+                System.out.println("Could not find alignments between " + queryName + " and " + refName + " in file " + options.getInputFilename());
+                System.exit(0);
             }
             m_tca.drawAlignmentDiagram(alignmentsToDraw, 0, 7 * 175);
         }

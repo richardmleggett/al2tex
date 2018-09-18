@@ -54,9 +54,7 @@ public class PAFAlignment implements DetailedAlignment, Comparable
     public int getTargetStart() { return rStart; }
     public int getTargetEnd() { return rEnd; }
     public int getQuerySize() { return qLength; }
-    public int getQueryAlignmentLength() { return qEnd - qStart; }
     public int getRefContigLength() {return rLength; }
-    public int getRefAlignmentLength() { return rEnd - rStart; }
     public boolean isReverseAlignment() { return isReverseAlignment; }
     public String getTargetName() { return rName; };
     public int getTargetSize() { return rLength; }
