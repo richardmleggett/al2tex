@@ -19,10 +19,6 @@ public class TikzPicture
     
     public TikzPicture(String f) {
         filename = f;
-        
-        if (!filename.endsWith(".tex") && !filename.endsWith(".Tex") && !filename.endsWith(".TEX")) {
-            filename += ".tex";
-        }
     }
     
     public void openFile() {
