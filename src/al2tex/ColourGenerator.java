@@ -16,7 +16,7 @@ public class ColourGenerator {
     ArrayList<Color> m_colours;
     int m_numberColours;
     
-    ColourGenerator(int n, boolean randomStart, float saturation, float brightness) 
+    ColourGenerator(int n, float saturation, float brightness) 
     {
         assert(n>0);
         assert(0 <= saturation && saturation < 1.);
@@ -25,7 +25,7 @@ public class ColourGenerator {
         m_colours = new ArrayList();
         m_numberColours = n;
         Random rng = new Random();
-        int startHue = randomStart ? rng.nextInt(360) : 0;
+        int startHue = rng.nextInt(360);
         int delta = 360 / n;
         // find some number that is relatively prime to n
         // so that the order of colours is interesting

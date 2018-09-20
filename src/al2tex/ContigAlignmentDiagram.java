@@ -43,7 +43,6 @@ public class ContigAlignmentDiagram
         }
         
         // sort each array of alignments by start pos
-        int sum = 0;
         for(List<DetailedAlignment> detailedAlignments : m_alignmentMap.values())
         {
             if(detailedAlignments.size() > m_maxAlignmentsPerContig)
@@ -53,8 +52,6 @@ public class ContigAlignmentDiagram
                 detailedAlignments.removeAll(entriesToRemove);
             }
             Collections.sort(detailedAlignments, DetailedAlignment.compareByQueryStart);
-            int numAlignments = detailedAlignments.size();
-            sum += numAlignments;
         }
         // create TikzPicture object
         m_tca = new TikzContigAlignment(outFilename);
@@ -62,11 +59,17 @@ public class ContigAlignmentDiagram
     
     public void writeTexFile(DiagramOptions options)
     {
+        if(m_refNames.isEmpty())
+        {
+            System.out.println( "Something went wrong! No alignments were found in " + options.getInputFilename() +                  
+                                ". Did you specify the correct format?");
+            System.exit(0);
+        }
         m_tca.openFile();
         
         // generate and write the colours
         int refNumber = m_refNames.size();
-        ColourGenerator colourGenerator = new ColourGenerator(refNumber, true, 0.7f, 0.8f);
+        ColourGenerator colourGenerator = new ColourGenerator(refNumber, 0.7f, 0.8f);
         Iterator<String> iter = m_refNames.iterator();
         int colourCount = 0;
         while(iter.hasNext())
