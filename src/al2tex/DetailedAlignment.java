@@ -19,7 +19,6 @@ public interface DetailedAlignment extends Alignment
     public abstract String  getQueryName();
     public abstract int     getTargetStart();
     public abstract int     getTargetEnd();
-    public abstract int     getTargetSize();
     public abstract boolean isReverseAlignment();
     
     

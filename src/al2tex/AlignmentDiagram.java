@@ -1,31 +1,27 @@
-// Al2Tex
-//
-// Alignment Diagrams in LaTeX
-//
-// Copyright 2012 Richard Leggett
-// richard.leggett@tgac.ac.uk
-// 
-// This is free software, supplied without warranty.
-
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package al2tex;
 
-import java.util.*;
-import java.io.*;
-
-public class PSLAlignmentDiagram {
+/**
+ *
+ * @author martins
+ */
+public class AlignmentDiagram {
+    
     private static final int NUM_DIVIDERS = 8;
-    private PSLFile alignmentFile;
+    private DetailedAlignmentFile alignmentFile;
     private DiagramOptions options;
     private int targetCounter = 0;
  
-   public PSLAlignmentDiagram(DiagramOptions o, PSLFile f) {
+   public AlignmentDiagram(DiagramOptions o, DetailedAlignmentFile f) {
         options = o;
         alignmentFile = f;
-        
-        f.sortByTargetStart();
    }
  
-   public void writeTexFile(String filename) {
+  public void writeTexFile(String filename) {
         String previousTarget = new String("");
         String finalTarget = alignmentFile.getAlignment(alignmentFile.getNumberOfAlignments() - 1).getTargetName();
         TexFileWriter tfw = new TexFileWriter(filename + "_alignment.tex");
@@ -36,7 +32,7 @@ public class PSLAlignmentDiagram {
 
         // Go through alignments
         for (int i=0; i<alignmentFile.getNumberOfAlignments(); i++) {
-            PSLAlignment a = alignmentFile.getAlignment(i);            
+            DetailedAlignment a = alignmentFile.getAlignment(i);            
 
             row++;
 

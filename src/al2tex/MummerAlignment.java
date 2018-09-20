@@ -97,47 +97,39 @@ public class MummerAlignment implements Comparable, DetailedAlignment {
         queryId = fields[12];
     }
         
-    public int getReferenceStart() { return referenceStart; }
-    public int getReferenceEnd() { return referenceEnd; }
-    public int getQueryStart() { return queryStart; }
-    public int getQueryEnd() { return queryEnd; }
-    public int getReferenceLength() { return referenceLength; }
-    public int getQueryLength() { return queryLength; }
     public double getPcIdentity() { return pcIdentity; }
-    public String getReferenceId() { return referenceId; }
-    public String getQueryId() { return queryId; }
-    
-    // Aliases - to make compatible with PSL files
+
+    // from DetailedAlignment interface
+    public int getQueryStart() { return queryStart; }
+    public int getQueryEnd() { return queryEnd; } 
+    public int getQuerySize() { return queryLength; }
+    public String getQueryName() { return queryId; }
     public int getTargetStart() { return referenceStart; }
     public int getTargetEnd() { return referenceEnd; }
-    public String getTargetName() { return referenceId; }
-    public String getQueryName() { return queryId; }
     public int getTargetSize() { return referenceLength; }
-    public int getQuerySize() { return queryLength; }
+    public String getTargetName() { return referenceId; }
     public boolean isReverseAlignment() { return reverseAlignment; }
 
-    public int getLength() { return referenceEnd - referenceStart + 1; };
-    public int getBlockCount() { return 1; };
-    
+    public int getBlockCount() { return 1; };  
     public int getBlockSize(int i) {
-        if (i != 1) {
-            System.out.println("Something went wrong: block number for MummerAlignment should always be 1!\n");
+        if (i != 0) {
+            System.out.println("Something went wrong: block number for MummerAlignment should always be 0!\n");
             System.exit(-1);
         }
-        return this.getLength();
+        return referenceEnd - referenceStart;
     }
 
     public int getBlockTargetStart(int i) {
-        if (i != 1) {
-            System.out.println("Something went wrong: block number for MummerAlignment should always be 1!\n");
+        if (i != 0) {
+            System.out.println("Something went wrong: block number for MummerAlignment should always be 0!\n");
             System.exit(-1);
         }
-        return this.getReferenceStart();
+        return this.getTargetStart();
     }
     
     @Override
     public int compareTo(Object o) {
-        int td = referenceId.compareTo(((MummerAlignment)o).getReferenceId());
+        int td = referenceId.compareTo(((MummerAlignment)o).getTargetName());
         
         if (td != 0) {
             return td;

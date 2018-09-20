@@ -60,7 +60,7 @@ public class PAFAlignment implements DetailedAlignment, Comparable
     public int getTargetSize() { return rLength; }
     public int getBlockCount() { return 1; };
     public int getBlockTargetStart(int i) { return rStart; };
-    public int getBlockSize(int i) { return blockLength; };    
+    public int getBlockSize(int i) { return rEnd - rStart; };    
     
     @Override
     public int compareTo(Object o) 

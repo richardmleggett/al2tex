@@ -15,32 +15,50 @@ import java.lang.*;
 public class PAFFile implements DetailedAlignmentFile 
 {
     private ArrayList<PAFAlignment> alignments = new ArrayList();
+     private Hashtable<String,Integer> targetHits = new Hashtable();
     
     public PAFFile(String filename) 
-    {
-        String line;
-                
+    {        
         try
         {
-            BufferedReader br = new BufferedReader(new FileReader(filename));
-            
-            line = br.readLine();
-            while (line != null) {
+            BufferedReader br = new BufferedReader(new FileReader(filename));          
+            String line = br.readLine();
+            while (line != null) 
+            {
                 String[] fields = line.split("\\t");
 
-                if (fields.length >= 11) {                
+                if (fields.length >= 11) 
+                {                
                     PAFAlignment a = new PAFAlignment(line);
-                    if (a != null) {
+                    if (a != null) 
+                    {
+                        // add the alignment to the list
                         alignments.add(a);
+                        
+                        // increment hit count for alignments target
+                        Integer count = targetHits.get(a.getTargetName());
+                        if (count == null) 
+                        {
+                            count = new Integer(1);
+                        }
+                        else 
+                        {
+                            count = new Integer(count.intValue() + 1);
+                        }
+                        targetHits.put(a.getTargetName(), count);
                     }
-                } else {
+                } 
+                else 
+                {
                     System.out.println("Line not recognised: "+line);
                 }
 
                 line = br.readLine();
             } 
             br.close();
-        } catch (Exception ioe) {
+        } 
+        catch (Exception ioe) 
+        {
             System.out.println("Exception:");
             System.out.println(ioe);
         }
@@ -57,5 +75,19 @@ public class PAFFile implements DetailedAlignmentFile
     {
         return alignments.get(i);
     }
+    
+    public Hashtable getTargetHits() {
+        return targetHits;
+    }
+    
+    public int getTargetHitCount(String target) {
+        Integer a = targetHits.get(target);      
+        if (a == null) 
+        {
+            System.out.println("Something went wrong - unknown target.");
+            System.exit(-1);
+        }
+        return a.intValue();
+    }  
     
 }

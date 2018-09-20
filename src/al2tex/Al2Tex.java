@@ -58,7 +58,7 @@ public class Al2Tex {
             if ((options.getDiagramType().equals("alignment"))  ||
                 (options.getDiagramType().equals("all"))) {
                 System.out.println("Building alignment diagram");
-                PSLAlignmentDiagram pslAlignmentDiagram = new PSLAlignmentDiagram(options, pslFile);
+                AlignmentDiagram pslAlignmentDiagram = new AlignmentDiagram(options, pslFile);
                 System.out.println("Writing LaTeX files");
                 pslAlignmentDiagram.writeTexFile(options.getOutputFilePath());
             }
@@ -97,7 +97,7 @@ public class Al2Tex {
             if ((options.getDiagramType().equals("alignment"))  ||
                 (options.getDiagramType().equals("all"))) {
                 System.out.println("Building alignment diagram");
-                MummerAlignmentDiagram nucmerAlignmentDiagram = new MummerAlignmentDiagram(options, alignmentFile);
+                AlignmentDiagram nucmerAlignmentDiagram = new AlignmentDiagram(options, alignmentFile);
                 System.out.println("Writing LaTeX files");
                 nucmerAlignmentDiagram.writeTexFile(options.getOutputFilePath());
             }
@@ -118,7 +118,15 @@ public class Al2Tex {
                 ContigAlignmentDiagram contigAlignmentDiagram = new ContigAlignmentDiagram(pafFile, options.getOutputFilePath(), options.getMinPAFAlignmentProp());
                 System.out.println("Writing LaTeX files");
                 contigAlignmentDiagram.writeTexFile(options);
-            }           
+            }
+            if ((options.getDiagramType().equals("alignment"))  ||
+                (options.getDiagramType().equals("all"))) 
+            {
+                System.out.println("Building alignment diagram");
+                AlignmentDiagram alignmentDiagram = new AlignmentDiagram(options, pafFile);
+                System.out.println("Writing LaTeX files");
+                alignmentDiagram.writeTexFile(options.getOutputFilePath());
+            }
         }
         System.out.println("Done");
     }

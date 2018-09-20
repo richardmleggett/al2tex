@@ -137,7 +137,7 @@ public class TexFileWriter extends TikzPicture{
     }
     
     public void drawTargetBar(String name) {
-        name = name.replace("_", "\\_");
+        //name = name.replace("_", "-");
         try {
             bw.write("\\color{red}"); bw.newLine();
             bw.write("\\draw [fill] (0,"+y+") rectangle ("+targetWidth+","+(y - targetHeight)+");"); bw.newLine();

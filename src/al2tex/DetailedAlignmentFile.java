@@ -5,10 +5,14 @@
  */
 package al2tex;
 
+import java.util.Hashtable;
+
 /**
  *
  * @author martins
  */
 public interface DetailedAlignmentFile extends AlignmentFile {
     abstract DetailedAlignment getAlignment(int i);
+    abstract Hashtable getTargetHits();
+    abstract int getTargetHitCount(String target);
 }
