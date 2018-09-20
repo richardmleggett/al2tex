@@ -172,6 +172,7 @@ public class TexFileWriter {
     }
     
     public void outputContigLabel(String label) {
+        label = label.replace("_", "\\_");
         try {
             bw.write("\\node [anchor=west] at ("+(targetWidth + 5)+","+(y - (targetHeight / 2))+") {"+label+"};"); bw.newLine();  
         } catch (IOException e) {
@@ -204,6 +205,7 @@ public class TexFileWriter {
     }
     
     public void drawTargetBar(String name) {
+        name = name.replace("_", "\\_");
         try {
             bw.write("\\color{red}"); bw.newLine();
             bw.write("\\draw [fill] (0,"+y+") rectangle ("+targetWidth+","+(y - targetHeight)+");"); bw.newLine();

@@ -76,7 +76,7 @@ public class TikzContigAlignment extends TikzPicture
         assert(m_coloursSet);
         try 
         {
-            String contigName = alignments.get(0).getQueryName();
+            String contigName = alignments.get(0).getQueryName().replace("_", "\\_");
             int contigLength = alignments.get(0).getQuerySize();
             
             // fill in the alignments
@@ -141,7 +141,7 @@ public class TikzContigAlignment extends TikzPicture
                 double xPos = x + i * delta;
                 double yPos = y + j * m_contigDrawHeight;
                 String colour = entry.getValue();
-                String name = entry.getKey();
+                String name = entry.getKey().replace("_", "\\_");
                 bw.write("\\node (rect) at (" + xPos + "," + yPos + ") " + 
                             "[shade, left color=white, right color=" + colour + ", draw=" + colour + 
                             ", minimum width=50, minimum height=15, label=below:"+ name + "]{};");
