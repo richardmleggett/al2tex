@@ -26,7 +26,7 @@ public class MummerAlignmentDiagram {
    public void writeTexFile(String filename) {
         String previousTarget = new String("");
         String finalTarget = alignmentFile.getAlignment(alignmentFile.getNumberOfAlignments() - 1).getTargetName();
-        TexFileWriter tfw = new TexFileWriter(filename);
+        TexFileWriter tfw = new TexFileWriter(filename + "_alignment.tex");
         int page = 1;
         int row = 0;
 

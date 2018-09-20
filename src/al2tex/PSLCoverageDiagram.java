@@ -88,7 +88,7 @@ public class PSLCoverageDiagram
         {
             String previousTarget = new String("");
             String finalTarget = pslFile.getAlignment(pslFile.getNumberOfAlignments() - 1).getTargetName();
-            BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(filename + "_coverage.tex"));
             
             writeTexHeader(bw);
             

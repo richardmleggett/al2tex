@@ -91,10 +91,15 @@ public class DiagramOptions {
                 System.out.println("Output directory: "+outputDirectory);
             } else if (args[i].equalsIgnoreCase("-out")) {                
                 outputFilename = args[i+1];
+                // remove .tex ending
+                if (outputFilename.endsWith(".tex") || outputFilename.endsWith(".Tex") || outputFilename.endsWith(".TEX")) {
+                    outputFilename = outputFilename.substring(0, outputFilename.length() - 4);
+                }              
                 System.out.println(" Output filename: "+outputFilename);
             } else if (args[i].equalsIgnoreCase("-maxtargets")) {
                 maxTargets = Integer.parseInt(args[i+1]);
                 System.out.println("     Max targets: " + maxTargets);
+                
             } else if (args[i].equalsIgnoreCase("-maxcoverage")) {
                 maxCoverage = Integer.parseInt(args[i+1]);
                 System.out.println("    Max coverage: " + maxCoverage);

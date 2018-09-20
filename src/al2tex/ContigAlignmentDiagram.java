@@ -54,7 +54,7 @@ public class ContigAlignmentDiagram
             Collections.sort(detailedAlignments, DetailedAlignment.compareByQueryStart);
         }
         // create TikzPicture object
-        m_tca = new TikzContigAlignment(outFilename);
+        m_tca = new TikzContigAlignment(outFilename + "_contigAlignment.tex");
     }
     
     public void writeTexFile(DiagramOptions options)

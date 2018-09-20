@@ -85,7 +85,7 @@ public class CoverageMapDiagram
         {
             String previousTarget = new String("");
             String finalTarget = alignmentFile.getAlignment(alignmentFile.getNumberOfAlignments() - 1).getTargetName();
-            BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(filename + "_coverageMap.tex"));
             
             writeTexHeader(bw);
             
