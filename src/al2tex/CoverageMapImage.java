@@ -20,14 +20,18 @@ public class CoverageMapImage {
     private final static int MAX_ROWS = 400;
     private DiagramOptions options;
     private int targetSize;
+    private String targetName;
     private int nRows;
     private int[] coverage;
     private int largestCoverage = 0;
+    private String outputFilename;
                             
-    public CoverageMapImage(DiagramOptions o, int s) {
+    public CoverageMapImage(DiagramOptions o, int s, String _outputFilename, String _targetName) {
         options = o;
         targetSize = s;
-        coverage = new int[targetSize];                 
+        coverage = new int[targetSize];
+        outputFilename = _outputFilename;
+        targetName = _targetName;
     }
 
     public void addAlignment(Alignment a) {
@@ -35,7 +39,6 @@ public class CoverageMapImage {
         for (int b=0; b<a.getBlockCount(); b++) {
             int from = a.getBlockTargetStart(b);
             int to = from + a.getBlockSize(b);
-            
             for (int i=from; i<to; i++) {
                 coverage[i]++;
                 
@@ -46,7 +49,7 @@ public class CoverageMapImage {
         }
     }    
     
-    public void saveImageFile(String filename, HeatMapScale heatMap) {
+    public void saveImageFile(HeatMapScale heatMap) {
         int imageWidth = targetSize > 4000 ? 4000:targetSize;
         nRows = (targetSize / imageWidth) > MAX_ROWS ? MAX_ROWS:(targetSize/imageWidth);
         int imageHeight = nRows * (options.getRowHeight() + options.getRowSpacer());
@@ -83,7 +86,7 @@ public class CoverageMapImage {
         }        
         
         try {
-            ImageIO.write(bImage, "PNG", new File(filename));
+            ImageIO.write(bImage, "PNG", new File(outputFilename));
         }
         catch (Exception e)
         {
@@ -97,5 +100,17 @@ public class CoverageMapImage {
     
     public int getNumberOfRows() {
         return nRows;
+    }
+    
+    public String getFilename() {
+        return outputFilename;
+    }
+    
+    public int getTargetSize() {
+        return targetSize;
+    }
+    
+    public String getTargetName() {
+        return targetName;
     }
 }

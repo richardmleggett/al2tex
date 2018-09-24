@@ -68,6 +68,10 @@ public class MummerFile implements DetailedAlignmentFile {
         return alignments.get(i);
     }
     
+    public void sortAlignmentsByTargetName() {
+        Collections.sort(alignments, compareByTargetName);
+    }
+    
     public Hashtable getTargetHits() {
         return targetHits;
     }

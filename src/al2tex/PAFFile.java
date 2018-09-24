@@ -76,6 +76,10 @@ public class PAFFile implements DetailedAlignmentFile
         return alignments.get(i);
     }
     
+    public void sortAlignmentsByTargetName() {
+        Collections.sort(alignments, compareByTargetName);
+    }
+    
     public Hashtable getTargetHits() {
         return targetHits;
     }

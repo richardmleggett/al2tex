@@ -70,7 +70,11 @@ public class PSLFile implements DetailedAlignmentFile {
     public PSLAlignment getAlignment(int i) {
         return alignments.get(i);
     }
-    
+
+    public void sortAlignmentsByTargetName() {
+        Collections.sort(alignments, compareByTargetName);
+    }
+      
     public Hashtable getTargetHits() {
         return targetHits;
     }

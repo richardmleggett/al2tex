@@ -42,7 +42,7 @@ public class Al2Tex {
                 System.out.println("Making bitmaps");
                 coverageDiagram.makeBitmapsFromFile(pslFile, options.getOutputDirectory());
                 System.out.println("Writing LaTeX files");
-                coverageDiagram.writeTexFile(options.getOutputFilePath());
+                coverageDiagram.writeTexFile();
             }
             
             if ((options.getDiagramType().equals("coverage")) ||
@@ -82,7 +82,7 @@ public class Al2Tex {
                 System.out.println("Making bitmaps");
                 coverageDiagram.makeBitmapsFromFile(samFile, options.getOutputDirectory());
                 System.out.println("Writing LaTeX files");
-                coverageDiagram.writeTexFile(options.getOutputFilePath());
+                coverageDiagram.writeTexFile();
             }            
         } else if (options.getInputFormat().equals("coords") || options.getInputFormat().equals("tiling")) {
             int type = 0;
@@ -108,6 +108,16 @@ public class Al2Tex {
                 ContigAlignmentDiagram contigAlignmentDiagram = new ContigAlignmentDiagram(alignmentFile, options.getOutputFilePath(), options.getMinPAFAlignmentProp());
                 System.out.println("Writing LaTeX files");
                 contigAlignmentDiagram.writeTexFile(options);
+            }
+            if ((options.getDiagramType().equals("coveragemap"))  ||
+                (options.getDiagramType().equals("all"))) 
+            {
+                System.out.println("Building coverage map diagram");
+                CoverageMapDiagram coverageDiagram = new CoverageMapDiagram(options);
+                System.out.println("Making bitmaps");
+                coverageDiagram.makeBitmapsFromFile(alignmentFile, options.getOutputDirectory());
+                System.out.println("Writing LaTeX files");
+                coverageDiagram.writeTexFile();
             }            
         } else if (options.getInputFormat().equals("paf")) {
             PAFFile pafFile = new PAFFile(options.getInputFilename());
@@ -127,6 +137,16 @@ public class Al2Tex {
                 System.out.println("Writing LaTeX files");
                 alignmentDiagram.writeTexFile(options.getOutputFilePath());
             }
+            if ((options.getDiagramType().equals("coveragemap"))  ||
+                (options.getDiagramType().equals("all"))) 
+            {
+                System.out.println("Building coverage map diagram");
+                CoverageMapDiagram coverageDiagram = new CoverageMapDiagram(options);
+                System.out.println("Making bitmaps");
+                coverageDiagram.makeBitmapsFromFile(pafFile, options.getOutputDirectory());
+                System.out.println("Writing LaTeX files");
+                coverageDiagram.writeTexFile();
+            }  
         }
         System.out.println("Done");
     }
