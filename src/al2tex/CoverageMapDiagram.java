@@ -25,10 +25,14 @@ public class CoverageMapDiagram extends TikzPicture
     private int largestCoverage = 0;
     private HeatMapScale heatMapScale = new HeatMapScale();   // Heat map colours
     private ArrayList<CoverageMapImage> coverageMaps = new ArrayList();
+    private CoverageMapImage.Type mapType;
+    
+    private static final int NUM_DIVIDERS = 4;
     
     public CoverageMapDiagram(DiagramOptions o) {
         super(o.getOutputFilePath() + "_coverageMap.tex");
         options = o;
+        mapType = options.getCoverageMapImageType();
     }
     
     private String getTexSafeTargetName(Alignment a)
@@ -68,7 +72,7 @@ public class CoverageMapDiagram extends TikzPicture
         heatMapScale.setHeatMapSize(largestCoverage);
 
         for(CoverageMapImage mapImage : coverageMaps)
-        {  
+        {
             mapImage.saveImageFile(heatMapScale);
         }           
 
@@ -80,17 +84,30 @@ public class CoverageMapDiagram extends TikzPicture
     public void writeTexFile() 
     {
         openFile();
-
-        for(CoverageMapImage coverageMap : coverageMaps)
+        drawScale();
+        for(int i = 0; i < coverageMaps.size(); i++)
         {  
-            writeNewImage(coverageMap);
-            try
+            CoverageMapImage coverageMap = coverageMaps.get(i);
+            switch(mapType)
             {
-                bw.write("\\hspace{1cm}");
-            }
-            catch(IOException e)
-            {
-                System.out.println(e);
+                case SQUARE_MAP:
+                {
+                    if(i % 2 == 0 && i > 0)
+                    {
+                        try {
+                            bw.write("\\newpage");
+                        } catch(IOException e){
+                            System.out.println(e.getMessage());
+                        }
+                        drawScale();
+                    }
+                    writeNewSquareImage(coverageMap);
+                    break;
+                }
+                case LONG_MAP:
+                {   
+                    writeNewLongImage(coverageMap);
+                }
             }
         }
         closeFile();
@@ -98,22 +115,10 @@ public class CoverageMapDiagram extends TikzPicture
     
     protected void writeTexHeader() {
         super.writeTexHeader();
-        try {
-            bw.write("\\begin{tikzpicture}[x=1mm,y=1mm]"); bw.newLine();
-            bw.write("\\node[anchor=south west, inner sep=0pt, outer sep=0pt] at (0,0) {\\includegraphics[width="+targetWidth/2+"mm,height="+rowHeight+"mm]{heatmap.png}};"); bw.newLine();
-            bw.write("\\node [anchor=west] at (20,"+(pictureHeight-(rowHeight / 2))+") {Coverage};"); bw.newLine();
-            bw.write("\\node at (0,"+(pictureHeight-(rowHeight / 2))+") {0};"); bw.newLine();
-            bw.write("\\node at ("+(targetWidth / 2)+","+(pictureHeight-(rowHeight / 2))+") {"+heatMapScale.getHeatMapSize()+"};"); bw.newLine();
-            bw.write("\\end{tikzpicture}"); bw.newLine();
-            bw.write("\\vspace{5mm}"); bw.newLine();
-            bw.write("\\newline"); bw.newLine();
-            bw.write("\\noindent"); bw.newLine();            
-        } catch (IOException e){
-            System.out.println(e);
-        }
+        //drawScale();
     }
         
-    private void writeNewImage(CoverageMapImage coverageMap) 
+    private void writeNewSquareImage(CoverageMapImage coverageMap) 
     {          
         try 
         {
@@ -144,11 +149,66 @@ public class CoverageMapDiagram extends TikzPicture
             bw.write("\\node at (" + textxPos + ", -5) {Each row represents "+(int)rowSize+" nt};"); bw.newLine();
             bw.write("\\node at (" + textxPos + ", -10) {" + targetName + "};"); bw.newLine();
             bw.write("\\node[rotate=90] at (-10,60) {Position in genome (nt)};"); bw.newLine();
-            bw.write("\\end{tikzpicture}"); bw.newLine();
+            bw.write("\\end{tikzpicture}"); 
+            bw.newLine();
+            bw.write("\\hspace{1cm}");
         } 
         catch (IOException e) 
         {
             System.out.println(e);
         }
     } 
+    
+    private void writeNewLongImage(CoverageMapImage coverageMap) 
+    {
+        int targetSize = coverageMap.getTargetSize();
+        String targetName = coverageMap.getTargetName();
+        String filename = coverageMap.getFilename();
+        double unit = (double)targetWidth / targetSize;                
+
+        try 
+        {
+            bw.write("\\begin{tikzpicture}[x=1mm,y=1mm]"); bw.newLine();
+            for (int i=0; i<=NUM_DIVIDERS; i++) {
+                int num = i == NUM_DIVIDERS ? targetSize: (int)((targetSize / NUM_DIVIDERS) * i);
+                int pos = (int)((double)num * unit);
+
+                //bw.write("\\draw [dashed] ("+pos+", 0) -- ("+pos+","+(pictureHeight - yStep)+");"); bw.newLine();
+                bw.write("\\node at ("+pos+","+(pictureHeight-(rowHeight / 2))+") {"+num+"};"); bw.newLine();
+            }
+
+            bw.write("\\node[anchor=south west, inner sep=0pt, outer sep=0pt] at (0,0) {\\includegraphics[width="+targetWidth+"mm,height="+rowHeight+"mm]{"+filename+"}};"); 
+            bw.newLine();
+            bw.write("\\node [anchor=west] at ("+(targetWidth + 5)+","+(pictureHeight-(rowHeight * 2))+") {"+targetName+"};"); 
+            bw.newLine();
+            bw.write("\\end{tikzpicture}"); 
+            bw.newLine();
+            bw.write("\\vspace{5mm}");
+            bw.write("\\newline");
+        } 
+        catch (IOException e) 
+        {
+            System.out.println(e);
+        }
+    }
+    
+    private void drawScale()
+    {
+        try 
+        {
+            bw.write("\\begin{tikzpicture}[x=1mm,y=1mm]"); bw.newLine();
+            bw.write("\\node[anchor=south west, inner sep=0pt, outer sep=0pt] at (0,0) {\\includegraphics[width="+targetWidth/2+"mm,height="+rowHeight+"mm]{heatmap.png}};"); bw.newLine();
+            bw.write("\\node [anchor=west] at (20,"+(pictureHeight-(rowHeight / 2))+") {Coverage};"); bw.newLine();
+            bw.write("\\node at (0,"+(pictureHeight-(rowHeight / 2))+") {0};"); bw.newLine();
+            bw.write("\\node at ("+(targetWidth / 2)+","+(pictureHeight-(rowHeight / 2))+") {"+heatMapScale.getHeatMapSize()+"};"); bw.newLine();
+            bw.write("\\end{tikzpicture}"); bw.newLine();
+            bw.write("\\vspace{5mm}"); bw.newLine();
+            bw.write("\\newline"); bw.newLine();
+            bw.write("\\noindent"); bw.newLine();            
+        } 
+        catch (IOException e)
+        {
+            System.out.println(e);
+        }       
+    }
 }

@@ -17,6 +17,12 @@ import java.awt.*;
 import javax.imageio.*;
 
 public class CoverageMapImage {
+    
+    static public enum Type {
+        SQUARE_MAP,
+        LONG_MAP
+    };
+    
     private final static int MAX_ROWS = 400;
     private DiagramOptions options;
     private int targetSize;
@@ -25,6 +31,8 @@ public class CoverageMapImage {
     private int[] coverage;
     private int largestCoverage = 0;
     private String outputFilename;
+    private Type mapType;
+    private int longImageHeight = 16;
                             
     public CoverageMapImage(DiagramOptions o, int s, String _outputFilename, String _targetName) {
         options = o;
@@ -32,24 +40,27 @@ public class CoverageMapImage {
         coverage = new int[targetSize];
         outputFilename = _outputFilename;
         targetName = _targetName;
+        mapType = options.getCoverageMapImageType();
     }
 
-    public void addAlignment(Alignment a) {
-        
-        for (int b=0; b<a.getBlockCount(); b++) {
+    public void addAlignment(Alignment a) 
+    {     
+        for (int b=0; b<a.getBlockCount(); b++) 
+        {
             int from = a.getBlockTargetStart(b);
             int to = from + a.getBlockSize(b);
-            for (int i=from; i<to; i++) {
-                coverage[i]++;
-                
-                if (coverage[i] > largestCoverage) {
+            for (int i=from; i<to; i++) 
+            {
+                coverage[i]++;               
+                if (coverage[i] > largestCoverage) 
+                {
                     largestCoverage = coverage[i];
                 }
             }
         }
     }    
     
-    public void saveImageFile(HeatMapScale heatMap) {
+    public void saveSquareImageFile(HeatMapScale heatMap) {
         int imageWidth = targetSize > 4000 ? 4000:targetSize;
         nRows = (targetSize / imageWidth) > MAX_ROWS ? MAX_ROWS:(targetSize/imageWidth);
         int imageHeight = nRows * (options.getRowHeight() + options.getRowSpacer());
@@ -92,7 +103,41 @@ public class CoverageMapImage {
         {
             System.out.println(e);
         }
-    }    
+    }
+
+    public void saveLongImageFile(HeatMapScale heatMap)
+    {
+        double multiplier = 1.0;
+        int imageWidth = targetSize;
+        
+        if (targetSize > 10000) {
+            multiplier = 10000.0/targetSize;
+            System.out.println("Multiplier "+multiplier);
+            imageWidth = (int)((double)targetSize * multiplier);
+        }
+        
+        
+        System.out.println("Width "+imageWidth+" Height "+longImageHeight);
+        BufferedImage bImage = new BufferedImage(imageWidth, longImageHeight, BufferedImage.TYPE_INT_RGB);
+        
+        Graphics g = bImage.getGraphics();
+        g.setColor(new Color(200, 200, 200));
+        g.fillRect(0, 0, targetSize, longImageHeight);
+
+        for (int x=0; x<targetSize; x++) {
+            for (int y=0; y<longImageHeight; y++) {
+                bImage.setRGB((int)((double)x*multiplier), y, heatMap.getRGBColour(coverage[x]));
+            }
+        }        
+        
+        try {
+            ImageIO.write(bImage, "PNG", new File(outputFilename));
+        }
+        catch (Exception e)
+        {
+            System.out.println(e);
+        }
+    }
     
     public int getLargestCoverage() {
         return largestCoverage;
@@ -112,5 +157,22 @@ public class CoverageMapImage {
     
     public String getTargetName() {
         return targetName;
+    }
+    
+    public void saveImageFile(HeatMapScale heatMap)
+    {
+        switch(mapType)
+        {
+            case SQUARE_MAP:
+            {
+                saveSquareImageFile(heatMap);
+                break;
+            }
+            case LONG_MAP:
+            {
+                saveLongImageFile(heatMap);
+                break;
+            }
+        }
     }
 }

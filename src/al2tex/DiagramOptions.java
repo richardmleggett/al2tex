@@ -33,6 +33,7 @@ public class DiagramOptions {
     private double minPAFAlignmentProp = 0.01;
     private String alignmentQueryName = null;
     private String alignmentRefName = null;
+    private CoverageMapImage.Type cmiType = CoverageMapImage.Type.SQUARE_MAP;
     
     public void parseArgs(String[] args) {
         int i=0;
@@ -56,12 +57,13 @@ public class DiagramOptions {
         while (i < (args.length-1)) {
             if (args[i].equalsIgnoreCase("-type")) {
                 diagramType = args[i+1].toLowerCase();
-                if ((!diagramType.equals("coverage")) &&
+                if((!diagramType.equals("coverage")) &&
                    (!diagramType.equals("coveragemap")) &&
                    (!diagramType.equals("alignment")) &&
                    (!diagramType.equals("contigalignment")) &&
+                   (!diagramType.equals("genomecoverage")) &&
                    (!diagramType.equals("all"))) {
-                    System.out.println("Error: type must be 'all', 'coverage', 'coveragemap', 'contigalignment' or 'alignment'.");
+                    System.out.println("Error: type must be 'all', 'coverage', 'coveragemap', 'contigalignment','alignment' or 'genomecoverage'.");
                     System.exit(0);
                 }
                                 
@@ -263,5 +265,9 @@ public class DiagramOptions {
     
     public String getAlignmentRefName() {
         return alignmentRefName;
+    }
+    
+    public CoverageMapImage.Type getCoverageMapImageType() {
+        return cmiType;
     }
 }
