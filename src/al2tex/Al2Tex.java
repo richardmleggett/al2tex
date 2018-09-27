@@ -71,6 +71,14 @@ public class Al2Tex {
                 System.out.println("Writing LaTeX files");
                 contigAlignmentDiagram.writeTexFile(options);
             }
+            if((options.getDiagramType().equals("genomecoverage"))||
+                (options.getDiagramType().equals("all"))) 
+            {
+                System.out.println("Building genome coverage diagram");
+                GenomeCoverageDiagram genomeCoverageDiagram = new GenomeCoverageDiagram(options);
+                System.out.println("Writing LaTeX files");
+                genomeCoverageDiagram.makeBitmapsFromFile(pslFile);
+            }
         } else if (options.getInputFormat().equals("sam")) {
             System.out.println("\nOpening SAM file");
             SAMFile samFile = new SAMFile(options.getInputFilename(), options.getTargetSize());
@@ -83,7 +91,15 @@ public class Al2Tex {
                 coverageDiagram.makeBitmapsFromFile(samFile, options.getOutputDirectory());
                 System.out.println("Writing LaTeX files");
                 coverageDiagram.writeTexFile();
-            }            
+            }       
+            if((options.getDiagramType().equals("genomecoverage"))||
+                (options.getDiagramType().equals("all"))) 
+            {
+                System.out.println("Building genome coverage diagram");
+                GenomeCoverageDiagram genomeCoverageDiagram = new GenomeCoverageDiagram(options);
+                System.out.println("Writing LaTeX files");
+                genomeCoverageDiagram.makeBitmapsFromFile(samFile);
+            }
         } else if (options.getInputFormat().equals("coords") || options.getInputFormat().equals("tiling")) {
             int type = 0;
             if (options.getInputFormat().equals("coords")) {
@@ -118,6 +134,14 @@ public class Al2Tex {
                 coverageDiagram.makeBitmapsFromFile(alignmentFile, options.getOutputDirectory());
                 System.out.println("Writing LaTeX files");
                 coverageDiagram.writeTexFile();
+            }
+            if((options.getDiagramType().equals("genomecoverage"))||
+                (options.getDiagramType().equals("all"))) 
+            {
+                System.out.println("Building genome coverage diagram");
+                GenomeCoverageDiagram genomeCoverageDiagram = new GenomeCoverageDiagram(options);
+                System.out.println("Writing LaTeX files");
+                genomeCoverageDiagram.makeBitmapsFromFile(alignmentFile);
             }            
         } else if (options.getInputFormat().equals("paf")) {
             PAFFile pafFile = new PAFFile(options.getInputFilename());
@@ -146,7 +170,15 @@ public class Al2Tex {
                 coverageDiagram.makeBitmapsFromFile(pafFile, options.getOutputDirectory());
                 System.out.println("Writing LaTeX files");
                 coverageDiagram.writeTexFile();
-            }  
+            }
+            if((options.getDiagramType().equals("genomecoverage"))||
+                (options.getDiagramType().equals("all"))) 
+            {
+                System.out.println("Building genome coverage diagram");
+                GenomeCoverageDiagram genomeCoverageDiagram = new GenomeCoverageDiagram(options);
+                System.out.println("Writing LaTeX files");
+                genomeCoverageDiagram.makeBitmapsFromFile(pafFile);
+            }   
         }
         System.out.println("Done");
     }
