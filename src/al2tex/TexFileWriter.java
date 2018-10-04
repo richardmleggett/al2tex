@@ -12,7 +12,7 @@ package al2tex;
 import java.util.*;
 import java.io.*;
 
-public class TexFileWriter extends TikzPicture{
+public class TexFileWriter extends TikzDrawer{
     private final static int MAX_OVERHANG = 200;
     private float unit;
     private int targetWidth = 1800;                        // Width of reference (target) bar, in mm

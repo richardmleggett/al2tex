@@ -12,7 +12,7 @@ package al2tex;
 import java.util.*;
 import java.io.*;
 
-public class CoverageMapDiagram extends TikzPicture
+public class CoverageMapDiagram
 {
     private DiagramOptions options;
     private int pictureWidth = 160;                  // Width of picture
@@ -26,13 +26,15 @@ public class CoverageMapDiagram extends TikzPicture
     private HeatMapScale heatMapScale = new HeatMapScale();   // Heat map colours
     private ArrayList<CoverageMapImage> coverageMaps = new ArrayList();
     private CoverageMapImage.Type mapType;
+    private Drawer m_drawer;
     
     private static final int NUM_DIVIDERS = 4;
     
     public CoverageMapDiagram(DiagramOptions o) {
-        super(o.getOutputFilePath() + "_coverageMap.tex");
+        //super(o.getOutputFilePath() + "_coverageMap.tex");
         options = o;
         mapType = options.getCoverageMapImageType();
+        m_drawer = new TikzDrawer(o.getOutputFilePath() + "_coverageMap.tex");
     }
     
     private String getTexSafeTargetName(Alignment a)
@@ -83,7 +85,7 @@ public class CoverageMapDiagram extends TikzPicture
     
     public void writeTexFile() 
     {
-        openFile();
+        m_drawer.openFile();
         drawScale();
         for(int i = 0; i < coverageMaps.size(); i++)
         {  
@@ -94,11 +96,7 @@ public class CoverageMapDiagram extends TikzPicture
                 {
                     if(i % 2 == 0 && i > 0)
                     {
-                        try {
-                            bw.write("\\newpage");
-                        } catch(IOException e){
-                            System.out.println(e.getMessage());
-                        }
+                        m_drawer.drawNewPage();
                         drawScale();
                     }
                     writeNewSquareImage(coverageMap);
@@ -110,53 +108,43 @@ public class CoverageMapDiagram extends TikzPicture
                 }
             }
         }
-        closeFile();
+        m_drawer.closeFile();
     }
     
     protected void writeTexHeader() {
-        super.writeTexHeader();
+        //super.writeTexHeader();
         //drawScale();
     }
         
     private void writeNewSquareImage(CoverageMapImage coverageMap) 
     {          
-        try 
-        {
-            int nRows = coverageMap.getNumberOfRows();
-            int targetSize = coverageMap.getTargetSize();
-            String targetName = coverageMap.getTargetName().replace("_", "\\string_");
-            String filename = coverageMap.getFilename().replace("_", "\\string_");
-            
-            bw.write("\\begin{tikzpicture}[x=1mm,y=1mm]"); bw.newLine();
-         
-            // draw x-axis labels
-            double rowSize = (double)targetSize / (double)nRows;
-            for (int r=0; r<nRows; r+=50) {
-                int rowY = targetHeight - (int)((double)r * ((double)targetHeight / (double)nRows));
-                bw.write("\\node at (0,"+rowY+") {"+(int)((double)r*rowSize)+"};"); bw.newLine();
-            }
-            
-            int rowY = targetHeight - (int)((double)(nRows) * ((double)targetHeight / (double)nRows));
-            bw.write("\\node at (0,"+rowY+") {"+targetSize+"};"); bw.newLine();
-            
-            // draw the image
-            bw.write(   "\\node[anchor=south west, inner sep=0pt, outer sep=0pt] at ("+imageOffset+",0)" +  
-                        "{\\includegraphics[width="+targetWidth+"mm,height="+targetHeight+"mm]{" + filename + "}};"); 
-            bw.newLine();
-            
-            // draw the text labels
-            int textxPos = 5 + targetWidth / 2;
-            bw.write("\\node at (" + textxPos + ", -5) {Each row represents "+(int)rowSize+" nt};"); bw.newLine();
-            bw.write("\\node at (" + textxPos + ", -10) {" + targetName + "};"); bw.newLine();
-            bw.write("\\node[rotate=90] at (-10,60) {Position in genome (nt)};"); bw.newLine();
-            bw.write("\\end{tikzpicture}"); 
-            bw.newLine();
-            bw.write("\\hspace{1cm}");
-        } 
-        catch (IOException e) 
-        {
-            System.out.println(e);
+        int nRows = coverageMap.getNumberOfRows();
+        int targetSize = coverageMap.getTargetSize();
+        String targetName = coverageMap.getTargetName().replace("_", "\\string_");
+        String filename = coverageMap.getFilename().replace("_", "\\string_");
+
+        m_drawer.openPicture(1,1);
+
+        // draw x-axis labels
+        double rowSize = (double)targetSize / (double)nRows;
+        for (int r=0; r<nRows; r+=50) {
+            int rowY = targetHeight - (int)((double)r * ((double)targetHeight / (double)nRows));
+            m_drawer.drawText(0, rowY, Integer.toString((int)(r*rowSize)));
         }
+
+        int rowY = targetHeight - (int)((double)(nRows) * ((double)targetHeight / (double)nRows));
+        m_drawer.drawText(0, rowY, Integer.toString(targetSize));
+        
+        // draw the image
+        m_drawer.drawImage(imageOffset, 0, targetWidth, targetHeight, filename, "[anchor=south west, inner sep=0pt, outer sep=0pt]");
+
+        // draw the text labels
+        int textxPos = 5 + targetWidth / 2;
+        m_drawer.drawText(textxPos, -5, "Each row represents "+(int)rowSize+" nt");
+        m_drawer.drawText(textxPos, -10, targetName);
+        m_drawer.drawTextRotated(-10, 60, "Position in genome (nt)", 90);
+        m_drawer.closePicture();
+        m_drawer.drawHorizontalGap(10);
     } 
     
     private void writeNewLongImage(CoverageMapImage coverageMap) 
@@ -166,49 +154,32 @@ public class CoverageMapDiagram extends TikzPicture
         String filename = coverageMap.getFilename();
         double unit = (double)targetWidth / targetSize;                
 
-        try 
-        {
-            bw.write("\\begin{tikzpicture}[x=1mm,y=1mm]"); bw.newLine();
-            for (int i=0; i<=NUM_DIVIDERS; i++) {
-                int num = i == NUM_DIVIDERS ? targetSize: (int)((targetSize / NUM_DIVIDERS) * i);
-                int pos = (int)((double)num * unit);
+        m_drawer.openPicture(1,1);
 
-                //bw.write("\\draw [dashed] ("+pos+", 0) -- ("+pos+","+(pictureHeight - yStep)+");"); bw.newLine();
-                bw.write("\\node at ("+pos+","+(pictureHeight-(rowHeight / 2))+") {"+num+"};"); bw.newLine();
-            }
+        for (int i=0; i <= NUM_DIVIDERS; i++) {
+            int num = i == NUM_DIVIDERS ? targetSize: (int)((targetSize / NUM_DIVIDERS) * i);
+            int pos = (int)((double)num * unit);
 
-            bw.write("\\node[anchor=south west, inner sep=0pt, outer sep=0pt] at (0,0) {\\includegraphics[width="+targetWidth+"mm,height="+rowHeight+"mm]{"+filename+"}};"); 
-            bw.newLine();
-            bw.write("\\node [anchor=west] at ("+(targetWidth + 5)+","+(pictureHeight-(rowHeight * 2))+") {"+targetName+"};"); 
-            bw.newLine();
-            bw.write("\\end{tikzpicture}"); 
-            bw.newLine();
-            bw.write("\\vspace{5mm}");
-            bw.write("\\newline");
-        } 
-        catch (IOException e) 
-        {
-            System.out.println(e);
+            m_drawer.drawText(pos, (pictureHeight-(rowHeight / 2)), Integer.toString(num));
         }
+
+        m_drawer.drawImage(0, 0, targetWidth, rowHeight, filename, "[anchor=south west, inner sep=0pt, outer sep=0pt]");
+        m_drawer.drawText(targetWidth + 10, (pictureHeight-(rowHeight * 2)), targetName);
+        m_drawer.closePicture();
+        m_drawer.drawVerticalGap(5);
+        m_drawer.drawNewline();
     }
     
     private void drawScale()
     {
-        try 
-        {
-            bw.write("\\begin{tikzpicture}[x=1mm,y=1mm]"); bw.newLine();
-            bw.write("\\node[anchor=south west, inner sep=0pt, outer sep=0pt] at (0,0) {\\includegraphics[width="+targetWidth/2+"mm,height="+rowHeight+"mm]{heatmap.png}};"); bw.newLine();
-            bw.write("\\node [anchor=west] at (20,"+(pictureHeight-(rowHeight / 2))+") {Coverage};"); bw.newLine();
-            bw.write("\\node at (0,"+(pictureHeight-(rowHeight / 2))+") {0};"); bw.newLine();
-            bw.write("\\node at ("+(targetWidth / 2)+","+(pictureHeight-(rowHeight / 2))+") {"+heatMapScale.getHeatMapSize()+"};"); bw.newLine();
-            bw.write("\\end{tikzpicture}"); bw.newLine();
-            bw.write("\\vspace{5mm}"); bw.newLine();
-            bw.write("\\newline"); bw.newLine();
-            bw.write("\\noindent"); bw.newLine();            
-        } 
-        catch (IOException e)
-        {
-            System.out.println(e);
-        }       
+        int yPos = pictureHeight-(rowHeight/2);
+        m_drawer.openPicture(1,1);
+        m_drawer.drawImage(0, 0, targetWidth / 2, rowHeight, "heatmap.png", "[anchor=south west, inner sep=0pt, outer sep=0pt]");
+        m_drawer.drawText(27.5, yPos, "Coverage");
+        m_drawer.drawText(0, yPos, "0");
+        m_drawer.drawText(targetWidth/2, yPos, Integer.toString(heatMapScale.getHeatMapSize()));
+        m_drawer.closePicture();
+        m_drawer.drawVerticalGap(5);
+        m_drawer.drawNewline();              
     }
 }

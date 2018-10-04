@@ -134,12 +134,7 @@ public class DiagramOptions {
         if (inputFormat == null) {
             System.out.println("Error: You must specify an input format");
             System.exit(0);
-        }
-
-        if ((diagramType.equals("coveragemap")) && (!inputFormat.equals("psl")) && (!inputFormat.equals("sam"))) {
-            System.out.println("Error: coverage maps are currently only possible for PSL files");
-            System.exit(0);
-        }        
+        }      
         
         if (inputFormat.equals("sam")) {
             if (!diagramType.equals("coveragemap")) {

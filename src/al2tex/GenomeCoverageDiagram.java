@@ -12,7 +12,7 @@ import java.util.ArrayList;
  *
  * @author martins
  */
-public class GenomeCoverageDiagram extends TikzPicture
+public class GenomeCoverageDiagram extends TikzDrawer
 {
      private DiagramOptions options;
     private int pictureWidth = 160;                  // Width of picture

@@ -23,7 +23,6 @@ public class AlignmentDiagram {
  
   public void writeTexFile(String filename) {
         String previousTarget = new String("");
-        String finalTarget = alignmentFile.getAlignment(alignmentFile.getNumberOfAlignments() - 1).getTargetName();
         TexFileWriter tfw = new TexFileWriter(filename + "_alignment.tex");
         int page = 1;
         int row = 0;
@@ -60,7 +59,7 @@ public class AlignmentDiagram {
                 
                 tfw.newTarget(a.getTargetSize(), alignmentFile.getTargetHitCount(a.getTargetName()));
                 
-                tfw.openPicture();
+                tfw.openPicture(0.1,0.1);
                 tfw.drawDividers(NUM_DIVIDERS);
                 String targetName = options.filterName(a.getTargetName());
                 tfw.drawTargetBar(targetName);                

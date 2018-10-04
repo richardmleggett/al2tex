@@ -25,7 +25,6 @@ public class GenomeCoverageImage
     static final private int ALIGNMENT_BIN_SIZE = 10;
     private final HeatMapScale m_heatMapScale;
     
-    
     public GenomeCoverageImage(DiagramOptions options, String outputFilename) 
     {
         m_options = options;
@@ -97,13 +96,6 @@ public class GenomeCoverageImage
         Graphics g=bImage.getGraphics();
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, imageWidth, imageHeight);
-        g.setColor(new Color(200, 200, 200));
-        
-//        for (int y=0; y<nRows; y++) 
-//        {            
-//            //g.fillRect(0, y*(m_options.getRowHeight()+m_options.getRowSpacer()), imageWidth, m_options.getRowHeight());
-//             g.fillRect(0, y, imageWidth, m_options.getRowHeight());
-//        }
         
         int cumulativeTotal = 0;
         for(Object key: targetNames)
