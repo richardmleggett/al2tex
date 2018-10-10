@@ -10,6 +10,9 @@ Welcome to al2tex's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   usage/installation
+   usage/examples
+
 
 
 Indices and tables
