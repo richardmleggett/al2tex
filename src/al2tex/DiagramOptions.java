@@ -23,6 +23,7 @@ public class DiagramOptions {
     private String listFilename = null;
     private String inputFormat = null;
     private String domainsFilename = null;
+    private String outputFormat = null;
     private int maxCoverage = 0;
     private int maxPages = 0;
     private int maxTargets = 0;
@@ -30,7 +31,7 @@ public class DiagramOptions {
     private int rowHeight = 10;
     private int rowSpacer = 0;
     private boolean newHeatMapForEachContig = false;
-    private double minPAFAlignmentProp = 0.01;
+    private double minContigAlignmentProp = 0.01;
     private String alignmentQueryName = null;
     private String alignmentRefName = null;
     private CoverageMapImage.Type cmiType = CoverageMapImage.Type.SQUARE_MAP;
@@ -78,6 +79,13 @@ public class DiagramOptions {
                     (!inputFormat.equals("tiling"))) {
                     System.out.println("Error: inputfmt must be 'psl', 'coords', 'pileup', 'sam', 'paf' or 'tiling'.");
                     System.exit(0);
+                } 
+            } else if (args[i].equalsIgnoreCase("-outputfmt")) {
+                outputFormat = args[i+1].toLowerCase();
+                if ((!outputFormat.equals("tex")) &&
+                    (!outputFormat.equals("svg"))) {
+                    System.out.println("Error: outputfmt must be 'tex' or 'svg'.");
+                    System.exit(0);
                 }
             } else if (args[i].equalsIgnoreCase("-in")) {
                 inputFilename = args[i+1];
@@ -115,8 +123,8 @@ public class DiagramOptions {
                 rowSpacer = Integer.parseInt(args[i+1]);
                 System.out.println("      Row spacer: " + rowSpacer);
             } else if (args[i].equalsIgnoreCase("-minPAFAlignmentProp")) {
-                minPAFAlignmentProp = Double.parseDouble(args[i+1]);
-                System.out.println("      Min Alignment Proportion for PAF alignments: " + minPAFAlignmentProp);
+                minContigAlignmentProp = Double.parseDouble(args[i+1]);
+                System.out.println("      Min Alignment Proportion for PAF alignments: " + minContigAlignmentProp);
             } else if (args[i].equalsIgnoreCase("-alignmentQueryName")) {
                 alignmentQueryName = args[i+1];
                 System.out.println("   Query name for alignment diagram: " + alignmentQueryName);
@@ -251,7 +259,7 @@ public class DiagramOptions {
     }
     
     public double getMinPAFAlignmentProp() {
-        return minPAFAlignmentProp;
+        return minContigAlignmentProp;
     }
     
     public String getAlignmentQueryName() {
@@ -264,5 +272,9 @@ public class DiagramOptions {
     
     public CoverageMapImage.Type getCoverageMapImageType() {
         return cmiType;
+    }
+    
+    public String getOutputFormat() {
+        return outputFormat;
     }
 }

@@ -18,21 +18,21 @@ public class ContigAlignmentDiagram
     Set<String> m_refNames;
     private double m_minAlignmentProp;
     private final static int MAX_ALIGNMENTS_PER_CONTIG = 20;
+    private final static int NUM_COORD_MARKS = 4;
     
     private int m_contigDrawLength;
     private int m_contigDrawHeight;
     private int m_refContigDrawHeight;
     private int m_numKeysPerLine;
-    private int m_minYStart;
     private TreeMap<String, String> m_coloursMap;
     private int m_colourCounter;
     private boolean m_coloursSet;
     private Drawer m_drawer;
     
-    public ContigAlignmentDiagram(DetailedAlignmentFile alignmentFile, String outFilename, double minAlignmentProp)
+    public ContigAlignmentDiagram(DetailedAlignmentFile alignmentFile, DiagramOptions options)
     {
         m_alignmentMap = new TreeMap<String, ArrayList<DetailedAlignment>>();
-        m_minAlignmentProp = minAlignmentProp;
+        m_minAlignmentProp = options.getMinPAFAlignmentProp();
         m_refNames = new LinkedHashSet();
         m_contigDrawLength = 2000;
         m_contigDrawHeight = 100;
@@ -41,10 +41,16 @@ public class ContigAlignmentDiagram
         m_coloursSet = false;
         m_colourCounter = 0;
         m_numKeysPerLine = 7;
-        m_minYStart = 0;
-        //m_drawer = new SVGDrawer(outFilename);
-        m_drawer = new TikzDrawer(outFilename);
         
+        if(options.getOutputFormat().equals("tex"))
+        {
+            m_drawer = new TikzDrawer(options.getOutputFilePath());
+        }
+        else
+        {
+            m_drawer = new SVGDrawer(options.getOutputFilePath());
+        }
+      
         // iterate through all the alignments and group by contig name
         // filter out really small alignments
         for(int i = 0; i < alignmentFile.getNumberOfAlignments(); ++i)
@@ -136,7 +142,6 @@ public class ContigAlignmentDiagram
             for(ArrayList<DetailedAlignment> DetailedAlignments : m_alignmentMap.values())
             {
                 // make a new diagram on a new page
-                // TODO: 7 is a magic number
                 // TODO: 175 is a magic number
                 int y = keyOffset + i * 175;
                 if(i > m_drawer.getMaxAlignmentsPerPage())
@@ -212,6 +217,13 @@ public class ContigAlignmentDiagram
         // draw the contig rectangle
         m_drawer.drawRectangle(x, y, m_contigDrawLength, m_contigDrawHeight, "black");
         m_drawer.drawText(x - 100, (y + m_contigDrawHeight/2), contigName);
+        for(int i = 0; i <= NUM_COORD_MARKS; i++)
+        {
+            double xMark = x + i * (m_contigDrawLength / NUM_COORD_MARKS);
+            String coord = Integer.toString(i * (contigLength / NUM_COORD_MARKS));
+            m_drawer.drawLine(xMark, y - 5, xMark, y + 5, "black", false);
+            m_drawer.drawText(xMark, y - 15, coord);
+        }
 }
     
     public void drawKey(int x, int y)
@@ -237,8 +249,6 @@ public class ContigAlignmentDiagram
             m_drawer.drawKeyContig(xPos, yPos, 75, 15, colour, name);
             i++;
         }
-
-        m_minYStart = y + (j+1) * m_contigDrawHeight;
     }
     
     public void drawAlignmentDiagram(ArrayList<DetailedAlignment> alignments, int x, int y)

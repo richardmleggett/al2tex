@@ -20,6 +20,7 @@ public class SVGDrawer implements Drawer
     protected BufferedWriter bw;
     private int gradientCounter;
     private HashMap<String, Color> colourMap;
+    private double m_scale = 1.;
     
     public SVGDrawer(String f) 
     {
@@ -58,8 +59,15 @@ public class SVGDrawer implements Drawer
         try
         {
             //TODO: How big canvas?
-            bw.write("<svg version='1.1' height='20000' width='4000' xmlns='http://www.w3.org/2000/svg'>");
+            bw.write("<svg version='1.1' height='5000' width='2000' xmlns='http://www.w3.org/2000/svg'>");
             bw.newLine();
+            bw.write("<style>");
+            bw.newLine();
+            bw.write("\t.default { font-family: sans-serif; text-anchor: middle; }");
+            bw.newLine();
+            bw.write("</style>");
+            bw.newLine();
+            
         } 
         catch (IOException e) 
         {
@@ -94,14 +102,23 @@ public class SVGDrawer implements Drawer
     {
         try
         {
-            Color colourObj = colourMap.get(colour);
-            int r = colourObj.getRed();
-            int g = colourObj.getGreen();
-            int b = colourObj.getBlue();
+            x1 *= m_scale;
+            y1 *= m_scale;
+            x2 *= m_scale;
+            y2 *= m_scale;
+            
+            Color jcolour =  colourMap.get(colour);
+            String colourString = colour;
+            if(jcolour != null)
+            {
+                int r = jcolour.getRed();
+                int g = jcolour.getGreen();
+                int b = jcolour.getBlue();
+                colourString = "rgb(" + Integer.toString(r) + "," + Integer.toString(g) + "," + Integer.toString(b) + ")";
+            }
             bw.write("<line x1='" + Double.toString(x1) + "' y1='" + Double.toString(y1) + 
                          "' x2='" + Double.toString(x2) + "' y2='" + Double.toString(y2) + 
-                         "' style='stroke:rgb(" + Integer.toString(r) + "," + Integer.toString(g) + "," + Integer.toString(b) +
-                         ");stroke-width:2' />");
+                         "' style='stroke:" + colourString + ";stroke-width:2' />");
             bw.newLine();
         } 
         catch (IOException e) 
@@ -114,6 +131,11 @@ public class SVGDrawer implements Drawer
     {
          try
         {   
+            x *= m_scale;
+            y *= m_scale;
+            width *= m_scale;
+            height *= m_scale;
+            
             Color colour =  colourMap.get(borderColour);
             String colourString = borderColour;
             if(colour != null)
@@ -138,7 +160,10 @@ public class SVGDrawer implements Drawer
     {
         try
         {
-            bw.write(   "<text x='" + Double.toString(x) + "' y='" + Double.toString(y) + "' font-family = 'sans-serif'>" 
+            x *= m_scale;
+            y *= m_scale;
+            
+            bw.write(   "<text x='" + Double.toString(x) + "' y='" + Double.toString(y) + "' class='default'>" 
                         + text + "</text>" ); 
             bw.newLine();
         } 
@@ -152,9 +177,11 @@ public class SVGDrawer implements Drawer
     {
         try
         {
+            x *= m_scale;
+            y *= m_scale;
             bw.write("<text x='" + Double.toString(x) + "' y='" + Double.toString(y) + 
-                     "transform='rotate(" + Integer.toString(angle) + "," + Double.toString(x) + "," + Double.toString(y) + ")'>" + 
-                     text + "</text>" ); 
+                     "' transform='rotate(" + Integer.toString(angle) + "," + Double.toString(x) + "," + Double.toString(y) + 
+                     ")' class='default'>" + text + "</text>" ); 
             bw.newLine();
         } 
         catch (IOException e) 
@@ -167,8 +194,13 @@ public class SVGDrawer implements Drawer
     {
         try
         {
-            bw.write("<image xlink:href='" + filename + "' x='" + Double.toString(x) + "' y='" + Double.toString(y) + "'" + 
-                        " width='" + Double.toString(width) + "px' height='" + Double.toString(height) + "px'/>");
+            x *= m_scale;
+            y *= m_scale;
+            width *= m_scale;
+            height *= m_scale;
+            
+            bw.write("<image href='" + filename + "' x='" + Double.toString(x) + "' y='" + Double.toString(y) + "'" + 
+                        " width='" + Double.toString(width) + "' height='" + Double.toString(height) + "'/>");
             bw.newLine();
         } 
         catch (IOException e) 
@@ -207,6 +239,11 @@ public class SVGDrawer implements Drawer
     {
          try
         {
+            x *= m_scale;
+            y *= m_scale;
+            width *= m_scale;
+            height *= m_scale;
+            
             Color colour = colourMap.get(fillColour);
             int r = colour.getRed();
             int g = colour.getGreen();
@@ -248,8 +285,12 @@ public class SVGDrawer implements Drawer
     
     public void drawKeyContig(double x, double y, double width, double height, String colour, String name)
     {
+        x*= m_scale;
+        y *= m_scale;
+        width *= m_scale;
+        height *= m_scale;
         drawAlignment(x, y, width, height, colour, colour, 0, 100);
-        drawText(x + (width/3), y + 2 * height, name);
+        drawText(x + (width/2), y + 2.5 * height, name);
     }
     
     public void drawCurve(double startx, double starty, double endx, double endy, double controlx1, double controly1, double controlx2, double controly2)

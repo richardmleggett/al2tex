@@ -23,7 +23,7 @@ public class AlignmentDiagram {
  
   public void writeTexFile(String filename) {
         String previousTarget = new String("");
-        TexFileWriter tfw = new TexFileWriter(filename + "_alignment.tex");
+        TexFileWriter tfw = new TexFileWriter(filename + "_alignment");
         int page = 1;
         int row = 0;
 
@@ -100,6 +100,7 @@ public class AlignmentDiagram {
                 String subs[] = contigName.split("_");
                 contigName="NODE\\_"+subs[1];
             }
+            contigName = contigName.replace("\\_", "\\string_");
             tfw.outputContigLabel(contigName);
             
             if (i < (alignmentFile.getNumberOfAlignments() - 1)) {

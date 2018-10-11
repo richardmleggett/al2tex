@@ -68,7 +68,7 @@ public class TikzDrawer implements Drawer
     public void openPicture(double x, double y) {
         try 
         {
-            bw.write("\\begin{tikzpicture}[x=" + Double.toString(x) + "mm,y=" + Double.toString(y) + "mm]"); 
+            bw.write("\\begin{tikzpicture}[x=" + Double.toString(x) + "mm, y=" + Double.toString(y) + "mm]"); 
             bw.newLine();
         } 
         catch (IOException e) 
@@ -153,6 +153,7 @@ public class TikzDrawer implements Drawer
     {
         try
         {
+            text = text.replace("_", "\\string_");
             bw.write("\\node at (" + x  + "," + y + ") {" + text + "};" ); 
             bw.newLine();
         } 
@@ -166,6 +167,7 @@ public class TikzDrawer implements Drawer
     {
          try
         {
+            text = text.replace("_", "\\string_");
             bw.write("\\node[rotate=" + angle + "] at (" + x  + "," + y + ") {" + text + "};" ); 
             bw.newLine();
         } 
@@ -222,6 +224,7 @@ public class TikzDrawer implements Drawer
     {
         try
         {
+            filename = filename.replace("_", "\\string_");
             bw.write("\\node" + optionsString + " at (" + x + "," + y + ") {\\includegraphics[width=" + width + "mm, height=" + height + "mm]{" +filename + "}};"); 
             bw.newLine();
         } 

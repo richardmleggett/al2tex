@@ -34,12 +34,7 @@ public class CoverageMapDiagram
         //super(o.getOutputFilePath() + "_coverageMap.tex");
         options = o;
         mapType = options.getCoverageMapImageType();
-        m_drawer = new TikzDrawer(o.getOutputFilePath() + "_coverageMap.tex");
-    }
-    
-    private String getTexSafeTargetName(Alignment a)
-    {
-        return a.getTargetName().replace(".", "-");
+        m_drawer = new TikzDrawer(o.getOutputFilePath() + "_coverageMap");
     }
     
     public void makeBitmapsFromFile(AlignmentFile alignmentFile, String outputDirectory) 
@@ -55,7 +50,7 @@ public class CoverageMapDiagram
             Alignment a = alignmentFile.getAlignment(i);
             if(a.getTargetName().compareTo(previousTarget) != 0)
             {
-                String filename = filenamePrefix + getTexSafeTargetName(a) + "_covmap.png";
+                String filename = filenamePrefix + a.getTargetName() + "_covmap.png";
                 System.out.println("Making new CoverageMapImage: " + filename + " with size " + a.getTargetSize());
                 CoverageMapImage mapImage = new CoverageMapImage(options, a.getTargetSize(), filename, a.getTargetName()); 
                 coverageMaps.add(mapImage);
@@ -120,8 +115,8 @@ public class CoverageMapDiagram
     {          
         int nRows = coverageMap.getNumberOfRows();
         int targetSize = coverageMap.getTargetSize();
-        String targetName = coverageMap.getTargetName().replace("_", "\\string_");
-        String filename = coverageMap.getFilename().replace("_", "\\string_");
+        String targetName = coverageMap.getTargetName();
+        String filename = coverageMap.getFilename();
 
         m_drawer.openPicture(1,1);
 

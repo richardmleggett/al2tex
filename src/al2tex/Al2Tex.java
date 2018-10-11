@@ -67,7 +67,7 @@ public class Al2Tex {
                 (options.getDiagramType().equals("all"))) 
             {
                 System.out.println("Building contig alignment diagram");
-                ContigAlignmentDiagram contigAlignmentDiagram = new ContigAlignmentDiagram(pslFile, options.getOutputFilePath(), options.getMinPAFAlignmentProp());
+                ContigAlignmentDiagram contigAlignmentDiagram = new ContigAlignmentDiagram(pslFile, options);
                 System.out.println("Writing LaTeX files");
                 contigAlignmentDiagram.writeTexFile(options);
             }
@@ -121,7 +121,7 @@ public class Al2Tex {
                 (options.getDiagramType().equals("all"))) 
             {
                 System.out.println("Building contig alignment diagram");
-                ContigAlignmentDiagram contigAlignmentDiagram = new ContigAlignmentDiagram(alignmentFile, options.getOutputFilePath(), options.getMinPAFAlignmentProp());
+                ContigAlignmentDiagram contigAlignmentDiagram = new ContigAlignmentDiagram(alignmentFile, options);
                 System.out.println("Writing LaTeX files");
                 contigAlignmentDiagram.writeTexFile(options);
             }
@@ -149,7 +149,7 @@ public class Al2Tex {
                 (options.getDiagramType().equals("all"))) 
             {
                 System.out.println("Building contig alignment diagram");
-                ContigAlignmentDiagram contigAlignmentDiagram = new ContigAlignmentDiagram(pafFile, options.getOutputFilePath(), options.getMinPAFAlignmentProp());
+                ContigAlignmentDiagram contigAlignmentDiagram = new ContigAlignmentDiagram(pafFile, options);
                 System.out.println("Writing LaTeX files");
                 contigAlignmentDiagram.writeTexFile(options);
             }
