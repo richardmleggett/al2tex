@@ -20,7 +20,7 @@ public class SVGDrawer implements Drawer
     protected BufferedWriter bw;
     private int gradientCounter;
     private HashMap<String, Color> colourMap;
-    private double m_scale = 1.;
+    private double m_scale = 4;
     
     public SVGDrawer(String f) 
     {
@@ -200,7 +200,8 @@ public class SVGDrawer implements Drawer
             height *= m_scale;
             
             bw.write("<image href='" + filename + "' x='" + Double.toString(x) + "' y='" + Double.toString(y) + "'" + 
-                        " width='" + Double.toString(width) + "' height='" + Double.toString(height) + "'/>");
+                        " width='" + Double.toString(width) + "' height='" + Double.toString(height) + "'" +
+                        " preserveAspectRatio='none'/>");
             bw.newLine();
         } 
         catch (IOException e) 
@@ -307,5 +308,75 @@ public class SVGDrawer implements Drawer
     public int  getMaxAlignmentsPerPage()
     {
         return Integer.MAX_VALUE;
+    }
+    
+    public void drawCoverageMap(CoverageMapImage coverageMap, double x, double y)
+    {
+        int nRows = coverageMap.getNumberOfRows();
+        int targetSize = coverageMap.getTargetSize();
+        String targetName = coverageMap.getTargetName();
+        String filename = coverageMap.getFilename();
+        
+        int height = 100;
+        int width = 100;
+        
+        x += 10;
+
+        // draw x-axis labels
+        double rowSize = (double)targetSize / (double)nRows;
+        for (int r=0; r<nRows; r+=50) 
+        {
+            int rowY = (int)((double)r * ((double)height / (double)nRows));
+            drawText(x - 10, y + rowY, Integer.toString((int)(r*rowSize)));
+        }
+
+        int rowY = (int)((double)(nRows) * ((double)height / (double)nRows));
+        drawText(x - 10, y + rowY, Integer.toString(targetSize));
+        
+        // draw the image
+        drawImage(x, y, width, height, filename, "");
+
+        // draw the text labels
+        int textxPos = 5 + width / 2;
+        drawText(x + textxPos, y - 5, "Each row represents "+(int)rowSize+" nt");
+        drawText(x + textxPos, y - 10, targetName);
+        drawTextRotated(x - 25, y + (height/2), "Position in genome (nt)", 90);
+        closePicture();  
+    }
+    
+    public void drawCoverageLong(CoverageMapImage coverageMap, double x, double y, double imageWidth, double imageHeight, int num_dividers)
+    {
+        int targetSize = coverageMap.getTargetSize();
+        String targetName = coverageMap.getTargetName();
+        String filename = coverageMap.getFilename();
+        double unit = (double)imageWidth / targetSize;                
+
+        for (int i=0; i <= num_dividers; i++) 
+        {
+            int num = i == num_dividers ? targetSize: (int)((targetSize / num_dividers) * i);
+            int pos = (int)((double)num * unit);
+
+            drawText(x + pos, y + imageHeight + 4, Integer.toString(num));
+            drawLine(x + pos, y + imageHeight + 1, x + pos, y + imageHeight - 1, "black", false);
+        }
+
+        drawImage(x, y, imageWidth, imageHeight, filename, "[anchor=south west, inner sep=0pt, outer sep=0pt]");
+        drawText(x + imageWidth + 15, y + imageHeight, targetName);   
+    }
+    
+    public void drawScale(HeatMapScale heatMapScale, double x, double y)
+    {
+        int height = 4;
+        int width = 50;
+        
+        drawImage(x, y, width, height, "heatmap.png", "[anchor=south west, inner sep=0pt, outer sep=0pt]");
+        drawText(x + (width/2), y + 10, "Coverage");
+        drawText(x, y + 10, "0");
+        drawText(x + width, y + 10, Integer.toString(heatMapScale.getHeatMapSize()));           
+    }
+    
+    public int getPageHeight()
+    {
+        return 500;
     }
 }

@@ -34,7 +34,15 @@ public class CoverageMapDiagram
         //super(o.getOutputFilePath() + "_coverageMap.tex");
         options = o;
         mapType = options.getCoverageMapImageType();
-        m_drawer = new TikzDrawer(o.getOutputFilePath() + "_coverageMap");
+        
+        if(o.getOutputFormat().equals("svg"))
+        {
+            m_drawer = new SVGDrawer(o.getOutputFilePath() + "_coverageMap");
+        }
+        else
+        {
+            m_drawer = new TikzDrawer(o.getOutputFilePath() + "_coverageMap");
+        }
     }
     
     public void makeBitmapsFromFile(AlignmentFile alignmentFile, String outputDirectory) 
@@ -81,100 +89,45 @@ public class CoverageMapDiagram
     public void writeTexFile() 
     {
         m_drawer.openFile();
-        drawScale();
-        for(int i = 0; i < coverageMaps.size(); i++)
-        {  
-            CoverageMapImage coverageMap = coverageMaps.get(i);
-            switch(mapType)
+        m_drawer.drawScale(heatMapScale, 10, 5);
+        switch(mapType)
+        {
+            case SQUARE_MAP:
             {
-                case SQUARE_MAP:
-                {
-                    if(i % 2 == 0 && i > 0)
+                double y = 0;
+                for(int i = 0; i < coverageMaps.size(); i++)
+                {  
+                    CoverageMapImage coverageMap = coverageMaps.get(i);
+                    double x = (i % 2) * targetWidth * 1.5;
+                    y += targetWidth * 1.25 + 30;
+                    x += 30;
+
+
+                    if(i % 2 == 0)
                     {
-                        m_drawer.drawNewPage();
-                        drawScale();
+                        if(y > m_drawer.getPageHeight())
+                        {
+                            m_drawer.drawNewPage();
+                            m_drawer.drawScale(heatMapScale, x, y);
+                            y = 0;
+                        }
                     }
-                    writeNewSquareImage(coverageMap);
-                    break;
+                    m_drawer.drawCoverageMap(coverageMap, x, y);
                 }
-                case LONG_MAP:
-                {   
-                    writeNewLongImage(coverageMap);
+                break;
+            }
+            case LONG_MAP:
+            {   
+                for(int i = 0; i < coverageMaps.size(); i++)
+                {
+                    double y = 20 + (i * 15);
+                    double x = 20;
+                    CoverageMapImage coverageMap = coverageMaps.get(i);
+                    m_drawer.drawCoverageLong(coverageMap, x, y, 200, 4, NUM_DIVIDERS);
                 }
+                break;
             }
         }
         m_drawer.closeFile();
-    }
-    
-    protected void writeTexHeader() {
-        //super.writeTexHeader();
-        //drawScale();
-    }
-        
-    private void writeNewSquareImage(CoverageMapImage coverageMap) 
-    {          
-        int nRows = coverageMap.getNumberOfRows();
-        int targetSize = coverageMap.getTargetSize();
-        String targetName = coverageMap.getTargetName();
-        String filename = coverageMap.getFilename();
-
-        m_drawer.openPicture(1,1);
-
-        // draw x-axis labels
-        double rowSize = (double)targetSize / (double)nRows;
-        for (int r=0; r<nRows; r+=50) {
-            int rowY = targetHeight - (int)((double)r * ((double)targetHeight / (double)nRows));
-            m_drawer.drawText(0, rowY, Integer.toString((int)(r*rowSize)));
-        }
-
-        int rowY = targetHeight - (int)((double)(nRows) * ((double)targetHeight / (double)nRows));
-        m_drawer.drawText(0, rowY, Integer.toString(targetSize));
-        
-        // draw the image
-        m_drawer.drawImage(imageOffset, 0, targetWidth, targetHeight, filename, "[anchor=south west, inner sep=0pt, outer sep=0pt]");
-
-        // draw the text labels
-        int textxPos = 5 + targetWidth / 2;
-        m_drawer.drawText(textxPos, -5, "Each row represents "+(int)rowSize+" nt");
-        m_drawer.drawText(textxPos, -10, targetName);
-        m_drawer.drawTextRotated(-10, 60, "Position in genome (nt)", 90);
-        m_drawer.closePicture();
-        m_drawer.drawHorizontalGap(10);
-    } 
-    
-    private void writeNewLongImage(CoverageMapImage coverageMap) 
-    {
-        int targetSize = coverageMap.getTargetSize();
-        String targetName = coverageMap.getTargetName();
-        String filename = coverageMap.getFilename();
-        double unit = (double)targetWidth / targetSize;                
-
-        m_drawer.openPicture(1,1);
-
-        for (int i=0; i <= NUM_DIVIDERS; i++) {
-            int num = i == NUM_DIVIDERS ? targetSize: (int)((targetSize / NUM_DIVIDERS) * i);
-            int pos = (int)((double)num * unit);
-
-            m_drawer.drawText(pos, (pictureHeight-(rowHeight / 2)), Integer.toString(num));
-        }
-
-        m_drawer.drawImage(0, 0, targetWidth, rowHeight, filename, "[anchor=south west, inner sep=0pt, outer sep=0pt]");
-        m_drawer.drawText(targetWidth + 10, (pictureHeight-(rowHeight * 2)), targetName);
-        m_drawer.closePicture();
-        m_drawer.drawVerticalGap(5);
-        m_drawer.drawNewline();
-    }
-    
-    private void drawScale()
-    {
-        int yPos = pictureHeight-(rowHeight/2);
-        m_drawer.openPicture(1,1);
-        m_drawer.drawImage(0, 0, targetWidth / 2, rowHeight, "heatmap.png", "[anchor=south west, inner sep=0pt, outer sep=0pt]");
-        m_drawer.drawText(27.5, yPos, "Coverage");
-        m_drawer.drawText(0, yPos, "0");
-        m_drawer.drawText(targetWidth/2, yPos, Integer.toString(heatMapScale.getHeatMapSize()));
-        m_drawer.closePicture();
-        m_drawer.drawVerticalGap(5);
-        m_drawer.drawNewline();              
     }
 }

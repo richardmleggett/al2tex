@@ -19,8 +19,6 @@ public interface Drawer
     abstract void drawLine(double x1, double y1, double x2, double y2, String colour, boolean dashed);
     abstract void drawCurve(double startx, double starty, double endx, double endy, double controlx1, double controly1, double controlx2, double controly2);
     abstract void drawRectangle(double x, double y, double width, double height, String borderColour);
-    abstract void drawAlignment(double x, double y, double width, double height, String fillColour, String borderColour, int fillLeftPC, int fillRightPC);
-    abstract void drawKeyContig(double x, double y, double width, double height, String colour, String name);
     abstract void drawText(double x, double y, String text);
     abstract void drawTextRotated(double x, double y, String text, int angle);
     abstract void drawImage(double x, double y, double width, double height, String filename, String optionsString);
@@ -29,6 +27,16 @@ public interface Drawer
     abstract void drawHorizontalGap(int x);
     abstract void drawNewline();
     abstract void drawNewPage();
-    abstract int  getMaxAlignmentsPerPage();
+    abstract int getPageHeight();
+    
+    // Detailed Alignment Diagram
+    abstract int  getMaxAlignmentsPerPage(); 
+    abstract void drawAlignment(double x, double y, double width, double height, String fillColour, String borderColour, int fillLeftPC, int fillRightPC);
+    abstract void drawKeyContig(double x, double y, double width, double height, String colour, String name);
+    
+    // Coverage Map Diagram
+    abstract void drawScale(HeatMapScale heatMapScale, double x, double y);
+    abstract void drawCoverageMap(CoverageMapImage coverageMap, double x, double y);
+    abstract void drawCoverageLong(CoverageMapImage coverageMap, double x, double y, double imageWidth, double imageHeight, int num_dividers);
     
 }
