@@ -377,6 +377,6 @@ public class SVGDrawer implements Drawer
     
     public int getPageHeight()
     {
-        return 500;
+        return Integer.MAX_VALUE;
     }
 }

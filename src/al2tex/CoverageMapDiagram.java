@@ -94,22 +94,21 @@ public class CoverageMapDiagram
         {
             case SQUARE_MAP:
             {
-                double y = 0;
+                double y = 30;
                 for(int i = 0; i < coverageMaps.size(); i++)
                 {  
                     CoverageMapImage coverageMap = coverageMaps.get(i);
                     double x = (i % 2) * targetWidth * 1.5;
-                    y += targetWidth * 1.25 + 30;
                     x += 30;
 
-
-                    if(i % 2 == 0)
+                    if(i % 2 == 0 && i > 0)
                     {
+                        y += targetWidth * 1.25 + 30;
                         if(y > m_drawer.getPageHeight())
                         {
                             m_drawer.drawNewPage();
+                            y = 30;
                             m_drawer.drawScale(heatMapScale, x, y);
-                            y = 0;
                         }
                     }
                     m_drawer.drawCoverageMap(coverageMap, x, y);
