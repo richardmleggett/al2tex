@@ -37,7 +37,7 @@ public class CoverageMapDiagram
         
         if(o.getOutputFormat().equals("svg"))
         {
-            m_drawer = new SVGDrawer(o.getOutputFilePath() + "_coverageMap");
+            m_drawer = new SVGDrawer(o.getOutputFilePath() + "_coverageMap", true, 4, 842, 595);
         }
         else
         {
@@ -106,9 +106,9 @@ public class CoverageMapDiagram
                         y += targetWidth * 1.25 + 30;
                         if(y > m_drawer.getPageHeight())
                         {
-                            m_drawer.drawNewPage();
+                            m_drawer.newPage();
+                            m_drawer.drawScale(heatMapScale, 10, 5);
                             y = 30;
-                            m_drawer.drawScale(heatMapScale, x, y);
                         }
                     }
                     m_drawer.drawCoverageMap(coverageMap, x, y);

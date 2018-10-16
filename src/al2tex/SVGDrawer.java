@@ -16,23 +16,37 @@ import java.io.IOException;
  */
 public class SVGDrawer implements Drawer
 {
-    protected String filename;
-    protected BufferedWriter bw;
-    private int gradientCounter;
-    private HashMap<String, Color> colourMap;
-    private double m_scale = 4;
+    protected String m_filename;
+    protected BufferedWriter m_bw;
+    private int m_gradientCounter;
+    private HashMap<String, Color> m_colourMap;
+    private double m_scale;
+    private boolean m_landscape;
+    private int m_pageNumber;
+    private String m_filenamePrefix;
     
-    public SVGDrawer(String f) 
+    private static int m_longPageLength;
+    private static int m_shortPageLength;
+    
+    public SVGDrawer(String f, boolean landscape, double scale, int longPageLength, int shortPageLength) 
     {
-        filename = f + ".svg";
-        colourMap = new HashMap();
-        gradientCounter = 0;
+        m_pageNumber = 1;
+        m_filenamePrefix = f;
+        m_gradientCounter = 0;
+        m_landscape = landscape;
+        m_filename = m_filenamePrefix + m_pageNumber + ".svg";
+        m_colourMap = new HashMap();
+        m_scale = scale;
+        
+        m_longPageLength = longPageLength;
+        m_shortPageLength = shortPageLength;
     }
     
-    public void openFile() {
+    public void openFile() 
+    {
         try 
         {
-            bw = new BufferedWriter(new FileWriter(filename));
+            m_bw = new BufferedWriter(new FileWriter(m_filename));
             writeSVGHeader();
         } 
         catch (IOException e) 
@@ -41,12 +55,13 @@ public class SVGDrawer implements Drawer
         }
     }
     
-    public void closeFile() {
+    public void closeFile() 
+    {
         try 
         {
             writeSVGFooter();
-            bw.flush();
-            bw.close();
+            m_bw.flush();
+            m_bw.close();
         } 
         catch (IOException e) 
         {
@@ -59,14 +74,23 @@ public class SVGDrawer implements Drawer
         try
         {
             //TODO: How big canvas?
-            bw.write("<svg version='1.1' height='5000' width='2000' xmlns='http://www.w3.org/2000/svg'>");
-            bw.newLine();
-            bw.write("<style>");
-            bw.newLine();
-            bw.write("\t.default { font-family: sans-serif; text-anchor: middle; }");
-            bw.newLine();
-            bw.write("</style>");
-            bw.newLine();
+            if(m_landscape)
+            {
+                m_bw.write("<svg version='1.1' height='" + m_shortPageLength + "' width='" + m_longPageLength + 
+                            "' xmlns='http://www.w3.org/2000/svg'>");
+            }
+            else
+            {
+                m_bw.write("<svg version='1.1' height='" + m_longPageLength + "' width='" + m_shortPageLength + 
+                            "' xmlns='http://www.w3.org/2000/svg'>");                
+            }
+            m_bw.newLine();
+            m_bw.write("<style>");
+            m_bw.newLine();
+            m_bw.write("\t.default { font-family: sans-serif; text-anchor: middle; }");
+            m_bw.newLine();
+            m_bw.write("</style>");
+            m_bw.newLine();
             
         } 
         catch (IOException e) 
@@ -79,8 +103,8 @@ public class SVGDrawer implements Drawer
     {
         try
         {
-            bw.write("</svg>");
-            bw.newLine();
+            m_bw.write("</svg>");
+            m_bw.newLine();
         } 
         catch (IOException e) 
         {
@@ -97,6 +121,15 @@ public class SVGDrawer implements Drawer
     {
         return;
     }
+         
+    public void newPage()
+    {
+        closeFile();
+        m_filename = m_filenamePrefix + (++m_pageNumber) + ".svg";
+        openFile();
+        return;
+    }
+    
     
     public void drawLine(double x1, double y1, double x2, double y2, String colour, boolean dashed)
     {
@@ -107,7 +140,7 @@ public class SVGDrawer implements Drawer
             x2 *= m_scale;
             y2 *= m_scale;
             
-            Color jcolour =  colourMap.get(colour);
+            Color jcolour =  m_colourMap.get(colour);
             String colourString = colour;
             if(jcolour != null)
             {
@@ -116,10 +149,10 @@ public class SVGDrawer implements Drawer
                 int b = jcolour.getBlue();
                 colourString = "rgb(" + Integer.toString(r) + "," + Integer.toString(g) + "," + Integer.toString(b) + ")";
             }
-            bw.write("<line x1='" + Double.toString(x1) + "' y1='" + Double.toString(y1) + 
+            m_bw.write("<line x1='" + Double.toString(x1) + "' y1='" + Double.toString(y1) + 
                          "' x2='" + Double.toString(x2) + "' y2='" + Double.toString(y2) + 
                          "' style='stroke:" + colourString + ";stroke-width:2' />");
-            bw.newLine();
+            m_bw.newLine();
         } 
         catch (IOException e) 
         {
@@ -136,7 +169,7 @@ public class SVGDrawer implements Drawer
             width *= m_scale;
             height *= m_scale;
             
-            Color colour =  colourMap.get(borderColour);
+            Color colour =  m_colourMap.get(borderColour);
             String colourString = borderColour;
             if(colour != null)
             {
@@ -145,10 +178,10 @@ public class SVGDrawer implements Drawer
                 int b = colour.getBlue();
                 colourString = "rgb(" + Integer.toString(r) + "," + Integer.toString(g) + "," + Integer.toString(b) + ")";
             }
-            bw.write("<rect x='" + Double.toString(x) + "' y='" + Double.toString(y) + 
+            m_bw.write("<rect x='" + Double.toString(x) + "' y='" + Double.toString(y) + 
                          "' width='" + Double.toString(width) + "' height='" + Double.toString(height) + 
                          "' style='stroke:" + colourString + ";stroke-width:2;fill-opacity:0.0' />");
-            bw.newLine();
+            m_bw.newLine();
         } 
         catch (IOException e) 
         {
@@ -163,9 +196,9 @@ public class SVGDrawer implements Drawer
             x *= m_scale;
             y *= m_scale;
             
-            bw.write(   "<text x='" + Double.toString(x) + "' y='" + Double.toString(y) + "' class='default'>" 
+            m_bw.write(   "<text x='" + Double.toString(x) + "' y='" + Double.toString(y) + "' class='default'>" 
                         + text + "</text>" ); 
-            bw.newLine();
+            m_bw.newLine();
         } 
         catch (IOException e) 
         {
@@ -179,10 +212,10 @@ public class SVGDrawer implements Drawer
         {
             x *= m_scale;
             y *= m_scale;
-            bw.write("<text x='" + Double.toString(x) + "' y='" + Double.toString(y) + 
+            m_bw.write("<text x='" + Double.toString(x) + "' y='" + Double.toString(y) + 
                      "' transform='rotate(" + Integer.toString(angle) + "," + Double.toString(x) + "," + Double.toString(y) + 
                      ")' class='default'>" + text + "</text>" ); 
-            bw.newLine();
+            m_bw.newLine();
         } 
         catch (IOException e) 
         {
@@ -199,10 +232,10 @@ public class SVGDrawer implements Drawer
             width *= m_scale;
             height *= m_scale;
             
-            bw.write("<image href='" + filename + "' x='" + Double.toString(x) + "' y='" + Double.toString(y) + "'" + 
+            m_bw.write("<image href='" + filename + "' x='" + Double.toString(x) + "' y='" + Double.toString(y) + "'" + 
                         " width='" + Double.toString(width) + "' height='" + Double.toString(height) + "'" +
                         " preserveAspectRatio='none'/>");
-            bw.newLine();
+            m_bw.newLine();
         } 
         catch (IOException e) 
         {
@@ -213,7 +246,7 @@ public class SVGDrawer implements Drawer
     public void defineColour(String name, int red, int green, int blue)
     {
         Color newColour = new Color(red, green, blue);
-        colourMap.put(name, newColour);
+        m_colourMap.put(name, newColour);
     }
     
     public void drawVerticalGap(int y)
@@ -231,11 +264,6 @@ public class SVGDrawer implements Drawer
         return;
     }
     
-    public void drawNewPage()
-    {
-        return;
-    }
-    
     public void drawAlignment(double x, double y, double width, double height, String fillColour, String borderColour, int fillLeftPC, int fillRightPC)
     {
          try
@@ -245,7 +273,7 @@ public class SVGDrawer implements Drawer
             width *= m_scale;
             height *= m_scale;
             
-            Color colour = colourMap.get(fillColour);
+            Color colour = m_colourMap.get(fillColour);
             int r = colour.getRed();
             int g = colour.getGreen();
             int b = colour.getBlue();
@@ -258,25 +286,25 @@ public class SVGDrawer implements Drawer
             int leftGreen = g + ((255 - g) * (100 - fillLeftPC)/100);
             int leftBlue = b + ((255 - b) * (100 - fillLeftPC)/100);           
             
-            String gradientName = "grad" + Integer.toString(gradientCounter++);
+            String gradientName = "grad" + Integer.toString(m_gradientCounter++);
             
-            bw.write("<defs>");
-            bw.newLine();
-            bw.write("\t<linearGradient id='" + gradientName + "' x1='" + 0 + "%' y1='0%' x2='" + 100 + "%' y2='0%'>");
-            bw.newLine();
-            bw.write("\t\t<stop offset='0%' style='stop-color:rgb(" + leftRed + "," + leftGreen + "," + leftBlue + ");stop-opacity:1' />");
-            bw.newLine();
-            bw.write("\t\t<stop offset='100%' style='stop-color:rgb(" + rightRed + "," + rightGreen + "," + rightBlue + ");stop-opacity:1' />");
-            bw.newLine();
-            bw.write("\t</linearGradient>");
-            bw.newLine();
-            bw.write("</defs>");
-            bw.newLine();
-            bw.write("<rect x='" + Double.toString(x) + "' y='" + Double.toString(y) + 
+            m_bw.write("<defs>");
+            m_bw.newLine();
+            m_bw.write("\t<linearGradient id='" + gradientName + "' x1='" + 0 + "%' y1='0%' x2='" + 100 + "%' y2='0%'>");
+            m_bw.newLine();
+            m_bw.write("\t\t<stop offset='0%' style='stop-color:rgb(" + leftRed + "," + leftGreen + "," + leftBlue + ");stop-opacity:1' />");
+            m_bw.newLine();
+            m_bw.write("\t\t<stop offset='100%' style='stop-color:rgb(" + rightRed + "," + rightGreen + "," + rightBlue + ");stop-opacity:1' />");
+            m_bw.newLine();
+            m_bw.write("\t</linearGradient>");
+            m_bw.newLine();
+            m_bw.write("</defs>");
+            m_bw.newLine();
+            m_bw.write("<rect x='" + Double.toString(x) + "' y='" + Double.toString(y) + 
                          "' width='" + Double.toString(width) + "' height='" + Double.toString(height) + 
                          "' style='stroke:rgb(" + Integer.toString(r) + "," + Integer.toString(g) + "," + Integer.toString(b) +
                          ");stroke-width:2' fill='url(#" + gradientName + ")'/>");
-            bw.newLine();
+            m_bw.newLine();
         } 
         catch (IOException e) 
         {
@@ -298,13 +326,7 @@ public class SVGDrawer implements Drawer
     {
         return;
     }
-    
-    public void newPage()
-    {
-        // what is pages?
-        return;
-    }
-    
+
     public int  getMaxAlignmentsPerPage()
     {
         return Integer.MAX_VALUE;
@@ -377,6 +399,13 @@ public class SVGDrawer implements Drawer
     
     public int getPageHeight()
     {
-        return Integer.MAX_VALUE;
+        if(m_landscape)
+        {
+            return (int)(m_shortPageLength / m_scale);
+        }
+        else
+        {
+            return (int)(m_longPageLength / m_scale);
+        }
     }
 }

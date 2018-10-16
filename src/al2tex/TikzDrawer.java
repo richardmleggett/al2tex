@@ -95,10 +95,15 @@ public class TikzDrawer implements Drawer
         }
     }
     
-    public void newPage() {
-        try {
-            bw.write("\\newpage"); bw.newLine();
-        } catch (IOException e) {
+    public void newPage() 
+    {
+        try 
+        {
+            bw.write("\\newpage"); 
+            bw.newLine();
+        } 
+        catch (IOException e) 
+        {
             System.out.println(e);
         }       
     }
@@ -272,19 +277,6 @@ public class TikzDrawer implements Drawer
         {
             System.out.println(e);
         }        
-    }
-    
-    public void drawNewPage()
-    {
-         try
-        {
-            bw.write("\\newpage");
-            bw.newLine();
-        } 
-        catch (IOException e) 
-        {
-            System.out.println(e);
-        }          
     }
     
     public int  getMaxAlignmentsPerPage()

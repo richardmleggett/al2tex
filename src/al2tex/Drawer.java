@@ -26,7 +26,6 @@ public interface Drawer
     abstract void drawVerticalGap(int y);
     abstract void drawHorizontalGap(int x);
     abstract void drawNewline();
-    abstract void drawNewPage();
     abstract int getPageHeight();
     
     // Detailed Alignment Diagram

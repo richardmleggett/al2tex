@@ -48,7 +48,7 @@ public class ContigAlignmentDiagram
         }
         else
         {
-            m_drawer = new SVGDrawer(options.getOutputFilePath());
+            m_drawer = new SVGDrawer(options.getOutputFilePath(), true, 1, 3508, 2480);
         }
       
         // iterate through all the alignments and group by contig name
@@ -144,14 +144,14 @@ public class ContigAlignmentDiagram
                 // make a new diagram on a new page
                 // TODO: 175 is a magic number
                 int y = keyOffset + i * 175;
-                if(i > m_drawer.getMaxAlignmentsPerPage())
+                if(y > m_drawer.getPageHeight() && i > m_drawer.getMaxAlignmentsPerPage())
                 {
                     m_drawer.closePicture();
                     m_drawer.newPage();
                     m_drawer.openPicture(0.1,0.1);
                     drawKey(200,25);
                     i = 0;
-                    y = keyOffset + i * 175;
+                    y = keyOffset;
                 }
 
                 drawContig(DetailedAlignments, 150, y );
