@@ -41,8 +41,8 @@ public class Al2Tex {
                 CoverageMapDiagram coverageDiagram = new CoverageMapDiagram(options);
                 System.out.println("Making bitmaps");
                 coverageDiagram.makeBitmapsFromFile(pslFile, options.getOutputDirectory());
-                System.out.println("Writing LaTeX files");
-                coverageDiagram.writeTexFile();
+                System.out.println("Writing " + options.getOutputFormat() + " files");
+                coverageDiagram.writeOutputFile();
             }
             
             if ((options.getDiagramType().equals("coverage")) ||
@@ -60,7 +60,7 @@ public class Al2Tex {
                 System.out.println("Building alignment diagram");
                 AlignmentDiagram pslAlignmentDiagram = new AlignmentDiagram(options, pslFile);
                 System.out.println("Writing LaTeX files");
-                pslAlignmentDiagram.writeTexFile(options.getOutputFilePath());
+                pslAlignmentDiagram.writeOutputFile(options.getOutputFilePath());
             }
             
             if((options.getDiagramType().equals("contigalignment"))||
@@ -68,8 +68,8 @@ public class Al2Tex {
             {
                 System.out.println("Building contig alignment diagram");
                 ContigAlignmentDiagram contigAlignmentDiagram = new ContigAlignmentDiagram(pslFile, options);
-                System.out.println("Writing LaTeX files");
-                contigAlignmentDiagram.writeTexFile(options);
+                System.out.println("Writing " + options.getOutputFormat() + " files");
+                contigAlignmentDiagram.writeOutputFile(options);
             }
             if((options.getDiagramType().equals("genomecoverage"))||
                 (options.getDiagramType().equals("all"))) 
@@ -89,8 +89,8 @@ public class Al2Tex {
                 CoverageMapDiagram coverageDiagram = new CoverageMapDiagram(options);
                 System.out.println("Making bitmaps");
                 coverageDiagram.makeBitmapsFromFile(samFile, options.getOutputDirectory());
-                System.out.println("Writing LaTeX files");
-                coverageDiagram.writeTexFile();
+                System.out.println("Writing " + options.getOutputFormat() + " files");
+                coverageDiagram.writeOutputFile();
             }       
             if((options.getDiagramType().equals("genomecoverage"))||
                 (options.getDiagramType().equals("all"))) 
@@ -115,15 +115,15 @@ public class Al2Tex {
                 System.out.println("Building alignment diagram");
                 AlignmentDiagram nucmerAlignmentDiagram = new AlignmentDiagram(options, alignmentFile);
                 System.out.println("Writing LaTeX files");
-                nucmerAlignmentDiagram.writeTexFile(options.getOutputFilePath());
+                nucmerAlignmentDiagram.writeOutputFile(options.getOutputFilePath());
             }
             if((options.getDiagramType().equals("contigalignment"))||
                 (options.getDiagramType().equals("all"))) 
             {
                 System.out.println("Building contig alignment diagram");
                 ContigAlignmentDiagram contigAlignmentDiagram = new ContigAlignmentDiagram(alignmentFile, options);
-                System.out.println("Writing LaTeX files");
-                contigAlignmentDiagram.writeTexFile(options);
+                System.out.println("Writing " + options.getOutputFormat() + " files");
+                contigAlignmentDiagram.writeOutputFile(options);
             }
             if ((options.getDiagramType().equals("coveragemap"))  ||
                 (options.getDiagramType().equals("all"))) 
@@ -132,8 +132,8 @@ public class Al2Tex {
                 CoverageMapDiagram coverageDiagram = new CoverageMapDiagram(options);
                 System.out.println("Making bitmaps");
                 coverageDiagram.makeBitmapsFromFile(alignmentFile, options.getOutputDirectory());
-                System.out.println("Writing LaTeX files");
-                coverageDiagram.writeTexFile();
+                System.out.println("Writing " + options.getOutputFormat() + " files");
+                coverageDiagram.writeOutputFile();
             }
             if((options.getDiagramType().equals("genomecoverage"))||
                 (options.getDiagramType().equals("all"))) 
@@ -150,8 +150,8 @@ public class Al2Tex {
             {
                 System.out.println("Building contig alignment diagram");
                 ContigAlignmentDiagram contigAlignmentDiagram = new ContigAlignmentDiagram(pafFile, options);
-                System.out.println("Writing LaTeX files");
-                contigAlignmentDiagram.writeTexFile(options);
+                System.out.println("Writing " + options.getOutputFormat() + " files");
+                contigAlignmentDiagram.writeOutputFile(options);
             }
             if ((options.getDiagramType().equals("alignment"))  ||
                 (options.getDiagramType().equals("all"))) 
@@ -159,7 +159,7 @@ public class Al2Tex {
                 System.out.println("Building alignment diagram");
                 AlignmentDiagram alignmentDiagram = new AlignmentDiagram(options, pafFile);
                 System.out.println("Writing LaTeX files");
-                alignmentDiagram.writeTexFile(options.getOutputFilePath());
+                alignmentDiagram.writeOutputFile(options.getOutputFilePath());
             }
             if ((options.getDiagramType().equals("coveragemap"))  ||
                 (options.getDiagramType().equals("all"))) 
@@ -168,8 +168,8 @@ public class Al2Tex {
                 CoverageMapDiagram coverageDiagram = new CoverageMapDiagram(options);
                 System.out.println("Making bitmaps");
                 coverageDiagram.makeBitmapsFromFile(pafFile, options.getOutputDirectory());
-                System.out.println("Writing LaTeX files");
-                coverageDiagram.writeTexFile();
+                System.out.println("Writing " + options.getOutputFormat() + " files");
+                coverageDiagram.writeOutputFile();
             }
             if((options.getDiagramType().equals("genomecoverage"))||
                 (options.getDiagramType().equals("all"))) 

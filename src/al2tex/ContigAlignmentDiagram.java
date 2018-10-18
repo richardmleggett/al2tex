@@ -82,7 +82,7 @@ public class ContigAlignmentDiagram
         }
     }
     
-    public void writeTexFile(DiagramOptions options)
+    public void writeOutputFile(DiagramOptions options)
     {
         if(m_refNames.isEmpty())
         {
@@ -216,13 +216,13 @@ public class ContigAlignmentDiagram
 
         // draw the contig rectangle
         m_drawer.drawRectangle(x, y, m_contigDrawLength, m_contigDrawHeight, "black");
-        m_drawer.drawText(x - 100, (y + m_contigDrawHeight/2), contigName);
+        m_drawer.drawText(x - 100, (y + m_contigDrawHeight/2), contigName, Drawer.Anchor.ANCHOR_MIDDLE, "black");
         for(int i = 0; i <= NUM_COORD_MARKS; i++)
         {
             double xMark = x + i * (m_contigDrawLength / NUM_COORD_MARKS);
             String coord = Integer.toString(i * (contigLength / NUM_COORD_MARKS));
             m_drawer.drawLine(xMark, y - 5, xMark, y + 5, "black", false);
-            m_drawer.drawText(xMark, y - 15, coord);
+            m_drawer.drawText(xMark, y - 15, coord, Drawer.Anchor.ANCHOR_MIDDLE, "black");
         }
 }
     
@@ -292,8 +292,8 @@ public class ContigAlignmentDiagram
         double maxRefX = (double)maxRef * refContigDrawLength / refLength;
         m_drawer.drawLine(0, zoomRefContigYStart, (refContigXStart + minRefX), refContigYEnd, "black", true);
         m_drawer.drawLine(m_contigDrawLength, zoomRefContigYStart, (refContigXStart + maxRefX), refContigYEnd, "black", true);
-        m_drawer.drawText(0, zoomRefContigYStart - 20, Integer.toString(minRef));
-        m_drawer.drawText(m_contigDrawLength, zoomRefContigYStart - 20, Integer.toString(maxRef));
+        m_drawer.drawText(0, zoomRefContigYStart - 20, Integer.toString(minRef), Drawer.Anchor.ANCHOR_MIDDLE, "black");
+        m_drawer.drawText(m_contigDrawLength, zoomRefContigYStart - 20, Integer.toString(maxRef), Drawer.Anchor.ANCHOR_MIDDLE, "black");
 
         double zoomRefLength = maxRef - minRef;
         int queryLength = alignments.get(0).getQuerySize();
@@ -357,9 +357,9 @@ public class ContigAlignmentDiagram
         m_drawer.drawRectangle(x, y, drawLength, m_refContigDrawHeight, "black");
         if(drawLabels)
         {
-            m_drawer.drawText(x, y - 20, Integer.toString(refStart));
-            m_drawer.drawText(x +  drawLength, y - 20, Integer.toString(refEnd));
-            m_drawer.drawText(x - 50, (y + m_refContigDrawHeight/2), refName);
+            m_drawer.drawText(x, y - 20, Integer.toString(refStart), Drawer.Anchor.ANCHOR_MIDDLE, "black");
+            m_drawer.drawText(x +  drawLength, y - 20, Integer.toString(refEnd), Drawer.Anchor.ANCHOR_MIDDLE, "black");
+            m_drawer.drawText(x - 50, (y + m_refContigDrawHeight/2), refName, Drawer.Anchor.ANCHOR_MIDDLE, "black");
         }
     }   
 }

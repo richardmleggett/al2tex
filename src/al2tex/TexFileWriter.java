@@ -27,7 +27,8 @@ public class TexFileWriter extends TikzDrawer{
         super(f);
     }
      
-    public void newTarget(int s, int h) {
+    public void newTarget(int s, int h) 
+    {
         targetSize = s;
         int targetHits = h;
 

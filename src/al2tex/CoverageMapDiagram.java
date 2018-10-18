@@ -34,14 +34,15 @@ public class CoverageMapDiagram
         //super(o.getOutputFilePath() + "_coverageMap.tex");
         options = o;
         mapType = options.getCoverageMapImageType();
+        String filename = o.getOutputFilePath() + "_coverageMap";
         
         if(o.getOutputFormat().equals("svg"))
         {
-            m_drawer = new SVGDrawer(o.getOutputFilePath() + "_coverageMap", true, 4, 842, 595);
+            m_drawer = new SVGDrawer(filename, true, 4, 842, 595);
         }
         else
         {
-            m_drawer = new TikzDrawer(o.getOutputFilePath() + "_coverageMap");
+            m_drawer = new TikzDrawer(filename);
         }
     }
     
@@ -86,7 +87,7 @@ public class CoverageMapDiagram
         heatMapScale.saveHeatmap(outputDirectory + "/heatmap.png");
     }
     
-    public void writeTexFile() 
+    public void writeOutputFile() 
     {
         m_drawer.openFile();
         m_drawer.drawScale(heatMapScale, 10, 5);

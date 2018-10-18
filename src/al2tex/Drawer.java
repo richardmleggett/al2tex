@@ -9,8 +9,16 @@ package al2tex;
  *
  * @author martins
  */
+
 public interface Drawer 
 {
+    public enum Anchor
+    {
+        ANCHOR_LEFT,
+        ANCHOR_MIDDLE,
+        ANCHOR_RIGHT 
+    }
+    
     abstract void openFile();
     abstract void closeFile();
     abstract void openPicture(double x, double y);
@@ -19,7 +27,8 @@ public interface Drawer
     abstract void drawLine(double x1, double y1, double x2, double y2, String colour, boolean dashed);
     abstract void drawCurve(double startx, double starty, double endx, double endy, double controlx1, double controly1, double controlx2, double controly2);
     abstract void drawRectangle(double x, double y, double width, double height, String borderColour);
-    abstract void drawText(double x, double y, String text);
+    abstract void drawFilledRectangle(double x, double y, double width, double height, String fillColour, String borderColour);
+    abstract void drawText(double x, double y, String text, Anchor anchor, String colour);
     abstract void drawTextRotated(double x, double y, String text, int angle);
     abstract void drawImage(double x, double y, double width, double height, String filename, String optionsString);
     abstract void defineColour(String name, int red, int green, int blue);

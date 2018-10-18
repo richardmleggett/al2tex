@@ -138,6 +138,20 @@ public class TikzDrawer implements Drawer
         }        
     }
     
+    public void drawFilledRectangle(double x, double y, double width, double height, String fillColour, String borderColour)
+    {
+          try
+        {
+            bw.write("\\filldraw[ fill=" + fillColour + ", draw=" + borderColour + "] (" + x + "," + y + ") rectangle " + 
+                    "(" + (x + width) +","+ (y + height) + ");");
+            bw.newLine();
+        } 
+        catch (IOException e) 
+        {
+            System.out.println(e);
+        }       
+    }
+    
     public void drawAlignment(double x, double y, double width, double height, String fillColour, String borderColour, int fillLeftPC, int fillRightPC)
     {
          try
@@ -155,12 +169,26 @@ public class TikzDrawer implements Drawer
         }        
     }
     
-    public void drawText(double x, double y, String text)
+    public void drawText(double x, double y, String text, Anchor anchor, String colour)
     {
         try
         {
             text = text.replace("_", "\\string_");
-            bw.write("\\node at (" + x  + "," + y + ") {" + text + "};" ); 
+            String anchorString = "";
+            switch(anchor)
+            {
+                case ANCHOR_LEFT:
+                {
+                    anchorString = "[anchor=west]";
+                    break;
+                }
+                case ANCHOR_RIGHT:
+                {
+                    anchorString = "[anchor= east]";
+                    break;
+                }
+            }
+            bw.write("\\node " + anchorString + " at (" + x  + "," + y + ") {\\color{" + colour + "}" + text + "};" ); 
             bw.newLine();
         } 
         catch (IOException e) 
@@ -301,19 +329,19 @@ public class TikzDrawer implements Drawer
         for(int r=0; r<nRows; r+=50) 
         {
             int rowY = height - (int)((double)r * ((double)height / (double)nRows));
-            drawText(x - 10, y + rowY, Integer.toString((int)(r*rowSize)));
+            drawText(x - 10, y + rowY, Integer.toString((int)(r*rowSize)), Drawer.Anchor.ANCHOR_MIDDLE, "black");
         }
 
         int rowY = height - (int)((double)(nRows) * ((double)height / (double)nRows));
-        drawText(x - 10, y + rowY, Integer.toString(targetSize));
+        drawText(x - 10, y + rowY, Integer.toString(targetSize), Drawer.Anchor.ANCHOR_MIDDLE, "black");
         
         // draw the image
         drawImage(x, y, width, height, filename, "[anchor=south west, inner sep=0pt, outer sep=0pt]");
 
         // draw the text labels
         int textxPos = width / 2;
-        drawText(x + textxPos, y - 5, "Each row represents "+(int)rowSize+" nt");
-        drawText(x + textxPos, y - 10, targetName);
+        drawText(x + textxPos, y - 5, "Each row represents "+(int)rowSize+" nt", Drawer.Anchor.ANCHOR_MIDDLE, "black");
+        drawText(x + textxPos, y - 10, targetName, Drawer.Anchor.ANCHOR_MIDDLE, "black");
         drawTextRotated(x - 20, y + (height/2), "Position in genome (nt)", 90);
         closePicture();
         drawHorizontalGap(10);
@@ -333,12 +361,12 @@ public class TikzDrawer implements Drawer
             int num = i == num_dividers ? targetSize: (int)((targetSize / num_dividers) * i);
             int pos = (int)((double)num * unit);
 
-            drawText(x + pos, y + imageHeight + 2, Integer.toString(num));
+            drawText(x + pos, y + imageHeight + 2, Integer.toString(num), Drawer.Anchor.ANCHOR_MIDDLE, "black");
             drawLine(x + pos, y + imageHeight + 1, x + pos, y + imageHeight - 1, "black", false);
         }
 
         drawImage(x, y, imageWidth, imageHeight, filename, "[anchor=south west, inner sep=0pt, outer sep=0pt]");
-        drawText(x + imageWidth + 10, y + (imageHeight/2), targetName);
+        drawText(x + imageWidth + 10, y + (imageHeight/2), targetName, Drawer.Anchor.ANCHOR_MIDDLE, "black");
         closePicture();
         drawVerticalGap(5);
         drawNewline();        
@@ -351,9 +379,9 @@ public class TikzDrawer implements Drawer
         
         openPicture(1,1);
         drawImage(x, y, width, height, "heatmap.png", "[anchor=south west, inner sep=0pt, outer sep=0pt]");
-        drawText(x + (width/2), y + 5, "Coverage");
-        drawText(x, y + 5, "0");
-        drawText(x + width, y + 5, Integer.toString(heatMapScale.getHeatMapSize()));
+        drawText(x + (width/2), y + 5, "Coverage", Drawer.Anchor.ANCHOR_MIDDLE, "black");
+        drawText(x, y + 5, "0", Drawer.Anchor.ANCHOR_MIDDLE, "black");
+        drawText(x + width, y + 5, Integer.toString(heatMapScale.getHeatMapSize()), Drawer.Anchor.ANCHOR_MIDDLE, "black");
         closePicture();
         drawVerticalGap(5);
         drawNewline();          
