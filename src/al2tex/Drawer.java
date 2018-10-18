@@ -29,7 +29,7 @@ public interface Drawer
     abstract void drawRectangle(double x, double y, double width, double height, String borderColour);
     abstract void drawFilledRectangle(double x, double y, double width, double height, String fillColour, String borderColour);
     abstract void drawText(double x, double y, String text, Anchor anchor, String colour);
-    abstract void drawTextRotated(double x, double y, String text, int angle);
+    abstract void drawTextRotated(double x, double y, String text, int angle, Anchor anchor);
     abstract void drawImage(double x, double y, double width, double height, String filename, String optionsString);
     abstract void defineColour(String name, int red, int green, int blue);
     abstract void drawVerticalGap(int y);

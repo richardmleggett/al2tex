@@ -197,12 +197,26 @@ public class TikzDrawer implements Drawer
         }         
     }
     
-    public void drawTextRotated(double x, double y, String text, int angle)
+    public void drawTextRotated(double x, double y, String text, int angle, Anchor anchor)
     {
          try
         {
+            String anchorString = "";
+            switch(anchor)
+            {
+                case ANCHOR_LEFT:
+                {
+                    anchorString = " ,anchor=west";
+                    break;
+                }
+                case ANCHOR_RIGHT:
+                {
+                    anchorString = " ,anchor= east";
+                    break;
+                }
+            }
             text = text.replace("_", "\\string_");
-            bw.write("\\node[rotate=" + angle + "] at (" + x  + "," + y + ") {" + text + "};" ); 
+            bw.write("\\node[rotate=" + angle + anchorString + "] at (" + x  + "," + y + ") {" + text + "};" ); 
             bw.newLine();
         } 
         catch (IOException e) 
@@ -342,7 +356,7 @@ public class TikzDrawer implements Drawer
         int textxPos = width / 2;
         drawText(x + textxPos, y - 5, "Each row represents "+(int)rowSize+" nt", Drawer.Anchor.ANCHOR_MIDDLE, "black");
         drawText(x + textxPos, y - 10, targetName, Drawer.Anchor.ANCHOR_MIDDLE, "black");
-        drawTextRotated(x - 20, y + (height/2), "Position in genome (nt)", 90);
+        drawTextRotated(x - 20, y + (height/2), "Position in genome (nt)", 90, Drawer.Anchor.ANCHOR_MIDDLE);
         closePicture();
         drawHorizontalGap(10);
     }

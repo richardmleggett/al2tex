@@ -38,7 +38,7 @@ public class CoverageMapDiagram
         
         if(o.getOutputFormat().equals("svg"))
         {
-            m_drawer = new SVGDrawer(filename, true, 4, 842, 595);
+            m_drawer = new SVGDrawer(filename, true, 4, 1242, 595);
         }
         else
         {
