@@ -427,7 +427,7 @@ public class SVGDrawer implements Drawer
 
     public int  getMaxAlignmentsPerPage()
     {
-        return Integer.MAX_VALUE;
+        return 14;
     }
     
     public void drawCoverageMap(CoverageMapImage coverageMap, double x, double y)

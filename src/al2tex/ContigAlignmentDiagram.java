@@ -42,13 +42,14 @@ public class ContigAlignmentDiagram
         m_colourCounter = 0;
         m_numKeysPerLine = 7;
         
+        String filename = options.getOutputFilePath() + "_contigalignment";
         if(options.getOutputFormat().equals("tex"))
         {
-            m_drawer = new TikzDrawer(options.getOutputFilePath());
+            m_drawer = new TikzDrawer(filename);
         }
         else
         {
-            m_drawer = new SVGDrawer(options.getOutputFilePath(), true, 1, 3508, 2480);
+            m_drawer = new SVGDrawer(filename, true, 1, 3508, 2480);
         }
       
         // iterate through all the alignments and group by contig name
