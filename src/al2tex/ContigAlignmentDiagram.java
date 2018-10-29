@@ -45,7 +45,7 @@ public class ContigAlignmentDiagram
         String filename = options.getOutputFilePath() + "_contigalignment";
         if(options.getOutputFormat().equals("tex"))
         {
-            m_drawer = new TikzDrawer(filename);
+            m_drawer = new TikzDrawer(filename, true);
         }
         else
         {

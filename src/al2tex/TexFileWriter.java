@@ -24,7 +24,7 @@ public class TexFileWriter extends TikzDrawer{
     private int y;
     
     public TexFileWriter(String f) {
-        super(f);
+        super(f, true);
     }
      
     public void newTarget(int s, int h) 

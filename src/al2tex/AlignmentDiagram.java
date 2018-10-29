@@ -40,7 +40,7 @@ public class AlignmentDiagram {
         
         if(options.getOutputFormat().equals("tex"))
         {
-            m_drawer = new TikzDrawer(filename);
+            m_drawer = new TikzDrawer(filename, true);
         }
         else
         {

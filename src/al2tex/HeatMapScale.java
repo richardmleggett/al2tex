@@ -17,8 +17,11 @@ import javax.imageio.*;
 
 public class HeatMapScale {
     private final static int HEATMAPLIMIT=10240;
-    private int heatMapSize = 70;
+    private int heatMapLength = 70;
+    private int heatMapHeight = 8;
+    private double ratio = 8./70;
     private Color[] heatMap = new Color[HEATMAPLIMIT];
+    private String filename;
     
     public HeatMapScale() {
         this.setHeatMapSize(64);
@@ -29,23 +32,24 @@ public class HeatMapScale {
     }
     
     public void setHeatMapSize(int s) {
-        heatMapSize = s;
-        
-        heatMap = new Color[heatMapSize+1];
+        heatMapLength = s;
+        heatMapHeight = Math.max((int)((double)s * ratio), 8);
+        heatMap = new Color[heatMapLength+1];
         
         heatMap[0] = new Color(200, 200, 200);
-        for(int i = 1; i <=heatMapSize; i++)
+        for(int i = 1; i <=heatMapLength; i++)
         {
-            heatMap[i] = Color.getHSBColor(0.7f*((float)(heatMapSize-(i-1)) / (float)heatMapSize), 0.85f, 1.0f);
+            heatMap[i] = Color.getHSBColor(0.7f*((float)(heatMapLength-(i-1)) / (float)heatMapLength), 0.85f, 1.0f);
         }
         
-        System.out.println("Heat map size set to "+heatMapSize);
+        System.out.println("Heat map size set to "+heatMapLength);
     }
     
-    public void saveHeatmap(String filename) {
-        BufferedImage bImage = new BufferedImage(heatMapSize+1, 8, BufferedImage.TYPE_INT_RGB);
-        for (int x=0; x<=heatMapSize; x++) {
-            for (int y=0; y<8; y++) {
+    public void saveHeatmap(String heatMapFilename) {
+        filename = heatMapFilename;
+        BufferedImage bImage = new BufferedImage(heatMapLength+1, heatMapHeight, BufferedImage.TYPE_INT_RGB);
+        for (int x=0; x<=heatMapLength; x++) {
+            for (int y=0; y<heatMapHeight; y++) {
                 bImage.setRGB(x, y, heatMap[x].getRGB());
             }
         }
@@ -60,7 +64,7 @@ public class HeatMapScale {
     }
     
     public void plotHeatMap(BufferedImage bImage, int xo, int yo, int w, int h, boolean restricted) {        
-        double m = (double)heatMapSize/(double)w;
+        double m = (double)heatMapLength/(double)w;
         for (int x=0; x<=w; x++) {
             int p = (int)((double)x * m);
             for (int y=0; y<h; y++) {
@@ -75,28 +79,40 @@ public class HeatMapScale {
         g.setFont(new Font("Arial", Font.PLAIN, 48));
         g.drawString("0", xo-h-h, yo - h / 4);
         g.drawString("1", xo-10, yo - h / 4);
-        g.drawString(Integer.toString(heatMapSize)+ (restricted ? "+":""), xo+w-50, yo - h / 4);
-        g.drawString(Integer.toString(heatMapSize/2), xo+(w/2)-50, yo - h / 4);
+        g.drawString(Integer.toString(heatMapLength)+ (restricted ? "+":""), xo+w-50, yo - h / 4);
+        g.drawString(Integer.toString(heatMapLength/2), xo+(w/2)-50, yo - h / 4);
         //g.drawLine(xo + (w/2), yo, xo+(w/2), yo-16);
     }
     
     public Color getColour(int i) {
-        if (i >= heatMapSize) {
-            return heatMap[heatMapSize -1];
+        if (i >= heatMapLength) {
+            return heatMap[heatMapLength -1];
         } else {
             return heatMap[i];
         }
     }
     
     public int getRGBColour(int i) {
-        if (i > heatMapSize) {
-            return heatMap[heatMapSize].getRGB();            
+        if (i > heatMapLength) {
+            return heatMap[heatMapLength].getRGB();            
         } else {
             return heatMap[i].getRGB();
         }
     }
     
     public int getHeatMapSize() {
-        return heatMapSize;
+        return heatMapLength;
+    }
+    
+    public int getHeatMapWidth() {
+        return heatMapLength;
+    }
+    
+    public int getHeatMapHeight() {
+        return heatMapHeight;
+    }
+    
+    public String getFilename() {
+        return filename;
     }
 }

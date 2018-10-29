@@ -10,10 +10,6 @@
 package al2tex;
 
 import java.io.*;
-import java.util.*;
-import java.awt.image.*;
-import java.awt.*;
-import javax.imageio.*;
 
 public class DiagramOptions {
     private String diagramType = null;
@@ -35,6 +31,7 @@ public class DiagramOptions {
     private String alignmentQueryName = null;
     private String alignmentRefName = null;
     private CoverageMapImage.Type cmiType = CoverageMapImage.Type.SQUARE_MAP;
+    private int binSize = 30;
     
     public void parseArgs(String[] args) {
         int i=0;
@@ -131,6 +128,9 @@ public class DiagramOptions {
             } else if (args[i].equalsIgnoreCase("-alignmentRefName")) {
                 alignmentRefName = args[i+1];
                 System.out.println("   Ref name for alignment diagram: " + alignmentRefName);
+            } else if (args[i].equalsIgnoreCase("-binsize")) {
+                binSize = Integer.parseInt(args[i+1]);
+                System.out.println("   Bin size: " + binSize);
             } else {
                 System.out.println("Unknown paramter: " + args[i]);
                 System.exit(0);
@@ -276,5 +276,9 @@ public class DiagramOptions {
     
     public String getOutputFormat() {
         return outputFormat;
+    }
+    
+    public int getBinSize() {
+        return binSize;
     }
 }

@@ -42,7 +42,7 @@ public class CoverageMapDiagram
         }
         else
         {
-            m_drawer = new TikzDrawer(filename);
+            m_drawer = new TikzDrawer(filename, true);
         }
     }
     

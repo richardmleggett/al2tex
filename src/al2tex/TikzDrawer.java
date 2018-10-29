@@ -16,9 +16,11 @@ public class TikzDrawer implements Drawer
 {
     protected String filename;
     protected BufferedWriter bw;
+    private boolean m_landscape;
     
-    public TikzDrawer(String f) {
+    public TikzDrawer(String f, boolean landscape) {
         filename = f + ".tex";
+        m_landscape = landscape;
     }
     
     public void openFile() {
@@ -48,6 +50,7 @@ public class TikzDrawer implements Drawer
     
     protected void writeTexHeader() {
         try {
+            String pageOrientation = m_landscape ? "landscape" : "portrait";            
             bw.write("\\documentclass[a4paper,11pt,oneside]{article}"); bw.newLine();
             bw.write("\\usepackage{graphicx}"); bw.newLine();
             bw.write("\\usepackage{url}"); bw.newLine();
@@ -55,7 +58,7 @@ public class TikzDrawer implements Drawer
             bw.write("\\usepackage{rotating}"); bw.newLine();
             bw.write("\\usepackage{xcolor}"); bw.newLine();
             bw.write("\\usepackage{tikz}"); bw.newLine();
-            bw.write("\\usepackage[landscape,top=3cm, bottom=3cm, left=3cm, right=3cm]{geometry}"); bw.newLine();
+            bw.write("\\usepackage[" + pageOrientation + ",top=3cm, bottom=3cm, left=3cm, right=3cm]{geometry}"); bw.newLine();
             bw.write("\\begin{document}"); bw.newLine();
             bw.write("\\sffamily"); bw.newLine();
             bw.write("\\scriptsize"); bw.newLine();

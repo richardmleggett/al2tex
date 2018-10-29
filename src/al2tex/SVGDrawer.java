@@ -486,13 +486,14 @@ public class SVGDrawer implements Drawer
     
     public void drawScale(HeatMapScale heatMapScale, double x, double y)
     {
-        int height = 4;
-        int width = 50;
+        int height = heatMapScale.getHeatMapHeight();
+        int width = heatMapScale.getHeatMapWidth();
+        String filename = heatMapScale.getFilename();
         
-        drawImage(x, y, width, height, "heatmap.png", "[anchor=south west, inner sep=0pt, outer sep=0pt]");
-        drawText(x + (width/2), y + 5, "Coverage", Drawer.Anchor.ANCHOR_MIDDLE, "black");
-        drawText(x, y + 5, "0", Drawer.Anchor.ANCHOR_MIDDLE, "black");
-        drawText(x + width, y + 5, Integer.toString(heatMapScale.getHeatMapSize()), Drawer.Anchor.ANCHOR_MIDDLE, "black");           
+        drawImage(x, y, width, height, filename, "[anchor=south west, inner sep=0pt, outer sep=0pt]");
+        drawText(x + (width/2), y + height + 5, "Coverage", Drawer.Anchor.ANCHOR_MIDDLE, "black");
+        drawText(x, y + height + 5, "0", Drawer.Anchor.ANCHOR_MIDDLE, "black");
+        drawText(x + width, y + height + 5, Integer.toString(heatMapScale.getHeatMapSize()), Drawer.Anchor.ANCHOR_MIDDLE, "black");           
     }
     
     public int getPageHeight()

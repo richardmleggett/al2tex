@@ -76,8 +76,9 @@ public class Al2Tex {
             {
                 System.out.println("Building genome coverage diagram");
                 GenomeCoverageDiagram genomeCoverageDiagram = new GenomeCoverageDiagram(options);
-                System.out.println("Writing LaTeX files");
+                System.out.println("Writing output files");
                 genomeCoverageDiagram.makeBitmapsFromFile(pslFile);
+                genomeCoverageDiagram.writeOutputFile();
             }
         } else if (options.getInputFormat().equals("sam")) {
             System.out.println("\nOpening SAM file");
@@ -97,8 +98,9 @@ public class Al2Tex {
             {
                 System.out.println("Building genome coverage diagram");
                 GenomeCoverageDiagram genomeCoverageDiagram = new GenomeCoverageDiagram(options);
-                System.out.println("Writing LaTeX files");
+                System.out.println("Writing output files");
                 genomeCoverageDiagram.makeBitmapsFromFile(samFile);
+                genomeCoverageDiagram.writeOutputFile();
             }
         } else if (options.getInputFormat().equals("coords") || options.getInputFormat().equals("tiling")) {
             int type = 0;
@@ -140,8 +142,9 @@ public class Al2Tex {
             {
                 System.out.println("Building genome coverage diagram");
                 GenomeCoverageDiagram genomeCoverageDiagram = new GenomeCoverageDiagram(options);
-                System.out.println("Writing LaTeX files");
+                System.out.println("Writing output files");
                 genomeCoverageDiagram.makeBitmapsFromFile(alignmentFile);
+                genomeCoverageDiagram.writeOutputFile();
             }            
         } else if (options.getInputFormat().equals("paf")) {
             PAFFile pafFile = new PAFFile(options.getInputFilename());
@@ -176,8 +179,9 @@ public class Al2Tex {
             {
                 System.out.println("Building genome coverage diagram");
                 GenomeCoverageDiagram genomeCoverageDiagram = new GenomeCoverageDiagram(options);
-                System.out.println("Writing LaTeX files");
+                System.out.println("Writing output files");
                 genomeCoverageDiagram.makeBitmapsFromFile(pafFile);
+                genomeCoverageDiagram.writeOutputFile();
             }   
         }
         System.out.println("Done");
