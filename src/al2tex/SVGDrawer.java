@@ -422,7 +422,34 @@ public class SVGDrawer implements Drawer
     
     public void drawCurve(double startx, double starty, double endx, double endy, double controlx1, double controly1, double controlx2, double controly2)
     {
-        return;
+               try
+        {
+            startx *= m_scale;
+            starty *= m_scale;
+            endx *= m_scale;
+            endy *= m_scale;
+            controlx1 *= m_scale;
+            controlx2*= m_scale;
+            controly1 *= m_scale;
+            controly2 *= m_scale;
+            
+            starty = m_pageHeight - starty;
+            endy = m_pageHeight - endy;
+            controly1 = m_pageHeight - controly1;
+            controly2 = m_pageHeight - controly2;
+            
+            m_bw.write("<path d='M" + Double.toString(startx) + " " + Double.toString(starty) + 
+                        " C " + Double.toString(controlx1) + " " + Double.toString(controly1) + 
+                        ", " + Double.toString(controlx2) + " " + Double.toString(controly2) + 
+                        ", " + Double.toString(endx) + " " + Double.toString(endy) + 
+                         "' style='stroke: black ;stroke-width:2' fill='transparent' />");
+            m_bw.newLine();
+        } 
+        catch (IOException e) 
+        {
+            System.out.println(e);
+        }
+ 
     }
 
     public int  getMaxAlignmentsPerPage()
