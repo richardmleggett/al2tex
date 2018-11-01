@@ -28,6 +28,7 @@ public class ContigAlignmentDiagram
     private int m_colourCounter;
     private boolean m_coloursSet;
     private Drawer m_drawer;
+    private boolean m_detailedDiagram = false;
     
     public ContigAlignmentDiagram(DetailedAlignmentFile alignmentFile, DiagramOptions options)
     {
@@ -42,6 +43,11 @@ public class ContigAlignmentDiagram
         m_colourCounter = 0;
         m_numKeysPerLine = 7;
         
+        if(options.getAlignmentQueryName() != null && options.getAlignmentRefName() != null)
+        {
+            m_detailedDiagram = true;
+        }
+        
         String filename = options.getOutputFilePath() + "_contigalignment";
         if(options.getOutputFormat().equals("tex"))
         {
@@ -49,7 +55,9 @@ public class ContigAlignmentDiagram
         }
         else
         {
-            m_drawer = new SVGDrawer(filename, true, 1, 3508, 2480);
+            int width = m_detailedDiagram ? 2500 : 3508;
+            int height = m_detailedDiagram ? 1400 : 2480;
+            m_drawer = new SVGDrawer(filename, true, 1, width, height);
         }
       
         // iterate through all the alignments and group by contig name
@@ -107,7 +115,7 @@ public class ContigAlignmentDiagram
         // do the picture
         m_drawer.openPicture(0.1,0.1);
         
-        if(options.getAlignmentQueryName() != null && options.getAlignmentRefName() != null)
+        if(m_detailedDiagram)
         {
             // do the stuff
             System.out.println("Drawing contig in detail.");
@@ -133,7 +141,7 @@ public class ContigAlignmentDiagram
                 System.out.println("Could not find alignments between " + queryName + " and " + refName + " in file " + options.getInputFilename());
                 System.exit(0);
             }
-            drawAlignmentDiagram(alignmentsToDraw, 0, 7 * 175);
+            drawAlignmentDiagram(alignmentsToDraw, 40, 1200);
         }
         else
         {        
@@ -266,7 +274,7 @@ public class ContigAlignmentDiagram
         int refContigYEnd = refContigYStart + m_refContigDrawHeight;
         
         double refLengthProp = 0.7;
-        int refContigXStart = (int)((1-refLengthProp) * m_contigDrawLength * 0.5);
+        int refContigXStart = x + (int)((1-refLengthProp) * m_contigDrawLength * 0.5);
         drawReferenceContig(refContigXStart, refContigYStart, refName, 0, refLength, true, refLengthProp);
         int minRef = refLength;
         int maxRef = 0;        
@@ -291,10 +299,10 @@ public class ContigAlignmentDiagram
         int refContigDrawLength = (int)(m_contigDrawLength * refLengthProp);
         double minRefX = (double)minRef * refContigDrawLength / refLength;
         double maxRefX = (double)maxRef * refContigDrawLength / refLength;
-        m_drawer.drawLine(0, zoomRefContigYStart, (refContigXStart + minRefX), refContigYEnd, "black", true);
-        m_drawer.drawLine(m_contigDrawLength, zoomRefContigYStart, (refContigXStart + maxRefX), refContigYEnd, "black", true);
-        m_drawer.drawText(0, zoomRefContigYStart - 20, Integer.toString(minRef), Drawer.Anchor.ANCHOR_MIDDLE, "black");
-        m_drawer.drawText(m_contigDrawLength, zoomRefContigYStart - 20, Integer.toString(maxRef), Drawer.Anchor.ANCHOR_MIDDLE, "black");
+        m_drawer.drawLine(x, zoomRefContigYStart, (refContigXStart + minRefX), refContigYEnd, "black", true);
+        m_drawer.drawLine(x + m_contigDrawLength, zoomRefContigYStart, (refContigXStart + maxRefX), refContigYEnd, "black", true);
+        m_drawer.drawText(x, zoomRefContigYStart - 20, Integer.toString(minRef), Drawer.Anchor.ANCHOR_MIDDLE, "black");
+        m_drawer.drawText(x + m_contigDrawLength, zoomRefContigYStart - 20, Integer.toString(maxRef), Drawer.Anchor.ANCHOR_MIDDLE, "black");
 
         double zoomRefLength = maxRef - minRef;
         int queryLength = alignments.get(0).getQuerySize();
