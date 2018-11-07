@@ -32,6 +32,7 @@ public class DiagramOptions {
     private String alignmentRefName = null;
     private CoverageMapImage.Type cmiType = CoverageMapImage.Type.SQUARE_MAP;
     private int binSize = 30;
+    private String blastFormatString;
     
     public void parseArgs(String[] args) {
         int i=0;
@@ -73,8 +74,9 @@ public class DiagramOptions {
                     (!inputFormat.equals("pileup")) &&
                     (!inputFormat.equals("sam")) &&
                     (!inputFormat.equals("paf")) &&
+                    (!inputFormat.equals("blast")) &&
                     (!inputFormat.equals("tiling"))) {
-                    System.out.println("Error: inputfmt must be 'psl', 'coords', 'pileup', 'sam', 'paf' or 'tiling'.");
+                    System.out.println("Error: inputfmt must be 'psl', 'coords', 'pileup', 'sam', 'paf', 'blast' or 'tiling'.");
                     System.exit(0);
                 } 
             } else if (args[i].equalsIgnoreCase("-outputfmt")) {
@@ -131,6 +133,9 @@ public class DiagramOptions {
             } else if (args[i].equalsIgnoreCase("-binsize")) {
                 binSize = Integer.parseInt(args[i+1]);
                 System.out.println("   Bin size: " + binSize);
+            } else if (args[i].equalsIgnoreCase("-blastfmt")) {
+                blastFormatString = args[i+1];
+                System.out.println("Format string for blastfile: " + blastFormatString);
             } else {
                 System.out.println("Unknown paramter: " + args[i]);
                 System.exit(0);
@@ -280,5 +285,9 @@ public class DiagramOptions {
     
     public int getBinSize() {
         return binSize;
+    }
+    
+    public String getBlastFormatString() {
+        return blastFormatString;
     }
 }

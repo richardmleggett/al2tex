@@ -10,9 +10,7 @@
 package al2tex;
 
 import java.io.*;
-import java.util.*;
 import java.awt.image.*;
-import javax.swing.*;
 import java.awt.*;
 import javax.imageio.*;
 

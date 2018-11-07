@@ -15,7 +15,7 @@ import java.lang.*;
 public class PAFFile implements DetailedAlignmentFile 
 {
     private ArrayList<PAFAlignment> alignments = new ArrayList();
-     private Hashtable<String,Integer> targetHits = new Hashtable();
+    private Hashtable<String,Integer> targetHits = new Hashtable();
     
     public PAFFile(String filename) 
     {        

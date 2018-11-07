@@ -183,6 +183,43 @@ public class Al2Tex {
                 genomeCoverageDiagram.makeBitmapsFromFile(pafFile);
                 genomeCoverageDiagram.writeOutputFile();
             }   
+        } else if (options.getInputFormat().equals("blast")) {
+            BlastFile blastFile = new BlastFile(options);
+            if((options.getDiagramType().equals("contigalignment"))||
+                (options.getDiagramType().equals("all"))) 
+            {
+                System.out.println("Building contig alignment diagram");
+                ContigAlignmentDiagram contigAlignmentDiagram = new ContigAlignmentDiagram(blastFile, options);
+                System.out.println("Writing " + options.getOutputFormat() + " files");
+                contigAlignmentDiagram.writeOutputFile(options);
+            }
+            if ((options.getDiagramType().equals("alignment"))  ||
+                (options.getDiagramType().equals("all"))) 
+            {
+                System.out.println("Building alignment diagram");
+                AlignmentDiagram alignmentDiagram = new AlignmentDiagram(options, blastFile);
+                System.out.println("Writing LaTeX files");
+                alignmentDiagram.writeOutputFile(options.getOutputFilePath());
+            }
+            if ((options.getDiagramType().equals("coveragemap"))  ||
+                (options.getDiagramType().equals("all"))) 
+            {
+                System.out.println("Building coverage map diagram");
+                CoverageMapDiagram coverageDiagram = new CoverageMapDiagram(options);
+                System.out.println("Making bitmaps");
+                coverageDiagram.makeBitmapsFromFile(blastFile, options.getOutputDirectory());
+                System.out.println("Writing " + options.getOutputFormat() + " files");
+                coverageDiagram.writeOutputFile();
+            }
+            if((options.getDiagramType().equals("genomecoverage"))||
+                (options.getDiagramType().equals("all"))) 
+            {
+                System.out.println("Building genome coverage diagram");
+                GenomeCoverageDiagram genomeCoverageDiagram = new GenomeCoverageDiagram(options);
+                System.out.println("Writing output files");
+                genomeCoverageDiagram.makeBitmapsFromFile(blastFile);
+                genomeCoverageDiagram.writeOutputFile();
+            }   
         }
         System.out.println("Done");
     }
