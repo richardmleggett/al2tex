@@ -176,7 +176,7 @@ public class TikzDrawer implements Drawer
     {
         try
         {
-            text = text.replace("_", "\\string_");
+            text = text.replace("\\_", "\\string_");
             String anchorString = "";
             switch(anchor)
             {
@@ -218,7 +218,7 @@ public class TikzDrawer implements Drawer
                     break;
                 }
             }
-            text = text.replace("_", "\\string_");
+            text = text.replace("\\_", "\\string_");
             bw.write("\\node[rotate=" + angle + anchorString + "] at (" + x  + "," + y + ") {" + text + "};" ); 
             bw.newLine();
         } 
