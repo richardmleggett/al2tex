@@ -50,8 +50,7 @@ public class CoverageMapDiagram
     {             
         File imagesDir = new File(outputDirectory+"/images");
         imagesDir.mkdir();
-
-        alignmentFile.sortAlignmentsByTargetName();
+        alignmentFile.sortAlignments(AlignmentFile.compareByTargetName);
         String filenamePrefix = outputDirectory + "/images/";
         String previousTarget = "";
         for (int i = 0; i < alignmentFile.getNumberOfAlignments(); i++) 

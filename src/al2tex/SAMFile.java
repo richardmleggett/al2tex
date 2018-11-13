@@ -65,10 +65,6 @@ public class SAMFile implements AlignmentFile {
     public SAMAlignment getAlignment(int i) {
         return alignments.get(i);
     }
- 
-    public void sortAlignmentsByTargetName() {
-        Collections.sort(alignments, compareByTargetName);
-    }
     
     public Hashtable getTargetHits() {
         return targetHits;
@@ -84,8 +80,21 @@ public class SAMFile implements AlignmentFile {
 
         return a.intValue();
     }
+     
+    public void filterAlignments()
+    {
+        // how will this be done?
+        return;
+    }
     
-    public void sortByTargetStart() {
-        //Collections.sort(alignments, new PSLAlignmentPositionComparator());
+    public void basicFilterAlignments()
+    {
+        // how will this be done?
+        return;
+    }
+       
+    public void sortAlignments(Comparator<? super Alignment> comparator)
+    {
+         Collections.sort(alignments, comparator);
     }
 }

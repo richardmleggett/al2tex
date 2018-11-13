@@ -43,7 +43,7 @@ public class PSLCoverageDiagram
             String previousTarget = new String("");
             
             for (int i=0; i<pslFile.getNumberOfAlignments(); i++) {
-                PSLAlignment a = pslFile.getAlignment(i);
+                DetailedAlignment a = pslFile.getAlignment(i);
 
                 if (a.getTargetName().compareTo(previousTarget) != 0) {
                     if (pslImage != null) {
@@ -93,7 +93,7 @@ public class PSLCoverageDiagram
             writeTexHeader(bw);
             
             for (int i=0; i<pslFile.getNumberOfAlignments(); i++) {
-                PSLAlignment a = pslFile.getAlignment(i);
+                DetailedAlignment a = pslFile.getAlignment(i);
 
                 if (a.getTargetName().compareTo(previousTarget) != 0) {
                     writeNewImage(bw, a.getTargetName(), a.getTargetSize());

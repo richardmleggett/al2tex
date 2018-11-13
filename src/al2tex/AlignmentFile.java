@@ -6,7 +6,9 @@ import java.util.Comparator;
 public interface AlignmentFile {
     abstract int getNumberOfAlignments();
     abstract Alignment getAlignment(int i);
-    abstract void sortAlignmentsByTargetName();
+    abstract void filterAlignments();
+    abstract void basicFilterAlignments();
+    abstract void sortAlignments(Comparator<? super Alignment> comparator);
     
     public static Comparator<Alignment> compareByTargetName = new Comparator<Alignment>(){
         public int compare(Alignment alignment1, Alignment alignment2) {

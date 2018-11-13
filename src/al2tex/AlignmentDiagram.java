@@ -6,6 +6,7 @@
 package al2tex;
 
 import java.io.IOException;
+import java.util.Comparator;
 
 /**
  *
@@ -48,6 +49,12 @@ public class AlignmentDiagram {
             m_xOffset = 50;
             m_yOffset = 50;
         }
+        
+        if(o.getFilter())
+        {
+            f.basicFilterAlignments();
+        }
+        f.sortAlignments(compareForAlignmentDiagram);
    }
  
   public void writeOutputFile(String filename) 
@@ -264,4 +271,21 @@ public class AlignmentDiagram {
         
         m_drawer.drawFilledRectangle(m_xOffset + x1, m_yOffset + y1, width, height, "white", "blue");
     }
+    
+    public static Comparator compareForAlignmentDiagram = new Comparator<DetailedAlignment>(){
+        public int compare(DetailedAlignment alignment1, DetailedAlignment alignment2) {
+            int result = alignment1.getTargetName().compareTo(alignment2.getTargetName());
+            if(result == 0)
+            {
+                result = alignment1.getQueryName().compareTo(alignment2.getQueryName());
+                if(result == 0)
+                {
+                    result = alignment1.getTargetStart() - alignment2.getTargetStart();
+                }
+            }
+            
+            return result;
+        }
+    };
+    
 }

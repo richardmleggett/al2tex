@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Hashtable;
 
 /**
@@ -19,7 +20,7 @@ import java.util.Hashtable;
 public class BlastFile implements DetailedAlignmentFile 
 {
 
-    private ArrayList<BlastAlignment> m_alignments = new ArrayList();
+    private ArrayList<DetailedAlignment> m_alignments = new ArrayList();
     private Hashtable<String,Integer> m_targetHits = new Hashtable();
     
     public BlastFile(DiagramOptions options) 
@@ -85,6 +86,7 @@ public class BlastFile implements DetailedAlignmentFile
             System.out.println(ioe);
         }
         
+        // why is this here?
         Collections.sort(m_alignments);        
     }
     
@@ -93,15 +95,11 @@ public class BlastFile implements DetailedAlignmentFile
         return m_alignments.size();
     }
     
-    public BlastAlignment getAlignment(int i) 
+    public DetailedAlignment getAlignment(int i) 
     {
         return m_alignments.get(i);
     }
-    
-    public void sortAlignmentsByTargetName() {
-        Collections.sort(m_alignments, compareByTargetName);
-    }
-    
+       
     public Hashtable getTargetHits() {
         return m_targetHits;
     }
@@ -114,5 +112,20 @@ public class BlastFile implements DetailedAlignmentFile
             System.exit(-1);
         }
         return a.intValue();
-    }      
+    }
+    
+    public void filterAlignments()
+    {
+        m_alignments = AlignmentFilter.filterAlignments(m_alignments);
+    }
+    
+    public void basicFilterAlignments()
+    {
+        m_alignments = AlignmentFilter.basicFilter(m_alignments);
+    }  
+    
+    public void sortAlignments(Comparator<? super Alignment> comparator)
+    {
+        Collections.sort(m_alignments, comparator);
+    }
 }

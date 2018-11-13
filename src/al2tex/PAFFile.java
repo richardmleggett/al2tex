@@ -14,7 +14,7 @@ import java.lang.*;
  */
 public class PAFFile implements DetailedAlignmentFile 
 {
-    private ArrayList<PAFAlignment> alignments = new ArrayList();
+    private ArrayList<DetailedAlignment> alignments = new ArrayList();
     private Hashtable<String,Integer> targetHits = new Hashtable();
     
     public PAFFile(String filename) 
@@ -71,13 +71,9 @@ public class PAFFile implements DetailedAlignmentFile
         return alignments.size();
     }
     
-    public PAFAlignment getAlignment(int i) 
+    public DetailedAlignment getAlignment(int i) 
     {
         return alignments.get(i);
-    }
-    
-    public void sortAlignmentsByTargetName() {
-        Collections.sort(alignments, compareByTargetName);
     }
     
     public Hashtable getTargetHits() {
@@ -94,4 +90,18 @@ public class PAFFile implements DetailedAlignmentFile
         return a.intValue();
     }  
     
+    public void filterAlignments()
+    {
+        alignments = AlignmentFilter.filterAlignments(alignments);
+    }
+    
+    public void basicFilterAlignments()
+    {
+        alignments = AlignmentFilter.basicFilter(alignments);
+    }
+    
+    public void sortAlignments(Comparator<? super Alignment> comparator)
+    {
+         Collections.sort(alignments, comparator);
+    }
 }

@@ -33,6 +33,7 @@ public class DiagramOptions {
     private CoverageMapImage.Type cmiType = CoverageMapImage.Type.SQUARE_MAP;
     private int binSize = 30;
     private String blastFormatString;
+    private boolean filter = false;
     
     public void parseArgs(String[] args) {
         int i=0;
@@ -289,5 +290,9 @@ public class DiagramOptions {
     
     public String getBlastFormatString() {
         return blastFormatString;
+    }
+    
+    public boolean getFilter() {
+        return filter;
     }
 }

@@ -29,7 +29,7 @@ public class PSLCoverageImage {
         coverage = new int[targetWidth];                 
     }
         
-    public void addAlignment(PSLAlignment a) {
+    public void addAlignment(DetailedAlignment a) {
         for (int b=0; b<a.getBlockCount(); b++) {
             int from = a.getBlockTargetStart(b);
             int to = from + a.getBlockSize(b);

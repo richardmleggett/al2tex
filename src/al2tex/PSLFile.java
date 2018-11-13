@@ -14,7 +14,7 @@ import java.io.*;
 import java.lang.*;
 
 public class PSLFile implements DetailedAlignmentFile {
-    private ArrayList<PSLAlignment> alignments = new ArrayList();
+    private ArrayList<DetailedAlignment> alignments = new ArrayList();
     private Hashtable<String,Integer> targetHits = new Hashtable();
     
     public PSLFile(String filename) {
@@ -67,12 +67,8 @@ public class PSLFile implements DetailedAlignmentFile {
         return alignments.size();
     }
     
-    public PSLAlignment getAlignment(int i) {
+    public DetailedAlignment getAlignment(int i) {
         return alignments.get(i);
-    }
-
-    public void sortAlignmentsByTargetName() {
-        Collections.sort(alignments, compareByTargetName);
     }
       
     public Hashtable getTargetHits() {
@@ -90,7 +86,18 @@ public class PSLFile implements DetailedAlignmentFile {
         return a.intValue();
     }
     
-    public void sortByTargetStart() {
-        //Collections.sort(alignments, new PSLAlignmentPositionComparator());
+    public void filterAlignments()
+    {
+        alignments = AlignmentFilter.filterAlignments(alignments);
+    }
+    
+    public void basicFilterAlignments()
+    {
+        alignments = AlignmentFilter.basicFilter(alignments);
+    }
+    
+    public void sortAlignments(Comparator<? super Alignment> comparator)
+    {
+         Collections.sort(alignments, comparator);
     }
 }
