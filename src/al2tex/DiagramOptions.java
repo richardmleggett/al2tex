@@ -137,12 +137,12 @@ public class DiagramOptions {
             } else if (args[i].equalsIgnoreCase("-blastfmt")) {
                 blastFormatString = args[i+1];
                 System.out.println("Format string for blastfile: " + blastFormatString);
-            } else {
-                System.out.println("Unknown paramter: " + args[i]);
-                System.exit(0);
+            } else if(args[i].equalsIgnoreCase("-filter")) {
+                filter = true;
+                System.out.println("Filtering enabled.");
             }
             
-            i+=2;
+            i++;
         }
         
         if (inputFormat == null) {

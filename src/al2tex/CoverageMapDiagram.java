@@ -9,6 +9,7 @@
 
 package al2tex;
 
+import al2tex.AlignmentFilters.OverlapFilter;
 import java.util.*;
 import java.io.*;
 
@@ -50,6 +51,15 @@ public class CoverageMapDiagram
     {             
         File imagesDir = new File(outputDirectory+"/images");
         imagesDir.mkdir();
+        
+        //TODO: write filter for overlaps so we don't get extra coverage.
+        // NOOOOOOOOOO!!!!
+        if(alignmentFile instanceof DetailedAlignmentFile)
+        {
+            ((DetailedAlignmentFile)alignmentFile).filterAlignments(new OverlapFilter());
+        }
+        
+        
         alignmentFile.sortAlignments(AlignmentFile.compareByTargetName);
         String filenamePrefix = outputDirectory + "/images/";
         String previousTarget = "";

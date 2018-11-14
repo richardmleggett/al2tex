@@ -53,6 +53,10 @@ public class OverlapFilter implements AlignmentFilter
         filteredAlignments.add(bestAlignment);
         for(DetailedAlignment alignment : alignments)
         {
+            if(alignment == bestAlignment)
+            {
+                continue;
+            }
             boolean add = true;
             for(DetailedAlignment alignment2 : filteredAlignments)
             {              
@@ -67,6 +71,12 @@ public class OverlapFilter implements AlignmentFilter
             {
                 filteredAlignments.add(alignment);
             }
+//            else
+//            {
+//                System.out.print("Removing alignments from query " + alignment.getQueryName() + "\t" + 
+//                        Integer.toString(alignment.getQueryStart()) + "\t" + 
+//                        Integer.toString(alignment.getQueryEnd()) + "\n" );
+//            }
         }     
         return filteredAlignments;
     }    

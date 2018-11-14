@@ -9,6 +9,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.*;
 
+import al2tex.AlignmentFilters.*;
+
 /**
  *
  * @author martins
@@ -35,6 +37,11 @@ public class GenomeCoverageDiagram
         m_genomeCoverageImage = new GenomeCoverageImage(m_options, filename);
         
         //TODO: write filter for overlaps so we don't get extra coverage.
+        // NOOOOOOOOOO!!!!
+        if(alignmentFile instanceof DetailedAlignmentFile)
+        {
+            ((DetailedAlignmentFile)alignmentFile).filterAlignments(new OverlapFilter());
+        }
         
         for(int i = 0; i < alignmentFile.getNumberOfAlignments(); ++i)
         {
