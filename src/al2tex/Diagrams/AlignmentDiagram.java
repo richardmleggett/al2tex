@@ -8,8 +8,8 @@ package al2tex.Diagrams;
 import al2tex.Drawers.SVGDrawer;
 import al2tex.Drawers.TikzDrawer;
 import al2tex.Drawers.Drawer;
-import al2tex.AlignmentFIles.DetailedAlignment;
-import al2tex.AlignmentFIles.DetailedAlignmentFile;
+import al2tex.AlignmentFiles.DetailedAlignment;
+import al2tex.AlignmentFiles.DetailedAlignmentFile;
 import java.io.IOException;
 import java.util.Comparator;
 

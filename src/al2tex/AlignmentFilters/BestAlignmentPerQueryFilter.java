@@ -5,7 +5,7 @@
  */
 package al2tex.AlignmentFilters;
 
-import al2tex.AlignmentFIles.DetailedAlignment;
+import al2tex.AlignmentFiles.DetailedAlignment;
 import java.util.ArrayList;
 import java.util.Collections;
 

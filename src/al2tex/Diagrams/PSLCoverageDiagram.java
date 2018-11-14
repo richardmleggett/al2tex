@@ -9,8 +9,8 @@
 
 package al2tex.Diagrams;
 
-import al2tex.AlignmentFIles.DetailedAlignment;
-import al2tex.AlignmentFIles.PSLFile;
+import al2tex.AlignmentFiles.DetailedAlignment;
+import al2tex.AlignmentFiles.PSLFile;
 import al2tex.DiagramOptions;
 import java.util.*;
 import java.io.*;

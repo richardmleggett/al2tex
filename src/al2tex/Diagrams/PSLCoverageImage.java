@@ -9,7 +9,7 @@
 
 package al2tex.Diagrams;
 
-import al2tex.AlignmentFIles.DetailedAlignment;
+import al2tex.AlignmentFiles.DetailedAlignment;
 import al2tex.DiagramOptions;
 import java.io.*;
 import java.util.*;

@@ -5,7 +5,7 @@
  */
 package al2tex.Diagrams;
 
-import al2tex.AlignmentFIles.Alignment;
+import al2tex.AlignmentFiles.Alignment;
 import al2tex.DiagramOptions;
 import java.io.*;
 import java.awt.*;

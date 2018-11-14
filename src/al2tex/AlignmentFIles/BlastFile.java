@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package al2tex.AlignmentFIles;
+package al2tex.AlignmentFiles;
 
 import al2tex.AlignmentFilters.AlignmentFilter;
 import al2tex.DiagramOptions;
-import static al2tex.AlignmentFIles.AlignmentFile.compareByTargetName;
+import static al2tex.AlignmentFiles.AlignmentFile.compareByTargetName;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package al2tex.AlignmentFIles;
+package al2tex.AlignmentFiles;
 
 public interface Alignment {
     public abstract String getTargetName();

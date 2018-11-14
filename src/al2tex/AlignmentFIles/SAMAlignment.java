@@ -7,7 +7,7 @@
 // 
 // This is free software, supplied without warranty.
 
-package al2tex.AlignmentFIles;
+package al2tex.AlignmentFiles;
 
 import java.util.*;
 

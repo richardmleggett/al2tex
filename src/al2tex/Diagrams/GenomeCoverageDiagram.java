@@ -7,9 +7,9 @@ package al2tex.Diagrams;
 
 import al2tex.Drawers.SVGDrawer;
 import al2tex.Drawers.Drawer;
-import al2tex.AlignmentFIles.AlignmentFile;
-import al2tex.AlignmentFIles.Alignment;
-import al2tex.AlignmentFIles.DetailedAlignmentFile;
+import al2tex.AlignmentFiles.AlignmentFile;
+import al2tex.AlignmentFiles.Alignment;
+import al2tex.AlignmentFiles.DetailedAlignmentFile;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.*;

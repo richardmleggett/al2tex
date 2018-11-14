@@ -1,6 +1,6 @@
 package al2tex.Diagrams;
 
-import al2tex.AlignmentFIles.PileupFile;
+import al2tex.AlignmentFiles.PileupFile;
 import al2tex.DiagramOptions;
 import al2tex.DomainInfo;
 import al2tex.DomainInfoFile;
