@@ -6,6 +6,7 @@
 package al2tex;
 
 import java.util.Hashtable;
+import al2tex.AlignmentFilters.AlignmentFilter;
 
 /**
  *
@@ -15,4 +16,5 @@ public interface DetailedAlignmentFile extends AlignmentFile {
     abstract DetailedAlignment getAlignment(int i);
     abstract Hashtable getTargetHits();
     abstract int getTargetHitCount(String target);
+    abstract void filterAlignments(AlignmentFilter filter);
 }

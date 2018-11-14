@@ -35,7 +35,6 @@ public class GenomeCoverageDiagram
         m_genomeCoverageImage = new GenomeCoverageImage(m_options, filename);
         
         //TODO: write filter for overlaps so we don't get extra coverage.
-        //alignmentFile.filterAlignments();
         
         for(int i = 0; i < alignmentFile.getNumberOfAlignments(); ++i)
         {

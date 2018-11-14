@@ -87,11 +87,6 @@ public class SAMFile implements AlignmentFile {
         return;
     }
     
-    public void basicFilterAlignments()
-    {
-        // how will this be done?
-        return;
-    }
        
     public void sortAlignments(Comparator<? super Alignment> comparator)
     {

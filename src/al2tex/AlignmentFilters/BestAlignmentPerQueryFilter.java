@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package al2tex;
+package al2tex.AlignmentFilters;
 
+import al2tex.DetailedAlignment;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -12,10 +13,10 @@ import java.util.Collections;
  *
  * @author martins
  */
-public class AlignmentFilter 
+public class BestAlignmentPerQueryFilter implements AlignmentFilter
 {
-    static private final float EPSILON_MAX = 0.1f;
-    static public ArrayList<DetailedAlignment> filterAlignments(ArrayList<DetailedAlignment> alignments)
+    private final float EPSILON_MAX = 0.1f;
+    public ArrayList<DetailedAlignment> filterAlignments(ArrayList<DetailedAlignment> alignments)
     {
         //first, sort the alignments by query name
         Collections.sort(alignments, DetailedAlignment.compareByQueryName);
@@ -41,7 +42,7 @@ public class AlignmentFilter
         return filteredAlignments;
     }
     
-    static private ArrayList<DetailedAlignment> findBestAlignmentsForQuery(ArrayList<DetailedAlignment> alignments)
+    private ArrayList<DetailedAlignment> findBestAlignmentsForQuery(ArrayList<DetailedAlignment> alignments)
     {
         //find the longest alignment
         Collections.sort(alignments, DetailedAlignment.compareByQueryAlignmentLength);
@@ -94,14 +95,14 @@ public class AlignmentFilter
         return bestAlignments;
     }
     
-    static private float getAlignmentCrossingPos(DetailedAlignment alignment)
+    private float getAlignmentCrossingPos(DetailedAlignment alignment)
     {
         //TODO: what about reverse alignments?
         float gradient = (alignment.getTargetEnd() - alignment.getTargetStart()) / (float)(alignment.getQueryEnd() - alignment.getQueryStart());
         return alignment.getTargetStart() - (gradient * alignment.getQueryStart());
     }
     
-    static private void printAlignment(DetailedAlignment alignment)
+    private void printAlignment(DetailedAlignment alignment)
     {
         System.out.println( alignment.getQueryName() + "\t" + 
                             Integer.toString(alignment.getQuerySize()) + "\t" + 
@@ -111,21 +112,5 @@ public class AlignmentFilter
                             Integer.toString(alignment.getTargetSize()) + "\t" + 
                             Integer.toString(alignment.getTargetStart()) + "\t" + 
                             Integer.toString(alignment.getTargetEnd())  );
-    }
-    
-    static public ArrayList<DetailedAlignment> basicFilter(ArrayList<DetailedAlignment> alignments)
-    {
-        ArrayList<DetailedAlignment> filteredAlignments = new ArrayList();
-        for(DetailedAlignment alignment : alignments)
-        {
-            int queryLength = Math.abs(alignment.getQueryEnd() - alignment.getQueryStart());
-            float prop = (float)queryLength / alignment.getTargetSize();
-            if(prop > 0.005)
-            {
-                filteredAlignments.add(alignment);
-            }
-        }
-        
-        return filteredAlignments;
     }
 }

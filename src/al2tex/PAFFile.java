@@ -5,6 +5,7 @@
  */
 package al2tex;
 
+import al2tex.AlignmentFilters.AlignmentFilter;
 import java.util.*;
 import java.io.*;
 import java.lang.*;
@@ -80,7 +81,8 @@ public class PAFFile implements DetailedAlignmentFile
         return targetHits;
     }
     
-    public int getTargetHitCount(String target) {
+    public int getTargetHitCount(String target) 
+    {
         Integer a = targetHits.get(target);      
         if (a == null) 
         {
@@ -90,14 +92,9 @@ public class PAFFile implements DetailedAlignmentFile
         return a.intValue();
     }  
     
-    public void filterAlignments()
+    public void filterAlignments(AlignmentFilter filter)
     {
-        alignments = AlignmentFilter.filterAlignments(alignments);
-    }
-    
-    public void basicFilterAlignments()
-    {
-        alignments = AlignmentFilter.basicFilter(alignments);
+        alignments = filter.filterAlignments(alignments);
     }
     
     public void sortAlignments(Comparator<? super Alignment> comparator)

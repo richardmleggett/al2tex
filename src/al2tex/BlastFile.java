@@ -5,6 +5,7 @@
  */
 package al2tex;
 
+import al2tex.AlignmentFilters.AlignmentFilter;
 import static al2tex.AlignmentFile.compareByTargetName;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -113,16 +114,11 @@ public class BlastFile implements DetailedAlignmentFile
         }
         return a.intValue();
     }
-    
-    public void filterAlignments()
+      
+    public void filterAlignments(AlignmentFilter filter)
     {
-        m_alignments = AlignmentFilter.filterAlignments(m_alignments);
+        m_alignments = filter.filterAlignments(m_alignments);
     }
-    
-    public void basicFilterAlignments()
-    {
-        m_alignments = AlignmentFilter.basicFilter(m_alignments);
-    }  
     
     public void sortAlignments(Comparator<? super Alignment> comparator)
     {

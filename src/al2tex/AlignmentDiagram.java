@@ -8,6 +8,8 @@ package al2tex;
 import java.io.IOException;
 import java.util.Comparator;
 
+import al2tex.AlignmentFilters.*;
+
 /**
  *
  * @author martins
@@ -52,7 +54,7 @@ public class AlignmentDiagram {
         
         if(o.getFilter())
         {
-            f.basicFilterAlignments();
+            f.filterAlignments(new MinPropFilter(0.005));
         }
         f.sortAlignments(compareForAlignmentDiagram);
    }
