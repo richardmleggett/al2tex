@@ -9,6 +9,7 @@
 
 package al2tex;
 
+import al2tex.Diagrams.CoverageMapImage;
 import java.io.*;
 
 public class DiagramOptions {

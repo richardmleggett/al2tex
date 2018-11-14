@@ -9,6 +9,19 @@
 
 package al2tex;
 
+import al2tex.Diagrams.CoverageMapDiagram;
+import al2tex.Diagrams.GenomeCoverageDiagram;
+import al2tex.Diagrams.PSLCoverageDiagram;
+import al2tex.Diagrams.AlignmentDiagram;
+import al2tex.Diagrams.ContigAlignmentDiagram;
+import al2tex.Diagrams.PileupCoverageDiagram;
+import al2tex.AlignmentFIles.PileupFile;
+import al2tex.AlignmentFIles.MummerAlignment;
+import al2tex.AlignmentFIles.MummerFile;
+import al2tex.AlignmentFIles.PAFFile;
+import al2tex.AlignmentFIles.SAMFile;
+import al2tex.AlignmentFIles.BlastFile;
+import al2tex.AlignmentFIles.PSLFile;
 import java.util.*;
 import java.io.*;
 
