@@ -11,17 +11,10 @@ package al2tex;
 
 import al2tex.Diagrams.CoverageMapDiagram;
 import al2tex.Diagrams.GenomeCoverageDiagram;
-import al2tex.Diagrams.PSLCoverageDiagram;
 import al2tex.Diagrams.AlignmentDiagram;
 import al2tex.Diagrams.ContigAlignmentDiagram;
 import al2tex.Diagrams.PileupCoverageDiagram;
-import al2tex.AlignmentFiles.PileupFile;
-import al2tex.AlignmentFiles.MummerAlignment;
-import al2tex.AlignmentFiles.MummerFile;
-import al2tex.AlignmentFiles.PAFFile;
-import al2tex.AlignmentFiles.SAMFile;
-import al2tex.AlignmentFiles.BlastFile;
-import al2tex.AlignmentFiles.PSLFile;
+import al2tex.AlignmentFiles.*;
 import java.util.*;
 import java.io.*;
 
@@ -33,72 +26,28 @@ public class Al2Tex {
         options.parseArgs(args);
     
         if ((options.getInputFormat().equals("pileup")) &&
-            (options.getDiagramType().equals("coverage"))) {
+            (options.getDiagramType().equals("coverage"))) 
+        {
             System.out.println("\nOpening pileup file");
             PileupFile pileupFile = new PileupFile(options.getInputFilename(), options.getListFilename());
             System.out.println("Building coverage diagram");
             PileupCoverageDiagram pileupCoverageDiagram = new PileupCoverageDiagram(options, pileupFile);
-            if (options.getDomainsFilename() != null) {
+            if (options.getDomainsFilename() != null) 
+            {
                 System.out.println("Loading domain information");
                 pileupCoverageDiagram.addDomainInfo(options.getDomainsFilename());
             }
             System.out.println("Making bitmaps");
             pileupCoverageDiagram.makeBitmaps();           
-        } else if (options.getInputFormat().equals("psl")) {
-            System.out.println("\nOpening PSL file");
-            PSLFile pslFile = new PSLFile(options.getInputFilename());
-            
-            if ((options.getDiagramType().equals("coveragemap"))  ||
-                (options.getDiagramType().equals("all"))) {
-                System.out.println("Building coverage map diagram");
-                CoverageMapDiagram coverageDiagram = new CoverageMapDiagram(options);
-                System.out.println("Making bitmaps");
-                coverageDiagram.makeBitmapsFromFile(pslFile, options.getOutputDirectory());
-                System.out.println("Writing " + options.getOutputFormat() + " files");
-                coverageDiagram.writeOutputFile();
-            }
-            
-            if ((options.getDiagramType().equals("coverage")) ||
-                (options.getDiagramType().equals("all"))) {
-                System.out.println("Building coverage diagram");
-                PSLCoverageDiagram pslCoverageDiagram = new PSLCoverageDiagram(options);
-                System.out.println("Making bitmaps");
-                pslCoverageDiagram.makeBitmaps(pslFile, options.getOutputDirectory());
-                System.out.println("Writing LaTeX files");
-                pslCoverageDiagram.writeTexFile(options.getOutputFilePath());
-            }
-
-            if ((options.getDiagramType().equals("alignment"))  ||
-                (options.getDiagramType().equals("all"))) {
-                System.out.println("Building alignment diagram");
-                AlignmentDiagram pslAlignmentDiagram = new AlignmentDiagram(options, pslFile);
-                System.out.println("Writing LaTeX files");
-                pslAlignmentDiagram.writeOutputFile(options.getOutputFilePath());
-            }
-            
-            if((options.getDiagramType().equals("contigalignment"))||
-                (options.getDiagramType().equals("all"))) 
-            {
-                System.out.println("Building contig alignment diagram");
-                ContigAlignmentDiagram contigAlignmentDiagram = new ContigAlignmentDiagram(pslFile, options);
-                System.out.println("Writing " + options.getOutputFormat() + " files");
-                contigAlignmentDiagram.writeOutputFile(options);
-            }
-            if((options.getDiagramType().equals("genomecoverage"))||
-                (options.getDiagramType().equals("all"))) 
-            {
-                System.out.println("Building genome coverage diagram");
-                GenomeCoverageDiagram genomeCoverageDiagram = new GenomeCoverageDiagram(options);
-                System.out.println("Writing output files");
-                genomeCoverageDiagram.makeBitmapsFromFile(pslFile);
-                genomeCoverageDiagram.writeOutputFile();
-            }
-        } else if (options.getInputFormat().equals("sam")) {
+        } 
+        else if (options.getInputFormat().equals("sam")) 
+        {
             System.out.println("\nOpening SAM file");
             SAMFile samFile = new SAMFile(options.getInputFilename(), options.getTargetSize());
 
             if ((options.getDiagramType().equals("coveragemap"))  ||
-                (options.getDiagramType().equals("all"))) {
+                (options.getDiagramType().equals("all"))) 
+            {
                 System.out.println("Building coverage map diagram");
                 CoverageMapDiagram coverageDiagram = new CoverageMapDiagram(options);
                 System.out.println("Making bitmaps");
@@ -115,124 +64,88 @@ public class Al2Tex {
                 genomeCoverageDiagram.makeBitmapsFromFile(samFile);
                 genomeCoverageDiagram.writeOutputFile();
             }
-        } else if (options.getInputFormat().equals("coords") || options.getInputFormat().equals("tiling")) {
-            int type = 0;
-            if (options.getInputFormat().equals("coords")) {
-                System.out.println("\nOpening MUMmer show-coords file");
-                type = MummerAlignment.SHOW_COORDS;
-            } else if (options.getInputFormat().equals("tiling")) {
-                System.out.println("\nOpening MUMmer show-tiling file");
-                type = MummerAlignment.SHOW_TILING;
+        }
+        else 
+        {
+            DetailedAlignmentFile alignmentFile;
+            switch(options.getInputFormat())
+            {
+                case "psl":
+                {
+                    System.out.println("\nOpening PSL file");
+                    alignmentFile = new PSLFile(options.getInputFilename());
+                    break;
+                }
+                case "coords":
+                {
+                    System.out.println("\nOpening coords file");
+                    alignmentFile = new MummerFile(options.getInputFilename(), MummerAlignment.SHOW_COORDS);
+                    break;
+                }
+                case "tiling":
+                {
+                    System.out.println("\nOpening tiling file");
+                    alignmentFile = new MummerFile(options.getInputFilename(), MummerAlignment.SHOW_TILING);
+                    break;                   
+                }
+                case "paf":
+                {
+                    System.out.println("\nOpening PAF file");
+                    alignmentFile = new PAFFile(options.getInputFilename());
+                    break;
+                }
+                case "blast":
+                {
+                    System.out.println("\nOpening BLAST file");
+                    alignmentFile = new BlastFile(options);
+                    break;
+                }
+                default:
+                {
+                    System.out.println("Did not recognise input format");
+                    System.exit(2);
+                    return;
+                }
             }
-            MummerFile alignmentFile = new MummerFile(options.getInputFilename(), type);
-            if ((options.getDiagramType().equals("alignment"))  ||
-                (options.getDiagramType().equals("all"))) {
-                System.out.println("Building alignment diagram");
-                AlignmentDiagram nucmerAlignmentDiagram = new AlignmentDiagram(options, alignmentFile);
-                System.out.println("Writing LaTeX files");
-                nucmerAlignmentDiagram.writeOutputFile(options.getOutputFilePath());
+            
+            switch(options.getDiagramType())
+            {
+                case "coveragemap":
+                {
+                    System.out.println("Building coverage map diagram");
+                    CoverageMapDiagram coverageDiagram = new CoverageMapDiagram(options);
+                    System.out.println("Making bitmaps");
+                    coverageDiagram.makeBitmapsFromFile(alignmentFile, options.getOutputDirectory());
+                    System.out.println("Writing " + options.getOutputFormat() + " files");
+                    coverageDiagram.writeOutputFile();
+                    break;
+                }
+                case "alignment":
+                {
+                    System.out.println("Building alignment diagram");
+                    AlignmentDiagram pslAlignmentDiagram = new AlignmentDiagram(options, alignmentFile);
+                    System.out.println("Writing LaTeX files");
+                    pslAlignmentDiagram.writeOutputFile(options.getOutputFilePath());
+                    break;
+                }
+                case "contigalignment":
+                {
+                    System.out.println("Building contig alignment diagram");
+                    ContigAlignmentDiagram contigAlignmentDiagram = new ContigAlignmentDiagram(alignmentFile, options);
+                    System.out.println("Writing " + options.getOutputFormat() + " files");
+                    contigAlignmentDiagram.writeOutputFile(options);
+                    break;
+                }
+                case "genomecoverage":
+                {
+                    System.out.println("Building genome coverage diagram");
+                    GenomeCoverageDiagram genomeCoverageDiagram = new GenomeCoverageDiagram(options);
+                    System.out.println("Writing output files");
+                    genomeCoverageDiagram.makeBitmapsFromFile(alignmentFile);
+                    genomeCoverageDiagram.writeOutputFile();
+                    break;
+                }
             }
-            if((options.getDiagramType().equals("contigalignment"))||
-                (options.getDiagramType().equals("all"))) 
-            {
-                System.out.println("Building contig alignment diagram");
-                ContigAlignmentDiagram contigAlignmentDiagram = new ContigAlignmentDiagram(alignmentFile, options);
-                System.out.println("Writing " + options.getOutputFormat() + " files");
-                contigAlignmentDiagram.writeOutputFile(options);
-            }
-            if ((options.getDiagramType().equals("coveragemap"))  ||
-                (options.getDiagramType().equals("all"))) 
-            {
-                System.out.println("Building coverage map diagram");
-                CoverageMapDiagram coverageDiagram = new CoverageMapDiagram(options);
-                System.out.println("Making bitmaps");
-                coverageDiagram.makeBitmapsFromFile(alignmentFile, options.getOutputDirectory());
-                System.out.println("Writing " + options.getOutputFormat() + " files");
-                coverageDiagram.writeOutputFile();
-            }
-            if((options.getDiagramType().equals("genomecoverage"))||
-                (options.getDiagramType().equals("all"))) 
-            {
-                System.out.println("Building genome coverage diagram");
-                GenomeCoverageDiagram genomeCoverageDiagram = new GenomeCoverageDiagram(options);
-                System.out.println("Writing output files");
-                genomeCoverageDiagram.makeBitmapsFromFile(alignmentFile);
-                genomeCoverageDiagram.writeOutputFile();
-            }            
-        } else if (options.getInputFormat().equals("paf")) {
-            PAFFile pafFile = new PAFFile(options.getInputFilename());
-            if((options.getDiagramType().equals("contigalignment"))||
-                (options.getDiagramType().equals("all"))) 
-            {
-                System.out.println("Building contig alignment diagram");
-                ContigAlignmentDiagram contigAlignmentDiagram = new ContigAlignmentDiagram(pafFile, options);
-                System.out.println("Writing " + options.getOutputFormat() + " files");
-                contigAlignmentDiagram.writeOutputFile(options);
-            }
-            if ((options.getDiagramType().equals("alignment"))  ||
-                (options.getDiagramType().equals("all"))) 
-            {
-                System.out.println("Building alignment diagram");
-                AlignmentDiagram alignmentDiagram = new AlignmentDiagram(options, pafFile);
-                System.out.println("Writing LaTeX files");
-                alignmentDiagram.writeOutputFile(options.getOutputFilePath());
-            }
-            if ((options.getDiagramType().equals("coveragemap"))  ||
-                (options.getDiagramType().equals("all"))) 
-            {
-                System.out.println("Building coverage map diagram");
-                CoverageMapDiagram coverageDiagram = new CoverageMapDiagram(options);
-                System.out.println("Making bitmaps");
-                coverageDiagram.makeBitmapsFromFile(pafFile, options.getOutputDirectory());
-                System.out.println("Writing " + options.getOutputFormat() + " files");
-                coverageDiagram.writeOutputFile();
-            }
-            if((options.getDiagramType().equals("genomecoverage"))||
-                (options.getDiagramType().equals("all"))) 
-            {
-                System.out.println("Building genome coverage diagram");
-                GenomeCoverageDiagram genomeCoverageDiagram = new GenomeCoverageDiagram(options);
-                System.out.println("Writing output files");
-                genomeCoverageDiagram.makeBitmapsFromFile(pafFile);
-                genomeCoverageDiagram.writeOutputFile();
-            }   
-        } else if (options.getInputFormat().equals("blast")) {
-            BlastFile blastFile = new BlastFile(options);
-            if((options.getDiagramType().equals("contigalignment"))||
-                (options.getDiagramType().equals("all"))) 
-            {
-                System.out.println("Building contig alignment diagram");
-                ContigAlignmentDiagram contigAlignmentDiagram = new ContigAlignmentDiagram(blastFile, options);
-                System.out.println("Writing " + options.getOutputFormat() + " files");
-                contigAlignmentDiagram.writeOutputFile(options);
-            }
-            if ((options.getDiagramType().equals("alignment"))  ||
-                (options.getDiagramType().equals("all"))) 
-            {
-                System.out.println("Building alignment diagram");
-                AlignmentDiagram alignmentDiagram = new AlignmentDiagram(options, blastFile);
-                System.out.println("Writing LaTeX files");
-                alignmentDiagram.writeOutputFile(options.getOutputFilePath());
-            }
-            if ((options.getDiagramType().equals("coveragemap"))  ||
-                (options.getDiagramType().equals("all"))) 
-            {
-                System.out.println("Building coverage map diagram");
-                CoverageMapDiagram coverageDiagram = new CoverageMapDiagram(options);
-                System.out.println("Making bitmaps");
-                coverageDiagram.makeBitmapsFromFile(blastFile, options.getOutputDirectory());
-                System.out.println("Writing " + options.getOutputFormat() + " files");
-                coverageDiagram.writeOutputFile();
-            }
-            if((options.getDiagramType().equals("genomecoverage"))||
-                (options.getDiagramType().equals("all"))) 
-            {
-                System.out.println("Building genome coverage diagram");
-                GenomeCoverageDiagram genomeCoverageDiagram = new GenomeCoverageDiagram(options);
-                System.out.println("Writing output files");
-                genomeCoverageDiagram.makeBitmapsFromFile(blastFile);
-                genomeCoverageDiagram.writeOutputFile();
-            }   
         }
         System.out.println("Done");
     }
