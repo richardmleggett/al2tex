@@ -5,12 +5,12 @@
  */
 package al2tex.Diagrams;
 
-import al2tex.Drawers.ColourGenerator;
 import al2tex.Drawers.SVGDrawer;
 import al2tex.Drawers.TikzDrawer;
 import al2tex.Drawers.Drawer;
 import al2tex.AlignmentFiles.DetailedAlignment;
 import al2tex.AlignmentFiles.DetailedAlignmentFile;
+import al2tex.AlignmentFilters.ChimeraFilter;
 import al2tex.Drawers.ColourGenerator;
 import al2tex.DiagramOptions;
 import java.awt.Color;
@@ -68,6 +68,11 @@ public class ContigAlignmentDiagram
             m_drawer = new SVGDrawer(filename, true, 1, width, height);
         }
       
+        if(options.getFindChimeras())
+        {
+            alignmentFile.filterAlignments(new ChimeraFilter(0.4f, 0.8f));
+        }
+        
         // iterate through all the alignments and group by contig name
         // filter out really small alignments
         for(int i = 0; i < alignmentFile.getNumberOfAlignments(); ++i)

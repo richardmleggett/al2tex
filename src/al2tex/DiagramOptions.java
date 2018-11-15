@@ -35,6 +35,7 @@ public class DiagramOptions {
     private int binSize = 30;
     private String blastFormatString;
     private boolean filter = false;
+    private boolean findChimeras = false;
     
     public void parseArgs(String[] args) {
         int i=0;
@@ -141,6 +142,9 @@ public class DiagramOptions {
             } else if(args[i].equalsIgnoreCase("-filter")) {
                 filter = true;
                 System.out.println("Filtering enabled.");
+            } else if(args[i].equalsIgnoreCase("-chimeras")) {
+                findChimeras = true;
+                System.out.println("Looking for Chimeric reads only.");
             }
             
             i++;
@@ -295,5 +299,9 @@ public class DiagramOptions {
     
     public boolean getFilter() {
         return filter;
+    }
+    
+    public boolean getFindChimeras() {
+        return findChimeras;
     }
 }
