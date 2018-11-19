@@ -10,12 +10,12 @@ import al2tex.Drawers.TikzDrawer;
 import al2tex.Drawers.Drawer;
 import al2tex.AlignmentFiles.DetailedAlignment;
 import al2tex.AlignmentFiles.DetailedAlignmentFile;
-import java.io.IOException;
 import java.util.Comparator;
 
 import al2tex.AlignmentFilters.*;
 import al2tex.DiagramOptions;
 
+import java.util.ArrayList;
 /**
  *
  * @author martins
@@ -40,7 +40,7 @@ public class AlignmentDiagram {
     private int m_pictureHeight; 
     private int m_xOffset = 0;
     private int m_yOffset = 0;
- 
+    private boolean m_isTexOut = true;
    public AlignmentDiagram(DiagramOptions o, DetailedAlignmentFile f) 
    {
         options = o;
@@ -56,6 +56,7 @@ public class AlignmentDiagram {
             m_drawer = new SVGDrawer(filename, true, 1, 2408, 1580);
             m_xOffset = 50;
             m_yOffset = 50;
+            m_isTexOut = false;
         }
         
         if(o.getFilter())
@@ -68,18 +69,29 @@ public class AlignmentDiagram {
   public void writeOutputFile(String filename) 
   {
         String previousTarget = new String("");
-        //TexFileWriter tfw = new TexFileWriter(filename + "_alignment");
         int page = 1;
         int row = 0;
 
         m_drawer.openFile();
-        //tfw.openFile();
-
         // Go through alignments
+        ArrayList<DetailedAlignment> alignmentsForQuery = new ArrayList();
+        String lastQuery = m_alignmentFile.getAlignment(0).getQueryName();
         for (int i=0; i<m_alignmentFile.getNumberOfAlignments(); i++) 
         {
             DetailedAlignment a = m_alignmentFile.getAlignment(i);            
             row++;
+            
+            if(a.getQueryName().equals(lastQuery))
+            {
+                alignmentsForQuery.add(a);
+            }
+            else
+            {
+                drawAlignmentsForQuery(alignmentsForQuery);
+                alignmentsForQuery.clear();
+                alignmentsForQuery.add(a);
+                lastQuery = a.getQueryName();
+            }
 
             // Look for different target - in which case, start a new page
             if ((i > 0) && (a.getTargetName().compareTo(previousTarget) != 0)) 
@@ -94,7 +106,7 @@ public class AlignmentDiagram {
                 }
             }
             // We put the reference genome on the top of every page
-            else if (row > m_rowsPerPage)//tfw.getRowsPerPage()) 
+            else if (row > m_rowsPerPage)
             {
                 row = 1;
                 page++;
@@ -104,86 +116,25 @@ public class AlignmentDiagram {
             {
                 if (page > 1) 
                 {
-                    //tfw.closePicture();
-                    //tfw.outputGapBetweenPictures();
                     m_drawer.closePicture();
                     m_drawer.drawVerticalGap(10);
                     m_drawer.newPage();
                 }
                 
-                //tfw.newTarget(a.getTargetSize(), m_alignmentFile.getTargetHitCount(a.getTargetName()));
                 newTarget(a.getTargetSize(), m_alignmentFile.getTargetHitCount(a.getTargetName()));
                 
-                //tfw.openPicture(0.1,0.1);
                 m_drawer.openPicture(0.1, 0.1);
                 
-                //tfw.drawDividers(NUM_DIVIDERS);
                 drawDividers(NUM_DIVIDERS);
                 String targetName = options.filterName(a.getTargetName());
                 
-                //tfw.drawTargetBar(targetName);
                 drawTargetBar(targetName);                
-            }
-
-            // Now parse each alignment
-
-            // Output line representing the whole contig
-            int contigStart = a.getTargetStart() - a.getQueryStart();
-            int contigEnd = a.getTargetEnd() + (a.getQuerySize() - a.getQueryEnd());
-            drawAlignmentLine(contigStart, contigEnd);
-            //tfw.outputAlignmentLine(contigStart, contigEnd);
-
-            // Now output the blocks
-            for (int j=0; j<a.getBlockCount(); j++) 
-            {        
-                int from = a.getBlockTargetStart(j);
-                int to = from + a.getBlockSize(j);
-
-                if (from < a.getTargetStart()) 
-                {
-                    System.out.println("Something went wrong - from < tStart");
-                    System.exit(-1);
-                }
-
-                if (to > a.getTargetEnd()) 
-                {
-                    System.out.println("Something went wrong - to ("+to+") > tEnd ("+a.getTargetEnd()+") with from ("+from+")");
-                    System.exit(-1);
-                }
-
-                //tfw.outputAlignmentBox(from, to);
-                drawAlignmentBox(from, to);
-            }
-
-            // Label the contig
-
-            // Get rid of dodgy characters!
-            String contigName = options.filterName(a.getQueryName()); 
-
-            // Filter velvet contig names, if neccessary
-            // this should probably be done by the alignmentfile object
-            if (contigName.matches("NODE_(\\d+)_length_(\\S+)_cov_(\\S+)")) 
-            {
-                String subs[] = contigName.split("_");
-                contigName="NODE\\_"+subs[1];
-            }
-            contigName = contigName.replace("\\_", "\\string_");
-            
-            double y = m_y - (m_targetHeight / 2);
-            m_drawer.drawText(m_xOffset + m_targetWidth + 5, m_yOffset + y, contigName, Drawer.Anchor.ANCHOR_LEFT, "blue");
-            //tfw.outputContigLabel(contigName);
-            
-            if (i < (m_alignmentFile.getNumberOfAlignments() - 1)) 
-            {
-                //tfw.nextAlignment();
-                m_y -= m_yStep;
             }
 
             previousTarget = a.getTargetName();
         }
+        drawAlignmentsForQuery(alignmentsForQuery);
 
-        //tfw.closePicture();
-        //tfw.closeFile();
         m_drawer.closePicture();
         m_drawer.closeFile();
     }
@@ -219,10 +170,9 @@ public class AlignmentDiagram {
             double y1 = m_yOffset;
             double y2 = m_yOffset + m_pictureHeight - m_yStep;
             m_drawer.drawLine(xpos, y1, xpos, y2, "black", true);
-            //bw.write("\\draw [dashed] ("+pos+", 0) -- ("+pos+","+(pictureHeight - yStep)+");"); bw.newLine();
+            
             double y3 = m_yOffset + m_y-(m_targetHeight / 2);
             m_drawer.drawText(xpos, y3, Integer.toString(num), Drawer.Anchor.ANCHOR_MIDDLE, "black");
-            //bw.write("\\node at ("+pos+","+(y-(targetHeight / 2))+") {"+num+"};"); bw.newLine();
         }
         m_y -= m_yStep;
     }
@@ -245,7 +195,6 @@ public class AlignmentDiagram {
             System.out.println("Something went wrong - from > to!");
             System.exit(-1);
         }
-
         
         if (x1 < -MAX_OVERHANG) 
         {
@@ -258,7 +207,7 @@ public class AlignmentDiagram {
             x2 = m_targetWidth + MAX_OVERHANG;
             m_drawer.drawText(m_xOffset + m_targetWidth + MAX_OVERHANG + 10, m_yOffset + y1, "+" + Integer.toString(to - m_targetSize), Drawer.Anchor.ANCHOR_MIDDLE, "black");
         }
-        
+    
         m_drawer.drawLine(m_xOffset + x1, m_yOffset + y1, m_xOffset + x2, m_yOffset + y1, "black", false);
     }
     
@@ -280,7 +229,8 @@ public class AlignmentDiagram {
         m_drawer.drawFilledRectangle(m_xOffset + x1, m_yOffset + y1, width, height, "white", "blue");
     }
     
-    public static Comparator compareForAlignmentDiagram = new Comparator<DetailedAlignment>(){
+    public static Comparator compareForAlignmentDiagram = new Comparator<DetailedAlignment>()
+    {
         public int compare(DetailedAlignment alignment1, DetailedAlignment alignment2) {
             int result = alignment1.getTargetName().compareTo(alignment2.getTargetName());
             if(result == 0)
@@ -295,5 +245,64 @@ public class AlignmentDiagram {
             return result;
         }
     };
+    
+    private void drawAlignmentsForQuery(ArrayList<DetailedAlignment> alignments)
+    {
+        int maxY = m_y;
+        for(DetailedAlignment a : alignments)
+        {
+            // Draw line representing the whole contig
+            int contigStart = a.getTargetStart() - a.getQueryStart();
+            int contigEnd = a.getTargetEnd() + (a.getQuerySize() - a.getQueryEnd());
+            drawAlignmentLine(contigStart, contigEnd);
+
+            // Now draw the box
+            for (int j=0; j<a.getBlockCount(); j++) 
+            {        
+                int from = a.getBlockTargetStart(j);
+                int to = from + a.getBlockSize(j);
+
+                if (from < a.getTargetStart()) 
+                {
+                    System.out.println("Something went wrong - from < tStart");
+                    System.exit(-1);
+                }
+
+                if (to > a.getTargetEnd()) 
+                {
+                    System.out.println("Something went wrong - to ("+to+") > tEnd ("+a.getTargetEnd()+") with from ("+from+")");
+                    System.exit(-1);
+                }
+
+                drawAlignmentBox(from, to);
+            }
+
+             m_y -= m_yStep;
+        }
+        
+        String contigName = options.filterName(alignments.get(0).getQueryName()); 
+
+        // Filter velvet contig names, if neccessary
+        // this should probably be done by the alignmentfile object
+        if (contigName.matches("NODE_(\\d+)_length_(\\S+)_cov_(\\S+)")) 
+        {
+            String subs[] = contigName.split("_");
+            contigName="NODE\\_"+subs[1];
+        }
+        contigName = contigName.replace("\\_", "\\string_");
+        
+        int minY = m_y;
+        float x = m_xOffset + m_targetWidth + 5;
+        float y = ((minY + maxY) / 2) - (m_targetHeight / 2) + (m_yStep/2);
+        m_drawer.drawText(x, m_yOffset + y, contigName, Drawer.Anchor.ANCHOR_LEFT, "blue");
+        
+        float dividerLineY = m_y + 5;
+        if(!m_isTexOut)
+        {
+            // y tho? :(
+            dividerLineY = m_y + 1.825f * m_yStep;
+        }
+        m_drawer.drawLine(m_xOffset, dividerLineY, m_xOffset + m_targetWidth, dividerLineY, "black", true);
+    }
     
 }
