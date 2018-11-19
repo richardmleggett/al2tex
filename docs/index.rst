@@ -11,6 +11,7 @@ Welcome to al2tex's documentation!
    :caption: Contents:
 
    usage/installation
+   usage/usage
    usage/diagrams
 
 

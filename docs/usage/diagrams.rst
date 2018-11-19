@@ -4,7 +4,7 @@ Diagrams
 Alignment Diagram
 -----------------
 
-The alignment diagram draws alignments between a query sequence (drawn in red), and target (or reference) sequences. Each target sequence is represented by a line underneath the query sequence, with the alignment drawn as a box aligned to the query sequence.
+The Alignment Diagram draws alignments between a target (or reference) sequence (drawn in red), and query sequences. Each query sequence is represented by a line underneath the target sequence, with the alignment drawn as a box aligned to the target sequence.
 
 
 .. image:: images/alignment_example.png
@@ -14,15 +14,18 @@ This diagram type accepts the following input formats
 - paf
 - psl
 - coords
+- tiling
+- blast
 
 and outputs the following formats
 
-- tex.
+- tex
+- svg.
 
 Contig Alignment Diagram
 ------------------------
 
-For each target contig, the Contig Alignment Diagram draws the most prominent alignments inside a rectange representing the query contig. The alignments are colour coded by target contig, and shaded to give an indication of the position in the target, and the orientation of the alignment.
+For each query contig, the Contig Alignment Diagram draws a rectangle representing the query, containing the most prominent alignments to the reference contigs. These alignments are colour coded by target contig, and shaded to give an indication of the position in the target, and the orientation of the alignment.
 
 .. image:: images/contig_alignment_example.png
 
@@ -31,6 +34,8 @@ This diagram type accepts the following input formats
 - paf
 - psl
 - coords
+- tiling
+- blast
 
 and outputs the following formats
 
@@ -44,7 +49,7 @@ If in addition, the user specifies a query contig and a reference contig, a deta
 Coverage Map Diagram
 --------------------
 
-Alignments are binned based on their position in the target contigs. For each target contig a heatmap image is produced showing the coverage. These are arranged in a tex or svg file.
+Alignments are binned based on their position in the target contigs. For each target contig a heatmap image is produced showing the coverage. These are arranged in a tex or svg file. Note that each heatmap image is a fixed size, with the scale adjusted to fit.
 
 .. image:: images/coverage_map_example.png
 
@@ -53,9 +58,33 @@ This diagram type accepts the following input formats
 - paf
 - psl
 - coords
+- tiling
+- blast
 - sam
 
 and outputs the following formats
 
 - tex
 - svg.
+
+Genome Coverage Diagram
+-----------------------
+
+As in the Coverage Map diagram, alignments are binned based on their position in the target contigs. One heatmap is produced showing the coverage over all the target contigs. Unlike the Coverage Map Diagram, the scale for the heatmaps remains the same across all the target contigs.
+
+.. image:: images/genome_coverage_example.png
+
+This diagram type accepts the following input formats
+
+- paf
+- psl
+- coords
+- tiling
+- blast
+- sam
+
+and outputs the following formats
+
+- svg.
+
+
