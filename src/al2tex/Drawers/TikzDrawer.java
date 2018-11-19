@@ -117,8 +117,13 @@ public class TikzDrawer implements Drawer
     {
         try
         {
+            String strx1 = String.format("%.1f", x1);
+            String stry1 = String.format("%.1f", y1);
+            String strx2 = String.format("%.1f", x2);
+            String stry2 = String.format("%.1f", y2);
+            
             String dashedString = dashed ? ", dashed" : "";
-            bw.write("\\draw[" + colour + dashedString + "] ( " + x1 + "," + y1 + ") -- (" + x2 + "," + y2 + ");");
+            bw.write("\\draw[" + colour + dashedString + "] ( " + strx1 + "," + stry1 + ") -- (" + strx2 + "," + stry2 + ");");
             bw.newLine();
         } 
         catch (IOException e) 
@@ -131,10 +136,14 @@ public class TikzDrawer implements Drawer
     {
         try
         {
-            bw.write("\\draw[" + borderColour + "] (" + x + "," + y + ") -- " + 
-                    "(" + (x + width) +","+ y + ") -- " +
-                    "(" + (x + width) + "," + (y + height) + ") -- " +
-                    "(" + x + "," + (y + height) + ") -- cycle ;");
+            String strx1 = String.format("%.1f", x);
+            String stry1 = String.format("%.1f", y);
+            String strx2 = String.format("%.1f", x + width);
+            String stry2 = String.format("%.1f", y + height);
+            bw.write("\\draw[" + borderColour + "] (" + strx1 + "," + stry1 + ") -- " + 
+                    "(" + strx2 +","+ stry1 + ") -- " +
+                    "(" + strx2 + "," + stry2 + ") -- " +
+                    "(" + strx1 + "," + stry2 + ") -- cycle ;");
             bw.newLine();
         } 
         catch (IOException e) 
@@ -145,10 +154,14 @@ public class TikzDrawer implements Drawer
     
     public void drawFilledRectangle(double x, double y, double width, double height, String fillColour, String borderColour)
     {
-          try
+        try
         {
-            bw.write("\\filldraw[ fill=" + fillColour + ", draw=" + borderColour + "] (" + x + "," + y + ") rectangle " + 
-                    "(" + (x + width) +","+ (y + height) + ");");
+            String strx1 = String.format("%.1f", x);
+            String stry1 = String.format("%.1f", y);
+            String strx2 = String.format("%.1f", x + width);
+            String stry2 = String.format("%.1f", y + height);
+            bw.write("\\filldraw[ fill=" + fillColour + ", draw=" + borderColour + "] (" + strx1 + "," + stry1 + ") rectangle " + 
+                    "(" + strx2 +","+ stry2 + ");");
             bw.newLine();
         } 
         catch (IOException e) 
@@ -178,6 +191,9 @@ public class TikzDrawer implements Drawer
     {
         try
         {
+            String strx = String.format("%.1f", x);
+            String stry = String.format("%.1f", y);
+            
             text = text.replace("\\_", "\\string_");
             String anchorString = "";
             switch(anchor)
@@ -193,7 +209,7 @@ public class TikzDrawer implements Drawer
                     break;
                 }
             }
-            bw.write("\\node " + anchorString + " at (" + x  + "," + y + ") {\\color{" + colour + "}" + text + "};" ); 
+            bw.write("\\node " + anchorString + " at (" + strx + "," + stry + ") {\\color{" + colour + "}" + text + "};" ); 
             bw.newLine();
         } 
         catch (IOException e) 
