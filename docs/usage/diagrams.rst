@@ -1,3 +1,4 @@
+
 Diagrams
 =================
 
@@ -49,7 +50,7 @@ If in addition, the user specifies a query contig and a reference contig, a deta
 Coverage Map Diagram
 --------------------
 
-Alignments are binned based on their position in the target contigs. For each target contig a heatmap image is produced showing the coverage. These are arranged in a tex or svg file. Note that each heatmap image is a fixed size, with the scale adjusted to fit.
+Alignments are binned based on their position in the target contigs, and counted to calculate the coverage of each bin. To avoid counting the same query region multiple times, alignments with overalpping query coordinates are filtered by choosing the longest alignment. For each target contig a heatmap image is produced in which each pixel represents the coverage of a bin. These are arranged in a tex or svg file. Note that each heatmap image is a fixed size, so the pixel scale is adjusted to fit.
 
 .. image:: images/coverage_map_example.png
 
