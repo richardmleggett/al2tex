@@ -1,7 +1,7 @@
 Usage
 ==========
 
-al2tex is run from the command line etc.
+alvis is run from the command line etc.
 
 Here are the options
 
@@ -9,7 +9,7 @@ Here are the options
 Input Formats
 -------------
 
-al2tex accepts a variety of alignment formats. These are specified by the option ``-inputfmt <format>``, where ``<format>`` is one of the following:
+alvis accepts a variety of alignment formats. These are specified by the option ``-inputfmt <format>``, where ``<format>`` is one of the following:
 
 - ``paf``
 - ``psl``
@@ -19,7 +19,7 @@ al2tex accepts a variety of alignment formats. These are specified by the option
 - ``sam``
 - ``pileup``
 
-A coords file can be created from a mummer .delta file using the ``show-coords`` command. For this file to work with al2tex, the ``-B`` option must be specified (see `here <http://mummer.sourceforge.net/manual/#coords/>`_ for more details).
+A coords file can be created from a mummer .delta file using the ``show-coords`` command. For this file to work with alvis, the ``-B`` option must be specified (see `here <http://mummer.sourceforge.net/manual/#coords/>`_ for more details).
 
 Similarly, a tiling file can be created from a mummer .delta file using the ``show-tiling`` command. In this case, the ``-a`` option must be specified (see `here <http://mummer.sourceforge.net/manual/#tiling/>`_ for more details).
 
@@ -32,7 +32,7 @@ If blast is given as the format, the input file must have been created by blast 
 - ``sstart``
 - ``send``
 
-The parameter passed to blast after the ``-outfmt`` option must also be given to al2tex after the -blastfmt option (e.g. ``-blastfmt '6 qseqid sseqid qstart qend sstart ssend'``).
+The parameter passed to blast after the ``-outfmt`` option must also be given to alvis after the -blastfmt option (e.g. ``-blastfmt '6 qseqid sseqid qstart qend sstart ssend'``).
 
 Diagrams
 ---------
@@ -50,7 +50,7 @@ Detailed information for each diagram can be found in the :doc:`diagrams` sectio
 Output Formats
 --------------
 
-al2tex can currently output most diagrams in two formats: SVG and laTeX. These are specified by the ``-outputfmt <format>`` option, where ``<format>`` is one of ``tex`` and ``svg``. Note that if ``tex`` is specified, the user must compile the .tex file that is created to obtain a pdf. Currently the diagrams are drawn with the tikz library, so the user must have this installed.
+alvis can currently output most diagrams in two formats: SVG and laTeX. These are specified by the ``-outputfmt <format>`` option, where ``<format>`` is one of ``tex`` and ``svg``. Note that if ``tex`` is specified, the user must compile the .tex file that is created to obtain a pdf. Currently the diagrams are drawn with the tikz library, so the user must have this installed.
 
 The following table shows the accepted input and output formats for each diagram.
 
@@ -73,9 +73,9 @@ The following table shows the accepted input and output formats for each diagram
 Filtering
 ----------
 
-The user can filter alignments using the ``-filter`` option. This will cause al2tex to ignore all alignments with length less than 0.5% of the reference contig size. (Note, this option is currently only used by the alignment diagram.)
+The user can filter alignments using the ``-filter`` option. This will cause alvis to ignore all alignments with length less than 0.5% of the reference contig size. (Note, this option is currently only used by the alignment diagram.)
 
-When using the ``-chimera`` option, al2tex will display only those alignments that it thinks could be a chimera.
+When using the ``-chimera`` option, alvis will display only those alignments that it thinks could be a chimera.
 
 .. image:: images/chimera_example.png
 
