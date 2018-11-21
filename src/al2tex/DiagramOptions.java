@@ -22,7 +22,6 @@ public class DiagramOptions {
     private String domainsFilename = null;
     private String outputFormat = null;
     private int maxCoverage = 0;
-    private int maxPages = 0;
     private int maxTargets = 0;
     private int tSize = 0;
     private int rowHeight = 10;
@@ -44,14 +43,19 @@ public class DiagramOptions {
             System.out.println("Syntax al2tex [options]");
             System.out.println("");
             System.out.println("Options:");
-            System.out.println("    -type coverage|coveragemap|alignment|all");
-            System.out.println("    -inputfmt psl|coords|pileup|tiling|sam");
+            System.out.println("    -type alignment|contigalignment|coveragemap|genomecoverage|pileup");
+            System.out.println("    -inputfmt psl|coords|pileup|tiling|sam|paf|blast");
             System.out.println("    -in <filename>");
             System.out.println("    -outdir <directory>");
             System.out.println("    -out <leafname>");
             System.out.println("    -maxtargets <int>");
             System.out.println("    -maxcoverage <int>");
             System.out.println("    -tsize <int>");
+            System.out.println("    -blastfmt <format string>");
+            System.out.println("    -alignmentQueryName <query sequence id>");
+            System.out.println("    -alignmentTargetName <target sequence id>");
+            System.out.println("    -filter");
+            System.out.println("    -chimeras");
             System.out.println("");
             System.exit(1);
         }
@@ -130,9 +134,9 @@ public class DiagramOptions {
             } else if (args[i].equalsIgnoreCase("-alignmentQueryName")) {
                 alignmentQueryName = args[i+1];
                 System.out.println("   Query name for alignment diagram: " + alignmentQueryName);
-            } else if (args[i].equalsIgnoreCase("-alignmentRefName")) {
+            } else if (args[i].equalsIgnoreCase("-alignmentTargetName")) {
                 alignmentRefName = args[i+1];
-                System.out.println("   Ref name for alignment diagram: " + alignmentRefName);
+                System.out.println("   Target name for alignment diagram: " + alignmentRefName);
             } else if (args[i].equalsIgnoreCase("-binsize")) {
                 binSize = Integer.parseInt(args[i+1]);
                 System.out.println("   Bin size: " + binSize);
@@ -156,8 +160,8 @@ public class DiagramOptions {
         }      
         
         if (inputFormat.equals("sam")) {
-            if (!diagramType.equals("coveragemap")) {
-                System.err.println("Error: SAM files can only produce coverage maps at the moment");
+            if (!(diagramType.equals("coveragemap") || diagramType.equals("genomecoveragemap"))) {
+                System.err.println("Error: SAM files can only produce coverage maps");
             }
             
             if (tSize == 0) {
@@ -254,7 +258,7 @@ public class DiagramOptions {
     }
     
     public String getOutputFilePath() {
-        return outputDirectory+File.separator+outputFilename;
+        return outputDirectory + File.separator + outputFilename;
     }
     
     public boolean isNewHeatMapForEachContig() {
