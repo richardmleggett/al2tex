@@ -27,6 +27,8 @@ public class MinPropFilter implements AlignmentFilter
     
     public ArrayList<DetailedAlignment> filterAlignments(ArrayList<DetailedAlignment> alignments)
     {
+        double min_pc = m_minProp*100;
+        System.out.println("Filtering out alignments that are less than " + Double.toString(min_pc) + "% of the target read.");
         ArrayList<DetailedAlignment> filteredAlignments = new ArrayList();
         for(DetailedAlignment alignment : alignments)
         {

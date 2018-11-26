@@ -14,7 +14,7 @@ import Alvis.Drawers.TikzDrawer;
 import Alvis.Drawers.Drawer;
 import Alvis.AlignmentFiles.DetailedAlignment;
 import Alvis.AlignmentFiles.DetailedAlignmentFile;
-import Alvis.AlignmentFilters.ChimeraFilter;
+import Alvis.AlignmentFilters.*;
 import Alvis.Drawers.ColourGenerator;
 import Alvis.DiagramOptions;
 import java.awt.Color;
@@ -44,8 +44,8 @@ public class ContigAlignmentDiagram
     
     public ContigAlignmentDiagram(DetailedAlignmentFile alignmentFile, DiagramOptions options)
     {
-        m_alignmentMap = new TreeMap<String, ArrayList<DetailedAlignment>>();
-        m_minAlignmentProp = options.getMinPAFAlignmentProp();
+        m_alignmentMap = new TreeMap();
+        m_minAlignmentProp = options.getMinAlignmentProp();
         m_refNames = new LinkedHashSet();
         m_contigDrawLength = 2000;
         m_contigDrawHeight = 100;
@@ -71,28 +71,29 @@ public class ContigAlignmentDiagram
             int height = m_detailedDiagram ? 1400 : 2480;
             m_drawer = new SVGDrawer(filename, true, 1, width, height);
         }
-      
+       
+        // filter out really small alignments
+        if(options.getFilter())
+        {
+            alignmentFile.filterAlignments(new MinPropFilter(m_minAlignmentProp));
+        }
+        
         if(options.getFindChimeras())
         {
-            alignmentFile.filterAlignments(new ChimeraFilter(0.4f, 0.8f));
+            alignmentFile.filterAlignments(new ChimeraFilter(0.3f, 0.8f));
         }
         
         // iterate through all the alignments and group by contig name
-        // filter out really small alignments
         for(int i = 0; i < alignmentFile.getNumberOfAlignments(); ++i)
         {
             DetailedAlignment alignment = alignmentFile.getAlignment(i);
-            int alignmentLength = alignment.getQueryEnd() - alignment.getQueryStart();
-            if((double)alignmentLength / alignment.getQuerySize() >= m_minAlignmentProp)
+            String name = alignment.getQueryName();
+            if(!m_alignmentMap.containsKey(name))
             {
-                String name = alignment.getQueryName();
-                if(!m_alignmentMap.containsKey(name))
-                {
-                    m_alignmentMap.put(name, new ArrayList());
-                }
-                m_alignmentMap.get(name).add(alignment);
-                m_refNames.add(alignment.getTargetName());
+                m_alignmentMap.put(name, new ArrayList());
             }
+            m_alignmentMap.get(name).add(alignment);
+            m_refNames.add(alignment.getTargetName());
         }
         
         // sort each array of alignments by start pos
@@ -101,11 +102,12 @@ public class ContigAlignmentDiagram
             if(detailedAlignments.size() > MAX_ALIGNMENTS_PER_CONTIG)
             {
                 Collections.sort(detailedAlignments, DetailedAlignment.compareByQueryAlignmentLength);
-                List<DetailedAlignment> entriesToRemove = detailedAlignments.subList(0, detailedAlignments.size() - MAX_ALIGNMENTS_PER_CONTIG);
+                List<DetailedAlignment> entriesToRemove = detailedAlignments.subList(MAX_ALIGNMENTS_PER_CONTIG, detailedAlignments.size());
                 detailedAlignments.removeAll(entriesToRemove);
             }
             Collections.sort(detailedAlignments, DetailedAlignment.compareByQueryStart);
         }
+        
     }
     
     public void writeOutputFile(DiagramOptions options)

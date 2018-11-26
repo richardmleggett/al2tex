@@ -128,9 +128,9 @@ public class DiagramOptions {
             } else if (args[i].equalsIgnoreCase("-rowspacer")) {
                 rowSpacer = Integer.parseInt(args[i+1]);
                 System.out.println("      Row spacer: " + rowSpacer);
-            } else if (args[i].equalsIgnoreCase("-minPAFAlignmentProp")) {
+            } else if (args[i].equalsIgnoreCase("-minAlignmentProp")) {
                 minContigAlignmentProp = Double.parseDouble(args[i+1]);
-                System.out.println("      Min Alignment Proportion for PAF alignments: " + minContigAlignmentProp);
+                System.out.println("      Min alignment proportion for filtering: " + minContigAlignmentProp);
             } else if (args[i].equalsIgnoreCase("-alignmentQueryName")) {
                 alignmentQueryName = args[i+1];
                 System.out.println("   Query name for alignment diagram: " + alignmentQueryName);
@@ -273,7 +273,7 @@ public class DiagramOptions {
         return rowSpacer;
     }
     
-    public double getMinPAFAlignmentProp() {
+    public double getMinAlignmentProp() {
         return minContigAlignmentProp;
     }
     

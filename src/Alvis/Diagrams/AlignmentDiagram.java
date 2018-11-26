@@ -9,7 +9,7 @@
 
 package Alvis.Diagrams;
 
-import Alvis.AlignmentFilters.MinPropFilter;
+import Alvis.AlignmentFilters.*;
 import Alvis.Drawers.SVGDrawer;
 import Alvis.Drawers.TikzDrawer;
 import Alvis.Drawers.Drawer;

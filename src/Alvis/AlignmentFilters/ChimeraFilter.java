@@ -29,6 +29,7 @@ public class ChimeraFilter implements AlignmentFilter
     
     public ArrayList<DetailedAlignment> filterAlignments(ArrayList<DetailedAlignment> alignments)
     {
+        System.out.println("Filtering for possible chimeras, removing everything else.");
         //first, sort the alignments by query name
         Collections.sort(alignments, DetailedAlignment.compareByQueryName);
         ArrayList<DetailedAlignment> filteredAlignments = new ArrayList();
@@ -60,9 +61,11 @@ public class ChimeraFilter implements AlignmentFilter
     {
         HashMap<String, Float> coveragesByTarget = new HashMap();
         float totalCoverage = 0.0f;
-        
+        String queryName = alignments.get(0).getQueryName();
         for(DetailedAlignment alignment : alignments)
         {
+            assert(alignment.getQueryName().equals(queryName));
+            
             String targetName = alignment.getTargetName();
             float coverage = Math.abs(alignment.getQueryEnd() - alignment.getQueryStart()) / (float)alignment.getQuerySize();
             totalCoverage += coverage;
@@ -75,10 +78,9 @@ public class ChimeraFilter implements AlignmentFilter
             {
                 Float newCoverage = oldCoverageValue + coverage;
                 coveragesByTarget.put(targetName, newCoverage);
-                System.out.println(alignment.getQueryName() + "-" + alignment.getTargetName() + ": " + Float.toString(newCoverage));
             }
         }
-        System.out.println("Total: " + Float.toString(totalCoverage));
+        
         if(totalCoverage > m_minTotalCoverage)
         {
             Collection<Float> coverages = coveragesByTarget.values();
@@ -94,9 +96,7 @@ public class ChimeraFilter implements AlignmentFilter
                     }
                 }
             }
-        }
-        
-        
+        }       
         return false;
     }
 }
