@@ -67,7 +67,7 @@ public class CoverageMapDiagram
         }
         
         
-        alignmentFile.sortAlignments(AlignmentFile.compareByTargetName);
+        alignmentFile.sort(AlignmentFile.compareByTargetName);
         String filenamePrefix = outputDirectory + "/images/";
         String previousTarget = "";
         for (int i = 0; i < alignmentFile.getNumberOfAlignments(); i++) 

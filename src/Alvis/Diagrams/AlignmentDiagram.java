@@ -15,6 +15,7 @@ import Alvis.Drawers.TikzDrawer;
 import Alvis.Drawers.Drawer;
 import Alvis.AlignmentFiles.DetailedAlignment;
 import Alvis.AlignmentFiles.DetailedAlignmentFile;
+import Alvis.AlignmentFiles.AlignmentSorter;
 import java.util.Comparator;
 
 import Alvis.DiagramOptions;
@@ -45,8 +46,10 @@ public class AlignmentDiagram {
     private int m_xOffset = 0;
     private int m_yOffset = 0;
     private boolean m_isTexOut = true;
-   public AlignmentDiagram(DiagramOptions o, DetailedAlignmentFile f) 
-   {
+    
+    
+    public AlignmentDiagram(DiagramOptions o, DetailedAlignmentFile f) 
+    {
         options = o;
         m_alignmentFile = f;
         String filename = options.getOutputFilePath() + "_alignmentDiagram";
@@ -67,11 +70,11 @@ public class AlignmentDiagram {
         {
             f.filterAlignments(new MinPropFilter(0.005));
         }
-        f.sortAlignments(compareForAlignmentDiagram);
-   }
+        f.sort(new Sorter());
+    }
  
-  public void writeOutputFile(String filename) 
-  {
+    public void writeOutputFile(String filename) 
+    {
         String previousTarget = new String("");
         int page = 1;
         int row = 0;
@@ -233,23 +236,6 @@ public class AlignmentDiagram {
         m_drawer.drawFilledRectangle(m_xOffset + x1, m_yOffset + y1, width, height, "white", "blue");
     }
     
-    public static Comparator compareForAlignmentDiagram = new Comparator<DetailedAlignment>()
-    {
-        public int compare(DetailedAlignment alignment1, DetailedAlignment alignment2) {
-            int result = alignment1.getTargetName().compareTo(alignment2.getTargetName());
-            if(result == 0)
-            {
-                result = alignment1.getQueryName().compareTo(alignment2.getQueryName());
-                if(result == 0)
-                {
-                    result = alignment1.getTargetStart() - alignment2.getTargetStart();
-                }
-            }
-            
-            return result;
-        }
-    };
-    
     private void drawAlignmentsForQuery(ArrayList<DetailedAlignment> alignments)
     {
         int maxY = m_y;
@@ -307,6 +293,79 @@ public class AlignmentDiagram {
             dividerLineY = m_y + 1.825f * m_yStep;
         }
         m_drawer.drawLine(m_xOffset, dividerLineY, m_xOffset + m_targetWidth, dividerLineY, "black", true);
+    }
+    
+    
+    // sorting is hard
+    private static class Sorter implements AlignmentSorter
+    {
+        public static Comparator compareGroups = new Comparator<ArrayList<DetailedAlignment>>()
+        {
+            public int compare(ArrayList<DetailedAlignment> list1, ArrayList<DetailedAlignment> list2) {
+                DetailedAlignment alignment1 = list1.get(0);
+                DetailedAlignment alignment2 = list2.get(0);
+                int result = alignment1.getTargetName().compareTo(alignment2.getTargetName());
+                if(result ==0)
+                {
+                    result = alignment1.getTargetStart() - alignment2.getTargetStart();
+                }
+                return result;
+            }
+        };
+        
+        public static Comparator compareForAlignmentDiagram = new Comparator<DetailedAlignment>()
+        {
+            public int compare(DetailedAlignment alignment1, DetailedAlignment alignment2) {
+                int result = alignment1.getTargetName().compareTo(alignment2.getTargetName());
+                if(result == 0)
+                {
+                    result = alignment1.getQueryName().compareTo(alignment2.getQueryName());
+                    if(result == 0)
+                    {
+                        result = alignment1.getTargetStart() - alignment2.getTargetStart();
+                    }
+                }
+
+                return result;
+            }
+        };
+            
+        public ArrayList<DetailedAlignment> sort(ArrayList<DetailedAlignment> alignments)
+        {
+            // first sort into groups of query and target
+            alignments.sort(compareForAlignmentDiagram);
+
+            // sort the groups of alignments by target and then target start
+            ArrayList<ArrayList<DetailedAlignment>> metaList = new ArrayList();
+            ArrayList<DetailedAlignment> currentQueryGroup = new ArrayList(); 
+            String lastQuery = alignments.get(0).getQueryName();
+            //pack
+            for(DetailedAlignment alignment : alignments)
+            {
+                if(alignment.getQueryName().equals(lastQuery))
+                {
+                    currentQueryGroup.add(alignment);
+                }
+                else
+                {
+                    metaList.add(currentQueryGroup);
+                    // new arrayList, don't clear because shallow copy etc.
+                    currentQueryGroup = new ArrayList();
+                    lastQuery = alignment.getQueryName();
+                    currentQueryGroup.add(alignment);
+                }
+            }
+            // sort
+            metaList.sort(compareGroups);
+
+            // unpack
+            ArrayList<DetailedAlignment> sortedList = new ArrayList();
+            for(ArrayList<DetailedAlignment> list : metaList)
+            {
+                sortedList.addAll(list);
+            }
+            return sortedList;
+        }
     }
     
 }

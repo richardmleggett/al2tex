@@ -88,7 +88,7 @@ public class SAMFile implements AlignmentFile {
     }
     
        
-    public void sortAlignments(Comparator<? super Alignment> comparator)
+    public void sort(Comparator<? super Alignment> comparator)
     {
          Collections.sort(alignments, comparator);
     }

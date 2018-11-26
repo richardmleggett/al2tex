@@ -124,8 +124,13 @@ public class BlastFile implements DetailedAlignmentFile
         m_alignments = filter.filterAlignments(m_alignments);
     }
     
-    public void sortAlignments(Comparator<? super Alignment> comparator)
+    public void sort(Comparator<? super Alignment> comparator)
     {
         Collections.sort(m_alignments, comparator);
+    }
+    
+    public void sort(AlignmentSorter sorter)
+    {
+        m_alignments = sorter.sort(m_alignments);
     }
 }

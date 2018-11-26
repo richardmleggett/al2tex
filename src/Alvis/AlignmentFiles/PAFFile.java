@@ -100,8 +100,13 @@ public class PAFFile implements DetailedAlignmentFile
         alignments = filter.filterAlignments(alignments);
     }
     
-    public void sortAlignments(Comparator<? super Alignment> comparator)
+    public void sort(Comparator<? super Alignment> comparator)
     {
          Collections.sort(alignments, comparator);
+    }
+    
+    public void sort(AlignmentSorter sorter)
+    {
+        alignments = sorter.sort(alignments);
     }
 }

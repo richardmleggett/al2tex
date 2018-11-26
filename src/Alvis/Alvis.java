@@ -23,8 +23,10 @@ import Alvis.Diagrams.AlignmentDiagram;
 import Alvis.Diagrams.ContigAlignmentDiagram;
 import Alvis.Diagrams.PileupCoverageDiagram;
 
-public class Alvis {
-    public static void main(String[] args) {
+public class Alvis 
+{
+    public static void main(String[] args) 
+    {
         DiagramOptions options = new DiagramOptions();
 
         System.out.println("Alvis\n");

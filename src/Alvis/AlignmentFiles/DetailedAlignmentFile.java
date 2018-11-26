@@ -11,6 +11,7 @@ package Alvis.AlignmentFiles;
 
 import java.util.Hashtable;
 import Alvis.AlignmentFilters.AlignmentFilter;
+import Alvis.Diagrams.AlignmentDiagram;
 
 /**
  *
@@ -21,4 +22,5 @@ public interface DetailedAlignmentFile extends AlignmentFile {
     abstract Hashtable getTargetHits();
     abstract int getTargetHitCount(String target);
     abstract void filterAlignments(AlignmentFilter filter);
+    abstract void sort(AlignmentSorter sorter);
 }
