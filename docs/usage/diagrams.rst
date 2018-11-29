@@ -26,7 +26,7 @@ and outputs the following formats
 Contig Alignment Diagram
 ------------------------
 
-For each query contig, the Contig Alignment Diagram draws a rectangle representing the query, containing the most prominent alignments to the reference contigs. These alignments are colour coded by target contig, and shaded to give an indication of the position in the target, and the orientation of the alignment.
+For each query contig, the Contig Alignment Diagram draws a rectangle representing the query, containing the most prominent alignments to the reference contigs. These alignments are colour coded by target contig, and shaded to give an indication of the position in the target, and the orientation of the alignment. If the ``-filter`` option is not used, only the longest 20 alignments are drawn for each query contig.
 
 .. image:: images/contig_alignment_example.png
 
@@ -50,7 +50,7 @@ If in addition, the user specifies a query contig and a reference contig, a deta
 Coverage Map Diagram
 --------------------
 
-Alignments are binned based on their position in the target contigs, and counted to calculate the coverage of each bin. To avoid counting the same query region multiple times, alignments with overalpping query coordinates are filtered by choosing the longest alignment. For each target contig a heatmap image is produced in which each pixel represents the coverage of a bin. These are arranged in a tex or svg file. Note that each heatmap image is a fixed size, so the pixel scale is adjusted to fit.
+Alignments are binned based on their position in the target contigs, and counted to calculate the coverage of each bin. By default, the bin size is 30 bp, but this can be set using the ``-binsize`` option. To avoid counting the same query region multiple times, alignments with overalpping query coordinates are filtered by choosing the longest alignment. For each target contig a heatmap image is produced in which each pixel represents the coverage of a bin. These are arranged in a tex or svg file. Note that each heatmap image is a fixed size, so the pixel scale is adjusted to fit.
 
 .. image:: images/coverage_map_example.png
 
@@ -71,7 +71,7 @@ and outputs the following formats
 Genome Coverage Diagram
 -----------------------
 
-As in the Coverage Map diagram, alignments are binned based on their position in the target contigs. One heatmap is produced showing the coverage over all the target contigs. Unlike the Coverage Map Diagram, the scale for the heatmaps remains the same across all the target contigs.
+As in the Coverage Map diagram, alignments are binned based on their position in the target contigs. By default, the bin size is 30 bp, but this can be set using the ``-binsize`` option. One heatmap is produced showing the coverage over all the target contigs. Unlike the Coverage Map Diagram, the scale for the heatmaps remains the same across all the target contigs.
 
 .. image:: images/genome_coverage_example.png
 

@@ -73,9 +73,9 @@ The following table shows the accepted input and output formats for each diagram
 Filtering
 ----------
 
-The user can filter alignments using the ``-filter`` option. This will cause alvis to ignore all alignments with length less than 0.5% of the reference contig size. (Note, this option is currently only used by the alignment diagram.)
+The user can filter alignments using the ``-filter`` option. This will cause alvis to ignore all alignments with length less than ``-minAlignmentProp``% of the reference contig size (set to 0.5% by default). Note that this option is currently only used by the alignment diagram and the contig alignment diagram.
 
-When using the ``-chimera`` option, alvis will display only those alignments that it thinks could be a chimera.
+When using the ``-chimera`` option in conjunction with the contig alignment diagram, alvis will display only those alignments that it thinks could be a chimera.
 
 .. image:: images/chimera_example.png
 
