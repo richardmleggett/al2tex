@@ -26,12 +26,13 @@ import java.util.*;
  */
 public class ContigAlignmentDiagram 
 {
+    private final static int MAX_ALIGNMENTS_PER_CONTIG = 20;
+    private final static int NUM_COORD_MARKS = 4;
+    private final static int MAX_NUM_KEYS_PER_PAGE = 7;
+ 
     private TreeMap<String, ArrayList<DetailedAlignment>> m_alignmentMap;
     Set<String> m_refNames;
     private double m_minAlignmentProp;
-    private final static int MAX_ALIGNMENTS_PER_CONTIG = 20;
-    private final static int NUM_COORD_MARKS = 4;
-    
     private int m_contigDrawLength;
     private int m_contigDrawHeight;
     private int m_refContigDrawHeight;
@@ -41,6 +42,8 @@ public class ContigAlignmentDiagram
     private boolean m_coloursSet;
     private Drawer m_drawer;
     private boolean m_detailedDiagram = false;
+    private boolean m_constantKey = true;
+    private final int m_keyOffset = 100;
     
     public ContigAlignmentDiagram(DetailedAlignmentFile alignmentFile, DiagramOptions options)
     {
@@ -83,17 +86,73 @@ public class ContigAlignmentDiagram
             alignmentFile.filterAlignments(new ChimeraFilter(0.3f, 0.8f));
         }
         
-        // iterate through all the alignments and group by contig name
+        // Iterate through all the alignments and group by contig name.
+        // Keep track of the different references for the key(s).
         for(int i = 0; i < alignmentFile.getNumberOfAlignments(); ++i)
         {
             DetailedAlignment alignment = alignmentFile.getAlignment(i);
-            String name = alignment.getQueryName();
-            if(!m_alignmentMap.containsKey(name))
+            
+            String queryName = alignment.getQueryName();
+            if(!m_alignmentMap.containsKey(queryName))
             {
-                m_alignmentMap.put(name, new ArrayList());
+                m_alignmentMap.put(queryName, new ArrayList());
             }
-            m_alignmentMap.get(name).add(alignment);
+            m_alignmentMap.get(queryName).add(alignment);
             m_refNames.add(alignment.getTargetName());
+        }
+        
+        System.out.println("Num refs: " + Integer.toString(m_refNames.size()));
+        if(m_refNames.size() > MAX_NUM_KEYS_PER_PAGE)
+        {
+            m_constantKey = false;
+            
+            // split up alignments that contain too many references
+            ArrayList<String> keys = new ArrayList();
+            for(String queryName : m_alignmentMap.keySet())
+            {
+                keys.add(queryName);
+            }
+            
+            // is this safe..?
+            for(int i = 0; i < keys.size(); i++)
+            {
+                String queryName = keys.get(i);
+                LinkedHashSet<String> refs = new LinkedHashSet();
+                ArrayList<DetailedAlignment> list1 = new ArrayList();       
+                ArrayList<DetailedAlignment>  list2 = new ArrayList();
+                
+                // keep alignments with the target one of the first MAX_NUM_KEYS_PER_PAGE targets in one list
+                // put everything else in another
+                for(DetailedAlignment alignment : m_alignmentMap.get(queryName))
+                {
+                    String targetName = alignment.getTargetName();
+                    if(refs.contains(targetName))
+                    {
+                        list1.add(alignment);
+                    }
+                    else
+                    {
+                        if(refs.size() < MAX_NUM_KEYS_PER_PAGE)
+                        {
+                            refs.add(targetName);
+                            list1.add(alignment);
+                        }
+                        else
+                        {
+                            list2.add(alignment);
+                        }
+                    }
+                }
+                
+                if(!list2.isEmpty())
+                {
+                    m_alignmentMap.put(queryName, list1);
+                    
+                    String newQueryName = queryName + "_split";
+                    m_alignmentMap.put(newQueryName, list2);
+                    keys.add(newQueryName);
+                }
+            }
         }
         
         // sort each array of alignments by start pos
@@ -114,23 +173,32 @@ public class ContigAlignmentDiagram
     {
         if(m_refNames.isEmpty())
         {
-            System.out.println( "Something went wrong! No alignments were found in " + options.getInputFilename() +                  
-                                ". Did you specify the correct format?");
+            if(options.getFindChimeras())
+            {
+                System.out.println("No chimera's found in " + options.getInputFilename() + ".");
+            }
+            else
+            {
+                System.out.println( "Something went wrong! No alignments were found in " + options.getInputFilename() +                  
+                                    ". Did you specify the correct format?");
+            }
             System.exit(0);
         }
         m_drawer.openFile();
         
-        // generate and write the colours
-        int refNumber = m_refNames.size();
-        ColourGenerator colourGenerator = new ColourGenerator(refNumber, 0.7f, 0.7f);
-        Iterator<String> iter = m_refNames.iterator();
-        int colourCount = 0;
-        while(iter.hasNext())
+        if(m_constantKey || m_detailedDiagram)
         {
-            setColourForContig(iter.next(), colourGenerator.getColour(colourCount));
-            colourCount++;
+            // generate and write the colours
+            int refNumber = m_refNames.size();
+            ColourGenerator colourGenerator = new ColourGenerator(refNumber, 0.7f, 0.7f);
+            Iterator<String> iter = m_refNames.iterator();
+            int colourCount = 0;
+            while(iter.hasNext())
+            {
+                setColourForContig(iter.next(), colourGenerator.getColour(colourCount));
+                colourCount++;
+            }
         }
-        
         // do the picture
         m_drawer.openPicture(0.1,0.1);
         
@@ -163,27 +231,63 @@ public class ContigAlignmentDiagram
             drawAlignmentDiagram(alignmentsToDraw, 40, 1200);
         }
         else
-        {        
-            drawKey(200,25);
-            int keyOffset = 100;
-            int i = 0;
-            for(ArrayList<DetailedAlignment> DetailedAlignments : m_alignmentMap.values())
+        {
+   
+            ArrayList<String> drawn = new ArrayList();
+            int totalQueries = m_alignmentMap.size();
+            while(drawn.size() < totalQueries)
             {
-                // make a new diagram on a new page
-                // TODO: 175 is a magic number
-                int y = keyOffset + i * 175;
-                if(y > m_drawer.getPageHeight() && i > m_drawer.getMaxAlignmentsPerPage())
+                int i = 0;
+                ArrayList<String> alignmentsForPage = new ArrayList();
+                LinkedHashSet<String> refsForPage = new LinkedHashSet();
+                for(String queryName : m_alignmentMap.keySet())
                 {
-                    m_drawer.closePicture();
-                    m_drawer.newPage();
-                    m_drawer.openPicture(0.1,0.1);
-                    drawKey(200,25);
-                    i = 0;
-                    y = keyOffset;
+                    if(!drawn.contains(queryName))
+                    {                    
+                        ArrayList<DetailedAlignment> alignments = m_alignmentMap.get(queryName);
+                        LinkedHashSet<String> newRefs = new LinkedHashSet();                  
+ 
+                        for(DetailedAlignment alignment : alignments)
+                        {
+                            String targetName = alignment.getTargetName();
+                            if(!refsForPage.contains(targetName))
+                            {
+                                newRefs.add(targetName);  
+                            }
+                        }
+                        
+                        if(refsForPage.size() + newRefs.size() <= MAX_NUM_KEYS_PER_PAGE)
+                        {
+                            refsForPage.addAll(newRefs);
+                            alignmentsForPage.add(queryName);
+                            drawn.add(queryName);
+                            i++;                         
+                            int y = m_keyOffset + i * 175;
+                            if((y > m_drawer.getPageHeight() && i > m_drawer.getMaxAlignmentsPerPage()))
+                            {                 
+                                break;
+                            }
+                        }
+                    }
                 }
-
-                drawContig(DetailedAlignments, 150, y );
-                i++;
+                
+                if(alignmentsForPage.size() > 0)
+                {
+                    drawContigAlignmentPage(alignmentsForPage, refsForPage);
+                    // new page stuff
+                    if(drawn.size() < totalQueries)
+                    {
+                        m_drawer.closePicture();
+                        m_drawer.newPage();
+                        m_drawer.openPicture(0.1,0.1);
+                    } 
+                }
+                else
+                {
+                    System.out.println("Error in ContigAlignmentDiagram:");
+                    System.out.println("Uh-oh, this shouldn't happen! Bailing...");
+                    System.exit(1);
+                }
             }
         }
         m_drawer.closePicture();
@@ -390,4 +494,34 @@ public class ContigAlignmentDiagram
             m_drawer.drawText(x - 50, (y + m_refContigDrawHeight/2), refName, Drawer.Anchor.ANCHOR_MIDDLE, "black");
         }
     }   
+    
+    private void drawContigAlignmentPage(ArrayList<String> queryNames, LinkedHashSet<String> refNames)
+    {
+        // generate new key colours for the refs on tnis page
+        if(!m_constantKey)
+        {             
+            // add the colours for the keys etc.
+            m_coloursMap.clear();
+            ColourGenerator colourGenerator = new ColourGenerator(refNames.size(), 0.7f, 0.7f);
+            Iterator<String> iter = refNames.iterator();
+            int colourCount = 0;
+            while(iter.hasNext())
+            {
+                setColourForContig(iter.next(), colourGenerator.getColour(colourCount));
+                colourCount++;
+            }
+        }
+                            
+        // draw the key
+        drawKey(200,25);
+        // draw the alignments
+        int j = 0;
+        for(String key : queryNames)
+        {
+            ArrayList<DetailedAlignment> detailedAlignments = m_alignmentMap.get(key);
+            int drawY = m_keyOffset + j * 175;
+            drawContig(detailedAlignments, 150, drawY);
+            j++;
+        }      
+    }
 }

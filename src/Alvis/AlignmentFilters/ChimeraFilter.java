@@ -57,6 +57,7 @@ public class ChimeraFilter implements AlignmentFilter
         return filteredAlignments;
     }
     
+    // TODO: Look for chimera's where all alignments have the same target. Currently these will be ignored.
     private boolean isChimera(ArrayList<DetailedAlignment> alignments)
     {
         HashMap<String, Float> coveragesByTarget = new HashMap();
