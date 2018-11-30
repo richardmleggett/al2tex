@@ -9,7 +9,7 @@
 
 package Alvis.AlignmentFiles;
 
-import Alvis.AlignmentFilters.AlignmentFilter;
+import Alvis.AlignmentFilters.*;
 import Alvis.DiagramOptions;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
+import java.util.LinkedHashSet;
 
 /**
  *
@@ -132,5 +133,10 @@ public class BlastFile implements DetailedAlignmentFile
     public void sort(AlignmentSorter sorter)
     {
         m_alignments = sorter.sort(m_alignments);
+    }
+    
+    public LinkedHashSet<String> getChimeras(ChimeraFilter filter)
+    {
+        return filter.getChimericContigs(m_alignments);
     }
 }

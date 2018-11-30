@@ -10,6 +10,9 @@
 package Alvis.AlignmentFilters;
 
 import Alvis.AlignmentFiles.DetailedAlignment;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -20,16 +23,27 @@ public class ChimeraFilter implements AlignmentFilter
 {
     private float m_minCoverageForTarget;
     private float m_minTotalCoverage;
+    private ArrayList<DetailedAlignment> m_chimeras;
     
     public ChimeraFilter(float minCoverageForTarget, float minTotalCoverage)
     {
         m_minCoverageForTarget = minCoverageForTarget;
         m_minTotalCoverage = minTotalCoverage;
+        m_chimeras = new ArrayList();
     }
     
     public ArrayList<DetailedAlignment> filterAlignments(ArrayList<DetailedAlignment> alignments)
     {
         System.out.println("Filtering for possible chimeras, removing everything else.");
+        if(m_chimeras.isEmpty())
+        {
+            m_chimeras = findChimeras(alignments);
+        }
+        return m_chimeras;
+    }
+    
+    private ArrayList<DetailedAlignment> findChimeras(ArrayList<DetailedAlignment> alignments)
+    {
         //first, sort the alignments by query name
         Collections.sort(alignments, DetailedAlignment.compareByQueryName);
         ArrayList<DetailedAlignment> filteredAlignments = new ArrayList();
@@ -58,6 +72,7 @@ public class ChimeraFilter implements AlignmentFilter
     }
     
     // TODO: Look for chimera's where all alignments have the same target. Currently these will be ignored.
+    // what about circular genomes?
     private boolean isChimera(ArrayList<DetailedAlignment> alignments)
     {
         HashMap<String, Float> coveragesByTarget = new HashMap();
@@ -100,4 +115,84 @@ public class ChimeraFilter implements AlignmentFilter
         }       
         return false;
     }
+    
+    public LinkedHashSet<String> getChimericContigs(ArrayList<DetailedAlignment> alignments)
+    {
+        if(m_chimeras.isEmpty())
+        {
+            m_chimeras = findChimeras(alignments);
+        }               
+        LinkedHashSet<String> names = new LinkedHashSet();
+        for(DetailedAlignment alignment : m_chimeras)
+        {
+            names.add(alignment.getQueryName());
+        }
+        return names;
+    }
+    
+    public void writeChimeraFile(String filename)
+    {
+        if(m_chimeras.isEmpty())
+        {
+            System.out.println("No chimeras to report");
+            return;
+        }
+        // order alignments by query and then by query start
+        m_chimeras.sort(chimeraComparator);
+        
+        // output format: queryName \t approx location of chimera on query \t ref1 \t ref2 \n
+        try
+        {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+            String lastRef = m_chimeras.get(0).getTargetName();
+            String lastQuery = m_chimeras.get(0).getQueryName();
+            int lastQueryEnd = m_chimeras.get(0).getQueryEnd();
+            for(DetailedAlignment alignment : m_chimeras)
+            {
+                String queryName = alignment.getQueryName();
+                String refName = alignment.getTargetName();
+                if(queryName.equals(lastQuery))
+                {
+                    if(!refName.equals(lastRef))
+                    {
+                        //write the Chimera
+                        int chimeraPos = (lastQueryEnd + alignment.getQueryStart()) / 2;
+                        writer.write(queryName + "\t" + chimeraPos + "\t" + lastRef + "\t" + refName + "\n");
+                        lastRef = alignment.getTargetName();
+                    }
+                }
+                else
+                {
+                    // move on to the next query
+                    lastQuery = queryName;
+                }
+                lastQueryEnd = alignment.getQueryEnd();
+            }
+            
+            writer.flush();
+            writer.close();
+        }
+        catch(IOException e)
+        {
+            System.out.println("Could not open " + filename + " for writing chimeras");
+        }
+        
+    }
+    
+    public static Comparator chimeraComparator = new Comparator<DetailedAlignment>()
+    {
+        public int compare(DetailedAlignment alignment1, DetailedAlignment alignment2) 
+        {
+            int result = alignment1.getTargetName().compareTo(alignment2.getTargetName());
+            if(result == 0)
+            {
+                result = alignment1.getQueryName().compareTo(alignment2.getQueryName());
+                if(result == 0)
+                {
+                    result = alignment1.getQueryStart() - alignment2.getQueryStart();
+                }
+            }
+            return result;
+        }
+    };
 }

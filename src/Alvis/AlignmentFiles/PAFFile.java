@@ -10,6 +10,7 @@
 package Alvis.AlignmentFiles;
 
 import Alvis.AlignmentFilters.AlignmentFilter;
+import Alvis.AlignmentFilters.ChimeraFilter;
 import java.util.*;
 import java.io.*;
 /**
@@ -108,5 +109,10 @@ public class PAFFile implements DetailedAlignmentFile
     public void sort(AlignmentSorter sorter)
     {
         alignments = sorter.sort(alignments);
+    }
+    
+    public LinkedHashSet<String> getChimeras(ChimeraFilter filter)
+    {
+        return filter.getChimericContigs(alignments);
     }
 }

@@ -19,6 +19,9 @@ import Alvis.Drawers.ColourGenerator;
 import Alvis.DiagramOptions;
 import java.awt.Color;
 import java.util.*;
+import java.io.*;
+import javax.imageio.*;
+import java.awt.image.*;
 
 /**
  *
@@ -32,6 +35,7 @@ public class ContigAlignmentDiagram
  
     private TreeMap<String, ArrayList<DetailedAlignment>> m_alignmentMap;
     Set<String> m_refNames;
+    Set<String> m_chimeras;
     private double m_minAlignmentProp;
     private int m_contigDrawLength;
     private int m_contigDrawHeight;
@@ -44,12 +48,14 @@ public class ContigAlignmentDiagram
     private boolean m_detailedDiagram = false;
     private boolean m_constantKey = true;
     private final int m_keyOffset = 100;
+    private boolean m_drawChimeraIcon = true;
     
     public ContigAlignmentDiagram(DetailedAlignmentFile alignmentFile, DiagramOptions options)
     {
         m_alignmentMap = new TreeMap();
         m_minAlignmentProp = options.getMinAlignmentProp();
         m_refNames = new LinkedHashSet();
+        m_chimeras = new LinkedHashSet();
         m_contigDrawLength = 2000;
         m_contigDrawHeight = 100;
         m_refContigDrawHeight = 50;
@@ -81,9 +87,18 @@ public class ContigAlignmentDiagram
             alignmentFile.filterAlignments(new MinPropFilter(m_minAlignmentProp));
         }
         
+        ChimeraFilter chimeraFilter = new ChimeraFilter(0.05f, 0.8f);
         if(options.getFindChimeras())
         {
-            alignmentFile.filterAlignments(new ChimeraFilter(0.3f, 0.8f));
+            alignmentFile.filterAlignments(chimeraFilter);
+        }
+        else
+        {
+            m_chimeras = alignmentFile.getChimeras(chimeraFilter);
+        }
+        if(options.getPrintChimeras())
+        {
+            chimeraFilter.writeChimeraFile(options.getOutputDirectory() + "/chimeras.txt");
         }
         
         // Iterate through all the alignments and group by contig name.
@@ -101,7 +116,6 @@ public class ContigAlignmentDiagram
             m_refNames.add(alignment.getTargetName());
         }
         
-        System.out.println("Num refs: " + Integer.toString(m_refNames.size()));
         if(m_refNames.size() > MAX_NUM_KEYS_PER_PAGE)
         {
             m_constantKey = false;
@@ -167,6 +181,18 @@ public class ContigAlignmentDiagram
             Collections.sort(detailedAlignments, DetailedAlignment.compareByQueryStart);
         }
         
+        // Copy the chimera image
+        BufferedImage chimeraImg = null;
+        try 
+        {
+            chimeraImg = ImageIO.read(new File("al2tex/Resources/chimera.png")); 
+            File outputfile = new File("images/chimera.png");
+            ImageIO.write(chimeraImg, "png", outputfile);
+        } 
+        catch (IOException e) 
+        {
+            m_drawChimeraIcon = false;
+        }             
     }
     
     public void writeOutputFile(DiagramOptions options)
@@ -232,7 +258,7 @@ public class ContigAlignmentDiagram
         }
         else
         {
-   
+            // Should we iterate through an array of reference names so that the references are always in alphabetical order?
             ArrayList<String> drawn = new ArrayList();
             int totalQueries = m_alignmentMap.size();
             while(drawn.size() < totalQueries)
@@ -356,7 +382,21 @@ public class ContigAlignmentDiagram
             m_drawer.drawLine(xMark, y - 5, xMark, y + 5, "black", false);
             m_drawer.drawText(xMark, y - 15, coord, Drawer.Anchor.ANCHOR_MIDDLE, "black");
         }
-}
+        
+        // Draw the Chimera logo
+        if(m_drawChimeraIcon && m_chimeras.contains(alignments.get(0).getQueryName()))
+        {
+            int chimerax = x + m_contigDrawLength + 30;
+            int chimeray = y + (m_contigDrawHeight / 2);
+            int size = 5;
+            if(m_drawer instanceof SVGDrawer)
+            {
+                size = 40;
+                chimeray -= 20;
+            }
+            m_drawer.drawImage(chimerax, chimeray, size, size, "images/chimera.png", "");
+        }
+    }
     
     public void drawKey(int x, int y)
     {

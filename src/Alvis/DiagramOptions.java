@@ -35,6 +35,7 @@ public class DiagramOptions {
     private String blastFormatString;
     private boolean filter = false;
     private boolean findChimeras = false;
+    private boolean printChimeras = false;
     
     public void parseArgs(String[] args) {
         int i=0;
@@ -149,7 +150,10 @@ public class DiagramOptions {
             } else if(args[i].equalsIgnoreCase("-chimeras")) {
                 findChimeras = true;
                 System.out.println("Looking for Chimeric reads only.");
+            } else if(args[i].equalsIgnoreCase("-printchimeras")) {
+                printChimeras = true;
             }
+            
             
             i++;
         }
@@ -307,5 +311,9 @@ public class DiagramOptions {
     
     public boolean getFindChimeras() {
         return findChimeras;
+    }
+    
+    public boolean getPrintChimeras() {
+        return printChimeras;
     }
 }
