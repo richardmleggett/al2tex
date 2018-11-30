@@ -9,7 +9,7 @@ Here are the options
 Input Formats
 -------------
 
-alvis accepts a variety of alignment formats. These are specified by the option ``-inputfmt <format>``, where ``<format>`` is one of the following:
+Alvis accepts a variety of alignment formats. These are specified by the option ``-inputfmt <format>``, where ``<format>`` is one of the following:
 
 - ``paf``
 - ``psl``
@@ -19,9 +19,18 @@ alvis accepts a variety of alignment formats. These are specified by the option 
 - ``sam``
 - ``pileup``
 
-A coords file can be created from a mummer .delta file using the ``show-coords`` command. For this file to work with alvis, the ``-B`` option must be specified (see `here <http://mummer.sourceforge.net/manual/#coords/>`_ for more details).
+Coords
+......
+
+A coords file can be created from a mummer .delta file using the ``show-coords`` command in the MUMer package. For this file to work with alvis, the ``-B`` option must be specified (see `here <http://mummer.sourceforge.net/manual/#coords/>`_ for more details).
+
+Tiling
+......
 
 Similarly, a tiling file can be created from a mummer .delta file using the ``show-tiling`` command. In this case, the ``-a`` option must be specified (see `here <http://mummer.sourceforge.net/manual/#tiling/>`_ for more details).
+
+Blast
+.....
 
 If blast is given as the format, the input file must have been created by blast using the tabular option, i.e. with "-outfmt 6" specified. Furthermore, the following fields must be present in some order:
 
@@ -33,6 +42,10 @@ If blast is given as the format, the input file must have been created by blast 
 - ``send``
 
 The parameter passed to blast after the ``-outfmt`` option must also be given to alvis after the -blastfmt option (e.g. ``-blastfmt '6 qseqid sseqid qstart qend sstart ssend'``).
+
+SAM
+....
+When using a SAM file, the ``-tSize`` option must be set to the size of the target.
 
 Diagrams
 ---------
@@ -73,7 +86,7 @@ The following table shows the accepted input and output formats for each diagram
 Filtering
 ----------
 
-The user can filter alignments using the ``-filter`` option. This will cause alvis to ignore all alignments with length less than ``-minAlignmentProp``% of the reference contig size (set to 0.5% by default). Note that this option is currently only used by the alignment diagram and the contig alignment diagram.
+The user can filter alignments using the ``-filter`` option. This will cause alvis to ignore all alignments with length less than ``-minAlignmentProp`` % of the reference contig size (set to 0.5% by default). Note that this option is currently only used by the alignment diagram and the contig alignment diagram.
 
 When using the ``-chimera`` option in conjunction with the contig alignment diagram, alvis will display only those alignments that it thinks could be a chimera.
 
