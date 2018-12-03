@@ -23,6 +23,8 @@ public class ChimeraFilter implements AlignmentFilter
 {
     private float m_minCoverageForTarget;
     private float m_minTotalCoverage;
+    private float m_maxQueryGapDistance;
+    private float m_minTargetGapDistance;
     private ArrayList<DetailedAlignment> m_chimeras;
     
     public ChimeraFilter(float minCoverageForTarget, float minTotalCoverage)
@@ -30,6 +32,8 @@ public class ChimeraFilter implements AlignmentFilter
         m_minCoverageForTarget = minCoverageForTarget;
         m_minTotalCoverage = minTotalCoverage;
         m_chimeras = new ArrayList();
+        m_maxQueryGapDistance = 0.01f;
+        m_minTargetGapDistance = 0.5f;
     }
     
     public ArrayList<DetailedAlignment> filterAlignments(ArrayList<DetailedAlignment> alignments)
@@ -63,7 +67,7 @@ public class ChimeraFilter implements AlignmentFilter
             }
         
             // identify the chimeras
-            if(isChimera(alignmentsForQuery))
+            if(isChimera2(alignmentsForQuery))
             {
                 filteredAlignments.addAll(alignmentsForQuery);
             }
@@ -195,4 +199,49 @@ public class ChimeraFilter implements AlignmentFilter
             return result;
         }
     };
+    
+    private boolean isChimera2(ArrayList<DetailedAlignment> alignments)
+    {
+        alignments.sort(DetailedAlignment.compareByQueryStart);
+        DetailedAlignment firstAlignment = alignments.get(0);
+        String lastTarget = firstAlignment.getTargetName();
+        int lastQueryEnd = firstAlignment.getQueryEnd();
+        int lastQueryStart = firstAlignment.getQueryStart();
+        int lastTargetEnd = firstAlignment.getTargetEnd();
+        boolean lastOrientation = firstAlignment.isReverseAlignment();
+        
+        int maxQueryDistBP = (int)(m_maxQueryGapDistance * alignments.get(0).getQuerySize());
+        for(int i = 1; i < alignments.size(); i++)
+        {
+            DetailedAlignment alignment = alignments.get(i);
+            int maxTargetDistBP = (int)(m_minTargetGapDistance * alignment.getTargetSize());
+            
+            int queryStart = alignment.getQueryStart();
+            assert(queryStart > lastQueryStart);
+            if(queryStart > lastQueryEnd && queryStart - lastQueryEnd < maxQueryDistBP)
+            {
+//                if(alignment.isReverseAlignment() != lastOrientation)
+//                {
+//                    return true;
+//                }
+                if(!lastTarget.equals(alignment.getTargetName()))
+                {
+                    return true;
+                }
+                else
+                {
+                    if(Math.abs(lastTargetEnd - alignment.getTargetStart()) % alignment.getTargetSize() > maxTargetDistBP)
+                    {
+                        return true;
+                    }
+                }
+            }
+            lastTarget = alignment.getTargetName();
+            lastQueryStart = alignment.getQueryStart();
+            lastQueryEnd = alignment.getQueryEnd();
+            lastTargetEnd = alignment.getTargetEnd();
+            lastOrientation = alignment.isReverseAlignment();
+        }
+        return false;
+    }
 }
