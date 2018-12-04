@@ -50,9 +50,13 @@ If in addition, the user specifies a query contig and a reference contig, a deta
 Coverage Map Diagram
 --------------------
 
-Alignments are binned based on their position in the target contigs, and counted to calculate the coverage of each bin. By default, the bin size is 30 bp, but this can be set using the ``-binsize`` option. To avoid counting the same query region multiple times, alignments with overalpping query coordinates are filtered by choosing the longest alignment. For each target contig a heatmap image is produced in which each pixel represents the coverage of a bin. These are arranged in a tex or svg file. Note that each heatmap image is a fixed size, so the pixel scale is adjusted to fit.
+Alignments are binned based on their position in the target contigs, and counted to calculate the coverage of each bin. By default, the bin size is 30 bp, but this can be set using the ``-binsize`` option. To avoid counting the same query region multiple times, alignments with overalpping query coordinates are filtered by choosing the longest alignment. For each target contig a heatmap image is produced in which each pixel represents the coverage of a bin. These are arranged in a tex or svg file. Note that each heatmap image is a fixed size, so the pixel scale is adjusted to fit. By default, square images are produced where the rows are read top to bottom, from left to right, as below.
 
 .. image:: images/coverage_map_example.png
+
+If the ``coverageType`` option is set to ``long``, then the heatmap consists of one row for each target, read left to right.
+
+.. image:: images/coverage_map_long_example.png
 
 This diagram type accepts the following input formats
 
