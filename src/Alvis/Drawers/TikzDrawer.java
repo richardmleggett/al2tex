@@ -427,6 +427,6 @@ public class TikzDrawer implements Drawer
     
     public int getPageHeight()
     {
-        return 175;
+        return 150;
     }
 }

@@ -46,7 +46,7 @@ public class CoverageMapDiagram
         
         if(o.getOutputFormat().equals("svg"))
         {
-            m_drawer = new SVGDrawer(filename, true, 4, 1242, 595);
+            m_drawer = new SVGDrawer(filename, true, 4, 1242, 700);
         }
         else
         {
@@ -111,7 +111,7 @@ public class CoverageMapDiagram
         {
             case SQUARE_MAP:
             {
-                double y = 30;
+                double y = 40;
                 for(int i = 0; i < coverageMaps.size(); i++)
                 {  
                     CoverageMapImage coverageMap = coverageMaps.get(i);
@@ -120,12 +120,12 @@ public class CoverageMapDiagram
 
                     if(i % 2 == 0 && i > 0)
                     {
-                        y += targetWidth * 1.25 + 30;
-                        if(y > m_drawer.getPageHeight())
+                        y += targetWidth * 1.25 + 20;
+                        if(y + targetWidth > m_drawer.getPageHeight())
                         {
                             m_drawer.newPage();
                             m_drawer.drawScale(heatMapScale, 10, 5);
-                            y = 30;
+                            y = 40;
                         }
                     }
                     m_drawer.drawCoverageMap(coverageMap, x, y);
@@ -134,12 +134,21 @@ public class CoverageMapDiagram
             }
             case LONG_MAP:
             {   
+                int multiplier = 0;
                 for(int i = 0; i < coverageMaps.size(); i++)
                 {
-                    double y = 20 + (i * 15);
+                    double y = 25 + (multiplier * 15);
+                    if(y + 15 > m_drawer.getPageHeight())
+                    {
+                        m_drawer.newPage();
+                        m_drawer.drawScale(heatMapScale, 10, 5);   
+                        multiplier = 0;
+                        y = 25;
+                    }             
                     double x = 20;
                     CoverageMapImage coverageMap = coverageMaps.get(i);
                     m_drawer.drawCoverageLong(coverageMap, x, y, 200, 4, NUM_DIVIDERS);
+                    multiplier++;
                 }
                 break;
             }
