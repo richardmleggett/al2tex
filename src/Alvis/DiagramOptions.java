@@ -152,9 +152,15 @@ public class DiagramOptions {
                 System.out.println("Looking for Chimeric reads only.");
             } else if(args[i].equalsIgnoreCase("-printchimeras")) {
                 printChimeras = true;
-            }
-            
-            
+            } else if(args[i].equalsIgnoreCase("-coverageType")) {
+                if(args[i+1].equalsIgnoreCase("square")) {
+                    cmiType = CoverageMapImage.Type.SQUARE_MAP;
+                } else if(args[i+1].equalsIgnoreCase("long")) {
+                    cmiType = CoverageMapImage.Type.LONG_MAP;
+                } else {
+                    System.out.println("Did not recognise coverage type: " + args[i+1]);
+                }
+            }          
             i++;
         }
         

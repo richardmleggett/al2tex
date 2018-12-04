@@ -404,7 +404,7 @@ public class TikzDrawer implements Drawer
         }
 
         drawImage(x, y, imageWidth, imageHeight, filename, "[anchor=south west, inner sep=0pt, outer sep=0pt]");
-        drawText(x + imageWidth + 10, y + (imageHeight/2), targetName, Drawer.Anchor.ANCHOR_MIDDLE, "black");
+        drawText(x + imageWidth + 5, y + (imageHeight/2), targetName, Drawer.Anchor.ANCHOR_LEFT, "black");
         closePicture();
         drawVerticalGap(5);
         drawNewline();        
