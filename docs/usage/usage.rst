@@ -1,10 +1,65 @@
 Usage
 ==========
 
-alvis is run from the command line etc.
+alvis is run from the command line etc. Something about jars, maybe make a run script?
 
-Here are the options
+The following options are mandatory.
 
++-------------------------+---------------------------------------+
+| ``-type <diagram>``     |   Type of diagram to be produced.     |
++-------------------------+---------------------------------------+
+| ``-inputfmt <format>``  |   Format of the alignment file to use.|
++-------------------------+---------------------------------------+
+| ``-outputfmt <format>`` |   Format to output the diagram in.    |
++-------------------------+---------------------------------------+
+| ``-in <path>``          |  Full file path to alignment file.    |
++-------------------------+---------------------------------------+
+| ``-outdir <dir>``       |  Directory to write output to.        |
++-------------------------+---------------------------------------+
+| ``-out <prefix>``       |  Prefix to use for output file names. |
++-------------------------+---------------------------------------+
+
+The following options are optional.
+
++----------------------------------------------+---------------------------------------------+
+| ``-filter``                                  | Filter small alignments to remove noise.    |
++----------------------------------------------+---------------------------------------------+
+| ``-minAlignmentProp <int>``                  | Minimum size of alignments, as a percent of |
+|                                              | the query length, to keep when filtering.   |
++----------------------------------------------+---------------------------------------------+
+| ``-chimeras``                                | Only display alignments from chimeras.      |
++----------------------------------------------+---------------------------------------------+
+| ``-alignmentQueryName <query sequence id>``  | ID of query sequence for exapnded contig    |
+|                                              | alignment diagram.                          |
++----------------------------------------------+---------------------------------------------+
+| ``-alignmentTargetName <target sequence id>``| ID of target sequence for expanded contig   |
+|                                              | alignment diagram.                          |
++----------------------------------------------+---------------------------------------------+
+| ``-blastfmt <format string>``                | Format string as given to blast. Required   |
+|                                              | if ``-inputfmt`` is ``blast``.              |
++----------------------------------------------+---------------------------------------------+
+| ``-tsize <int>``                             | Size (in bp) of target contig. Required if  |
+|                                              | ``inputfmt`` is ``sam``.                    |
++----------------------------------------------+---------------------------------------------+
+| ``-binsize <int>``                           | Size (in bp) of bins for coverage diagrams. |
++----------------------------------------------+---------------------------------------------+
+| ``-coverageType  <type>``                    | The type of coverage heatmap to produce.    |
+|                                              | Must be either "square" or "long".          |
++----------------------------------------------+---------------------------------------------+
+
+
+Diagrams
+---------
+
+The type of diagram is specified with the ``-type <diagram>`` option etc. The currently available diagrams are:
+
+- ``alignment``
+- ``contigAlignment``
+- ``coveragemap``
+- ``genomecoverage``
+- ``pileup``
+
+Detailed information for each diagram can be found in the :doc:`diagrams` section.
 
 Input Formats
 -------------
@@ -46,19 +101,6 @@ The parameter passed to blast after the ``-outfmt`` option must also be given to
 SAM
 ....
 When using a SAM file, the ``-tSize`` option must be set to the size of the target.
-
-Diagrams
----------
-
-The type of diagram is specified with the ``-type <diagram>`` option etc. The currently available diagrams are:
-
-- ``alignment``
-- ``contigAlignment``
-- ``coveragemap``
-- ``genomecoverage``
-- ``pileup``
-
-Detailed information for each diagram can be found in the :doc:`diagrams` section.
 
 Output Formats
 --------------
