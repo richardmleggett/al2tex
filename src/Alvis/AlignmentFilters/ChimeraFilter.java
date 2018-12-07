@@ -26,6 +26,7 @@ public class ChimeraFilter implements AlignmentFilter
     private float m_maxQueryGapDistance;
     private float m_minTargetGapDistance;
     private ArrayList<DetailedAlignment> m_chimeras;
+    private AlignmentFilter m_overlapFilter;
     
     public ChimeraFilter(float minCoverageForTarget, float minTotalCoverage)
     {
@@ -34,6 +35,7 @@ public class ChimeraFilter implements AlignmentFilter
         m_chimeras = new ArrayList();
         m_maxQueryGapDistance = 0.01f;
         m_minTargetGapDistance = 0.5f;
+        m_overlapFilter = new OverlapFilter();
     }
     
     public ArrayList<DetailedAlignment> filterAlignments(ArrayList<DetailedAlignment> alignments)
@@ -202,6 +204,7 @@ public class ChimeraFilter implements AlignmentFilter
     
     private boolean isChimera2(ArrayList<DetailedAlignment> alignments)
     {
+        alignments = m_overlapFilter.filterAlignments(alignments);
         alignments.sort(DetailedAlignment.compareByQueryStart);
         DetailedAlignment firstAlignment = alignments.get(0);
         String lastTarget = firstAlignment.getTargetName();
@@ -220,10 +223,10 @@ public class ChimeraFilter implements AlignmentFilter
             assert(queryStart > lastQueryStart);
             if(queryStart > lastQueryEnd && queryStart - lastQueryEnd < maxQueryDistBP)
             {
-//                if(alignment.isReverseAlignment() != lastOrientation)
-//                {
-//                    return true;
-//                }
+                if(alignment.isReverseAlignment() != lastOrientation)
+                {
+                    return true;
+                }
                 if(!lastTarget.equals(alignment.getTargetName()))
                 {
                     return true;
