@@ -33,6 +33,7 @@ public class CoverageMapImage {
     private String outputFilename;
     private Type mapType;
     private int longImageHeight = 16;
+    private boolean printedWarning = false;
                             
     public CoverageMapImage(DiagramOptions o, int s, String _outputFilename, String _targetName) {
         options = o;
@@ -49,6 +50,13 @@ public class CoverageMapImage {
         {
             int from = a.getBlockTargetStart(b);
             int to = from + a.getBlockSize(b);
+            if(from > coverage.length || to > coverage.length)
+            {
+                printTrimWarning();
+            }
+            
+            from = Math.min(from, a.getTargetSize());
+            to = Math.min(to, a.getTargetSize());
             for (int i=from; i<to; i++) 
             {
                 coverage[i]++;               
@@ -58,7 +66,17 @@ public class CoverageMapImage {
                 }
             }
         }
-    }    
+    }
+    
+    private void printTrimWarning()
+    {
+        if(!printedWarning)
+        {
+            System.out.println("Warning: Some alignments went over targetSize. Has -tsizes been set correctly?");
+            System.out.println("Trimming alignments to fit.");
+            printedWarning = true;
+        }
+    }
     
     public void saveSquareImageFile(HeatMapScale heatMap) {
         int imageWidth = targetSize > 4000 ? 4000:targetSize;
@@ -67,9 +85,8 @@ public class CoverageMapImage {
         int pixels = nRows*imageWidth;
         double multiplier = (double)pixels / (double)targetSize;
         
-        System.out.println("Multiplier "+multiplier);
-                
-        System.out.println("Width "+imageWidth+" Height " + imageHeight);
+        //System.out.println("Multiplier "+multiplier);        
+        //System.out.println("Width "+imageWidth+" Height " + imageHeight);
         BufferedImage bImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
         
         Graphics g=bImage.getGraphics();

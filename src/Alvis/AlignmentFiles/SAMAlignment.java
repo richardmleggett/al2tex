@@ -48,9 +48,9 @@ public class SAMAlignment implements Alignment, Comparable {
         rName=rName.replace("_", "");        
         
         String expectedCigar = aLength+"M";        
-        if (!cigar.contains(expectedCigar)) {
-            System.out.println("Warning: CIGAR string "+cigar+" doesn't contain expected "+expectedCigar);
-        }
+        //if (!cigar.contains(expectedCigar)) {
+        //    System.out.println("Warning: CIGAR string "+cigar+" doesn't contain expected "+expectedCigar);
+        //}
     }
     
     public String getQueryName() { return qName; };

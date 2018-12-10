@@ -50,7 +50,7 @@ public class Alvis
         else if (options.getInputFormat().equals("sam")) 
         {
             System.out.println("\nOpening SAM file");
-            SAMFile samFile = new SAMFile(options.getInputFilename(), options.getTargetSize());
+            SAMFile samFile = new SAMFile(options.getInputFilename(), options.getTargetSizes());
 
             if ((options.getDiagramType().equals("coveragemap"))  ||
                 (options.getDiagramType().equals("all"))) 

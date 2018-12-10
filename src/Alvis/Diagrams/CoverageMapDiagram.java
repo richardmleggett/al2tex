@@ -59,13 +59,11 @@ public class CoverageMapDiagram
         File imagesDir = new File(outputDirectory+"/images");
         imagesDir.mkdir();
         
-        //TODO: write filter for overlaps so we don't get extra coverage.
         // NOOOOOOOOOO!!!!
         if(alignmentFile instanceof DetailedAlignmentFile)
         {
             ((DetailedAlignmentFile)alignmentFile).filterAlignments(new OverlapFilter());
         }
-        
         
         alignmentFile.sort(AlignmentFile.compareByTargetName);
         String filenamePrefix = outputDirectory + "/images/";

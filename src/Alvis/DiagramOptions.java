@@ -23,7 +23,7 @@ public class DiagramOptions {
     private String outputFormat = null;
     private int maxCoverage = 0;
     private int maxTargets = 0;
-    private int tSize = 0;
+    private String tSizes;
     private int rowHeight = 10;
     private int rowSpacer = 0;
     private boolean newHeatMapForEachContig = false;
@@ -120,9 +120,9 @@ public class DiagramOptions {
             } else if (args[i].equalsIgnoreCase("-maxcoverage")) {
                 maxCoverage = Integer.parseInt(args[i+1]);
                 System.out.println("    Max coverage: " + maxCoverage);
-            } else if (args[i].equalsIgnoreCase("-tsize")) {
-                tSize = Integer.parseInt(args[i+1]);
-                System.out.println("     Target size: " + tSize);
+            } else if (args[i].equalsIgnoreCase("-tsizes")) {
+                tSizes = (args[i+1]);
+                System.out.println("     Target size: " + tSizes);
             } else if (args[i].equalsIgnoreCase("-rowheight")) {
                 rowHeight = Integer.parseInt(args[i+1]);
                 System.out.println("      Row height: " + rowHeight);
@@ -174,7 +174,7 @@ public class DiagramOptions {
                 System.err.println("Error: SAM files can only produce coverage maps");
             }
             
-            if (tSize == 0) {
+            if (tSizes.isEmpty()) {
                 System.out.println("Error: For SAM files, you must specify a -tsize");
             }
         }
@@ -243,8 +243,8 @@ public class DiagramOptions {
         return maxCoverage;
     }
     
-    public int getTargetSize() {
-        return tSize;
+    public String getTargetSizes() {
+        return tSizes;
     }
     
     public String getDiagramType() {
