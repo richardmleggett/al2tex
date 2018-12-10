@@ -38,8 +38,9 @@ The following options are optional.
 | ``-blastfmt <format string>``                | Format string as given to blast. Required   |
 |                                              | if ``-inputfmt`` is ``blast``.              |
 +----------------------------------------------+---------------------------------------------+
-| ``-tsize <int>``                             | Size (in bp) of target contig. Required if  |
-|                                              | ``inputfmt`` is ``sam``.                    |
+| ``-tsizes <"string">``                       | List of target names and sizes, separated by|
+|                                              | whitspace. Required if ``inputfmt`` is      |
+|                                              | ``sam``.                                    |
 +----------------------------------------------+---------------------------------------------+
 | ``-binsize <int>``                           | Size (in bp) of bins for coverage diagrams. |
 +----------------------------------------------+---------------------------------------------+
@@ -100,7 +101,7 @@ The parameter passed to blast after the ``-outfmt`` option must also be given to
 
 SAM
 ....
-When using a SAM file, the ``-tSize`` option must be set to the size of the target.
+When using a SAM file, Alvis will attempt to find the target contig sizes from the header section. If this unavailable, the user can supply these values through the ``-tsizes`` option, by typing a space-separaed list of target names and their sizes. E.g. ``-tsizes 'Chr1 34964571 Chr2 22037565 Chr3 25499034 Chr4 20862711 Chr5 31270811'``.
 
 Output Formats
 --------------
