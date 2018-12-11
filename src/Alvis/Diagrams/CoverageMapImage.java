@@ -129,12 +129,12 @@ public class CoverageMapImage {
         
         if (targetSize > 10000) {
             multiplier = 10000.0/targetSize;
-            System.out.println("Multiplier "+multiplier);
+            //System.out.println("Multiplier "+multiplier);
             imageWidth = (int)((double)targetSize * multiplier);
         }
         
         
-        System.out.println("Width "+imageWidth+" Height "+longImageHeight);
+        //System.out.println("Width "+imageWidth+" Height "+longImageHeight);
         BufferedImage bImage = new BufferedImage(imageWidth, longImageHeight, BufferedImage.TYPE_INT_RGB);
         
         Graphics g = bImage.getGraphics();

@@ -23,7 +23,7 @@ public class DiagramOptions {
     private String outputFormat = null;
     private int maxCoverage = 0;
     private int maxTargets = 0;
-    private String tSizes;
+    private String tSizes = "";
     private int rowHeight = 10;
     private int rowSpacer = 0;
     private boolean newHeatMapForEachContig = false;
@@ -172,10 +172,6 @@ public class DiagramOptions {
         if (inputFormat.equals("sam")) {
             if (!(diagramType.equals("coveragemap") || diagramType.equals("genomecoveragemap"))) {
                 System.err.println("Error: SAM files can only produce coverage maps");
-            }
-            
-            if (tSizes.isEmpty()) {
-                System.out.println("Error: For SAM files, you must specify a -tsize");
             }
         }
 

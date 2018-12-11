@@ -22,46 +22,62 @@ public class SAMFile implements AlignmentFile {
     {
         try
         {        
-            BufferedReader br = new BufferedReader(new FileReader(filename));
-            String line = br.readLine();
-            while (line != null && line.startsWith("@")) 
+            Scanner sc = new Scanner(new FileReader(filename));
+            sc.useDelimiter("\t");
+            
+            boolean scannedFirstField = false;
+            String firstField = "";
+            while(sc.hasNextLine())
             {
-                // this is a header line. Look for target lengths.
-                if(line.subSequence(1, 3).equals("SQ"))
+                String first = sc.next();
+                if(first.startsWith("@")) 
                 {
-                    String[] fields = line.split("\\t");
-                    String targetName = "";
-                    int targetSize = -1;
-                    for(int i = 0; i < fields.length; i++)
+                    // this is a header line. Look for target lengths.
+                    String line = sc.nextLine();
+                    if(first.equals("@SQ"))
                     {
-                        String field = fields[i].trim();
-                        if(field.contains("SN:"))
+                        String[] fields = line.split("\\t");
+                        String targetName = "";
+                        int targetSize = -1;
+                        for(int i = 0; i < fields.length; i++)
                         {
-                            targetName = field.substring(3);
+                            String field = fields[i].trim();
+                            if(field.contains("SN:"))
+                            {
+                                targetName = field.substring(3);
+                            }
+                            else if(field.contains("LN:"))
+                            {
+                                targetSize = Integer.parseInt(field.substring(3));
+                            }
                         }
-                        else if(field.contains("LN:"))
-                        {
-                            targetSize = Integer.parseInt(field.substring(3));
-                        }
+                        assert(!targetName.isEmpty());
+                        assert(targetSize != -1);
+                        targetSizes.put(targetName, targetSize);
+                        System.out.println("Found target: " + targetName + ", " + targetSize);
                     }
-                    assert(!targetName.isEmpty());
-                    assert(targetSize != -1);
-                    targetSizes.put(targetName, targetSize);
-                    System.out.println("Found target: " + targetName + ", " + targetSize);
                 }
-                line = br.readLine();
+                else
+                {
+                    firstField = first;
+                    scannedFirstField = true;
+                    break;
+                }
             }
             
-            String[] sizes = tSizes.split(" ");
-            System.out.println("Looking for targets with sizes:");
-            for(int i = 0; i < sizes.length; i+=2)
+            if(!tSizes.isEmpty())
             {
-                String targetName = sizes[i];
-                int targetSize = Integer.parseInt(sizes[i+1]);
-                if(targetSizes.get(targetName) == null)
+                String[] sizes = tSizes.split(" ");
+                System.out.println("Looking for targets with sizes:");
+                for(int i = 0; i < sizes.length; i+=2)
                 {
-                    targetSizes.put(targetName, targetSize);
-                    System.out.println("Found target:" + targetName + ", " + Integer.toString(targetSize));
+                    String targetName = sizes[i];
+                    int targetSize = Integer.parseInt(sizes[i+1]);
+                    if(targetSizes.get(targetName) == null)
+                    {
+                        targetSizes.put(targetName, targetSize);
+                        System.out.println("Found target:" + targetName + ", " + Integer.toString(targetSize));
+                    }
                 }
             }
             
@@ -70,46 +86,62 @@ public class SAMFile implements AlignmentFile {
                 System.out.println("Could not find target sizes in SAM file header section. Please specify -tsizes");
                 return;
             }
+            
+            ArrayList<String> unrecognizedTargets = new ArrayList();
                      
-            while (line != null) 
+            while(sc.hasNextLine()) 
             {
-                String[] fields = line.split("\\t");
-                if (fields.length >= 11) 
+                String qName; 
+                if(scannedFirstField)
                 {
-                    String target = fields[2];
-                    if(targetSizes.containsKey(target))
+                    qName = firstField;
+                    scannedFirstField = false;
+                }
+                else
+                {
+                    qName = sc.next();
+                }
+                int flag = Integer.parseInt(sc.next());
+                String target = sc.next();
+                int pos = Integer.parseInt(sc.next());
+                int mapq = Integer.parseInt(sc.next());
+                sc.next(); // CIGAR string
+                sc.next(); // RNEXT
+                sc.next(); // PNEXT
+                sc.next(); // TLEN
+                int length = sc.next().length();
+                sc.nextLine(); // we are done now, go to end of line
+                
+                if(targetSizes.containsKey(target))
+                {
+                    int size = targetSizes.get(target);
+                    SAMAlignment a = new SAMAlignment(size, qName, flag, target, pos, mapq, length);
+                    alignments.add(a);
+
+                    Integer count = targetHits.get(a.getTargetName());
+
+                    if (count == null) 
                     {
-                        int size = targetSizes.get(target);
-                        SAMAlignment a = new SAMAlignment(line, size, false);
-                        alignments.add(a);
-
-                        Integer count = targetHits.get(a.getTargetName());
-
-                        if (count == null) 
-                        {
-                            count = 1;
-                        } 
-                        else 
-                        {
-                            count += 1;
-                        }
-                        targetHits.put(a.getTargetName(), count);
+                        count = 1;
+                    } 
+                    else 
+                    {
+                        count += 1;
                     }
-                    else
+                    targetHits.put(a.getTargetName(), count);
+                }
+                else
+                {
+                    if(!unrecognizedTargets.contains(target))
                     {
                         System.out.println("Did not recognise target " + target + ".");
+                        unrecognizedTargets.add(target);
                     }
-                } 
-                else 
-                {
-                    System.out.println("Line not recognised: "+line);
                 }
-
-                line = br.readLine();
             } 
-            br.close();
+            sc.close();
         } 
-        catch (Exception ioe) 
+        catch(Exception ioe) 
         {
             System.out.println("Exception:");
             System.out.println(ioe);

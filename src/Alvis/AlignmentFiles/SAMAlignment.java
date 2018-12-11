@@ -10,75 +10,50 @@
 package Alvis.AlignmentFiles;
 
 public class SAMAlignment implements Alignment, Comparable {
-    private String qName;
-    private int flag;
-    private String rName;
-    private int pos;
-    private int mapq;
-    private String cigar;
-    private String rNext;
-    private int pNext;
-    private int tLen;
-    private String seq;
-    private String qual;
-    private int tSize;
-    private int aLength;
+    private String m_qName;
+    private int m_flag;
+    private String m_rName;
+    private int m_pos;
+    private int m_mapq;
+    private int m_tSize;
+    private int m_aLength;
     
-    public SAMAlignment(String line, int size, boolean fStoreSeq) {
-        String[] fields = line.split("\\t");
+    public SAMAlignment( int tSize, String qName, int flag, String rName, int pos, int mapq, int length) 
+    {
 
-        tSize = size;
-        qName = fields[0];
-        flag = Integer.parseInt(fields[1]);
-        rName = fields[2];
-        pos = Integer.parseInt(fields[3]);
-        mapq = Integer.parseInt(fields[4]);
-        cigar = fields[5];
-        rNext = fields[6];
-        pNext = Integer.parseInt(fields[7]);        
-        tLen = Integer.parseInt(fields[8]);
-        if (fStoreSeq) {
-            seq = fields[9];
-            qual = fields[10];
-        }
-        aLength = fields[9].length();
+        m_tSize = tSize;
+        m_qName = qName;
+        m_flag = flag;
+        m_rName = rName;
+        m_pos = pos;
+        m_mapq = mapq;       
+        m_aLength = length;
 
         rName=rName.replace("|", "");
         rName=rName.replace(".", "");
         rName=rName.replace("_", "");        
         
-        String expectedCigar = aLength+"M";        
-        //if (!cigar.contains(expectedCigar)) {
-        //    System.out.println("Warning: CIGAR string "+cigar+" doesn't contain expected "+expectedCigar);
-        //}
     }
     
-    public String getQueryName() { return qName; };
-    public int getFlags() { return flag; };
-    public String getRef() { return rName; };
-    public int getPos() { return pos; };
-    public int getMapQ() { return mapq; };
-    public String getCigar() { return cigar; };
-    public String getRefNext() { return rNext; };
-    public int getPosNext() { return pNext; };        
-    public int getTLen() { return tLen; };
-    public String getSeq() { return seq; };
-    public String getQual() { return qual; };        
-    public int getLength() { return aLength; };
-    public String getTargetName() { return this.getRef(); };
-    public int getTargetSize() { return tSize; }
+    public String getQueryName() { return m_qName; };
+    public int getFlags() { return m_flag; };
+    public int getPos() { return m_pos; };
+    public int getMapQ() { return m_mapq; };             
+    public int getLength() { return m_aLength; };
+    public String getTargetName() { return m_rName; };
+    public int getTargetSize() { return m_tSize; }
     public int getBlockCount() { return 1; };
     public int getBlockTargetStart(int i) { return this.getPos(); };
     public int getBlockSize(int i) { return this.getLength(); };    
     
     @Override
     public int compareTo(Object o) {
-        int td = rName.compareTo(((SAMAlignment)o).getRef());
+        int td = m_rName.compareTo(((SAMAlignment)o).getTargetName());
         
         if (td != 0) {
             return td;
         }
         
-        return pos - ((SAMAlignment)o).getPos();
+        return m_pos - ((SAMAlignment)o).getPos();
     }
 }
