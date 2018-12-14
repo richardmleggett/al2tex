@@ -1,9 +1,8 @@
-al2tex
-Richard.Leggett@tgac.ac.uk
+Alvis
+samuel.martin@earlham.ac.uk
 
-Java tool to produce LaTeX alignment diagrams from PSL (Blat) files and from
-MUMmer files.
+Java tool to produce LaTeX and SVG alignment diagrams from a number of common alignment formats.
 
-May be extended to other alignment formats in the future!
+May be extended to other alignment formats and diagrams in the future!
 
-There may be a manual in the future too!
+A user guide can be found at https://alvis.readthedocs.io/en/latest/
