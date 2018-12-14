@@ -1,9 +1,12 @@
 Usage
 ==========
 
-alvis is run from the command line etc. Something about jars, maybe make a run script?
+Alvis can be run from the command line using the .jar file. In the terminal, navigate to the dist directory in the Alvis project, and type e.g: ::
 
-The following options are mandatory.
+	Java -jar alvis.jar -type alignment -inputfmt paf -outputfmt tex \
+		-in /path/to/alignments/alignments.paf -outdir /path/to/out/ -out prefix
+
+This will create the file prefix_alignment.tex in the directory /path/to/out. The file prefix_alignment.tex can then be compiled by your favourite tex compiler and viewed as a pdf. The options used in this command form the minimum set required for Alvis to work, and are described in the following table.
 
 +-------------------------+---------------------------------------+
 | ``-type <diagram>``     |   Type of diagram to be produced.     |
@@ -19,7 +22,7 @@ The following options are mandatory.
 | ``-out <prefix>``       |  Prefix to use for output file names. |
 +-------------------------+---------------------------------------+
 
-The following options are optional.
+The following are optional.
 
 +----------------------------------------------+---------------------------------------------+
 | ``-filter``                                  | Filter small alignments to remove noise.    |
@@ -97,7 +100,15 @@ If blast is given as the format, the input file must have been created by blast 
 - ``sstart``
 - ``send``
 
-The parameter passed to blast after the ``-outfmt`` option must also be given to alvis after the -blastfmt option (e.g. ``-blastfmt '6 qseqid sseqid qstart qend sstart ssend'``).
+The parameter passed to blast after the ``-outfmt`` option must also be given to Alvis after the -blastfmt option. For example, the following command could be used: ::
+
+	Java -jar alvis.jar -type alignment -inputfmt blast -outputfmt tex \
+		-in /path/to/alignments/alignments.blast -outdir /path/to/out/ -out prefix \
+		-blastfmt '6 qseqid sseqid qstart qend sstart ssend'
+
+if the file alignment.blast was created with:: 
+
+	blastn -db nt -query query.fa -out alignments.blast -outfmt '6 qseqid sseqid qstart qend sstart ssend'
 
 SAM
 ....
