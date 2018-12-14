@@ -38,7 +38,7 @@ The following are optional.
 | ``-alignmentTargetName <target sequence id>``| ID of target sequence for expanded contig   |
 |                                              | alignment diagram.                          |
 +----------------------------------------------+---------------------------------------------+
-| ``-blastfmt <format string>``                | Format string as given to blast. Required   |
+| ``-blastfmt <format string>``                | Format string as given to blast. Can be used|
 |                                              | if ``-inputfmt`` is ``blast``.              |
 +----------------------------------------------+---------------------------------------------+
 | ``-tsizes <"string">``                       | List of target names and sizes, separated by|
@@ -91,16 +91,7 @@ Similarly, a tiling file can be created from a mummer .delta file using the ``sh
 Blast
 .....
 
-If blast is given as the format, the input file must have been created by blast using the tabular option, i.e. with "-outfmt 6" specified. Furthermore, the following fields must be present in some order:
-
-- ``qseqid``
-- ``sseqid``
-- ``qstart``
-- ``qend``
-- ``sstart``
-- ``send``
-
-The parameter passed to blast after the ``-outfmt`` option must also be given to Alvis after the -blastfmt option. For example, the following command could be used: ::
+If blast is given as the format, the input file must have been created by blast using the tabular option. By default, Alvis will assume that the blast file was not created with a user defined format, but with just ``-outfmt 6``. If a user defined format was used, the parameter passed to blast after the ``-outfmt`` option must also be given to Alvis after the -blastfmt option. For example, the following command could be used: ::
 
 	Java -jar alvis.jar -type alignment -inputfmt blast -outputfmt tex \
 		-in /path/to/alignments/alignments.blast -outdir /path/to/out/ -out prefix \
@@ -109,6 +100,15 @@ The parameter passed to blast after the ``-outfmt`` option must also be given to
 if the file alignment.blast was created with:: 
 
 	blastn -db nt -query query.fa -out alignments.blast -outfmt '6 qseqid sseqid qstart qend sstart ssend'
+
+If a user defined format is used, the following fields must be present in some order:
+
+- ``qseqid``
+- ``sseqid``
+- ``qstart``
+- ``qend``
+- ``sstart``
+- ``send``
 
 SAM
 ....
