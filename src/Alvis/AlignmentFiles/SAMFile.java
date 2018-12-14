@@ -109,7 +109,7 @@ public class SAMFile implements AlignmentFile {
                 sc.next(); // RNEXT
                 sc.next(); // PNEXT
                 sc.next(); // TLEN
-                int length = sc.next().length();
+                int length = sc.next().length(); // SEQ
                 sc.nextLine(); // we are done now, go to end of line
                 
                 if(targetSizes.containsKey(target))

@@ -39,24 +39,25 @@ public class BlastFile implements DetailedAlignmentFile
             if(formatString == null || formatString.isEmpty())
             {
                 System.out.println("No format string provided for blast tabular file.");
-                System.out.println("Please provide the format string as given to blastn.");
-                System.out.println("Terminating");
-                System.exit(0);
+                System.out.println("Assuming default outfmt 6 was used.");
+                formatString = "6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore";
             }
-            
-            if(!formatString.split(" ")[0].equals("6"))
-            {
-                System.out.println("Blast file must be in tabular format, i.e. -outfmt '6 ...'");
-                System.out.println("Terminating");
-                System.exit(0);
-            }
-            
-            if( !formatString.contains("qseqid") || !formatString.contains("qlen") || !formatString.contains("qstart") || !formatString.contains("qend") ||
-                !formatString.contains("sseqid") || !formatString.contains("slen") || !formatString.contains("sstart") || !formatString.contains("send"))
-            {
-                System.out.println("Blast tabular must contain the fields qseqid, qlen, qstart, qend, sseqid, slen, sstart, send.");
-                System.out.println("Terminating");
-                System.exit(0);
+            else
+            {          
+                if(!formatString.split(" ")[0].equals("6"))
+                {
+                    System.out.println("Blast file must be in tabular format, i.e. -outfmt '6 ...'");
+                    System.out.println("Terminating");
+                    System.exit(0);
+                }
+
+                if( !formatString.contains("qseqid") || !formatString.contains("qlen") || !formatString.contains("qstart") || !formatString.contains("qend") ||
+                    !formatString.contains("sseqid") || !formatString.contains("slen") || !formatString.contains("sstart") || !formatString.contains("send"))
+                {
+                    System.out.println("Blast tabular must contain the fields qseqid, qlen, qstart, qend, sseqid, slen, sstart, send.");
+                    System.out.println("Terminating");
+                    System.exit(0);
+                }
             }
             
             String line = br.readLine();
