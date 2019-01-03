@@ -33,34 +33,12 @@ public class MinPropFilter implements AlignmentFilter
         for(DetailedAlignment alignment : alignments)
         {
             int queryLength = Math.abs(alignment.getQueryEnd() - alignment.getQueryStart());
-            float prop = (float)queryLength / alignment.getTargetSize();
+            double prop = (double)queryLength / alignment.getTargetSize();
             if(prop > m_minProp)
             {
                 filteredAlignments.add(alignment);
             }
         }
-        
-//        try 
-//        {
-//            PrintWriter writer = new PrintWriter("filtered_alignments.txt", "UTF-8");
-//            for(DetailedAlignment a : filteredAlignments)
-//            {
-//                writer.println( a.getQueryName() + "\t" + 
-//                                Integer.toString(a.getQuerySize()) + "\t" + 
-//                                Integer.toString(a.getQueryStart()) + "\t" +
-//                                Integer.toString(a.getQueryEnd()) + "\t"+
-//                                a.getTargetName() + "\t" + 
-//                                Integer.toString(a.getTargetSize()) + "\t" + 
-//                                Integer.toString(a.getTargetStart()) + "\t" +
-//                                Integer.toString(a.getTargetEnd()));
-//            }
-//            writer.close();
-//        }
-//        catch(IOException e)
-//        {
-//            
-//        }
-            
         return filteredAlignments;
     }   
 }

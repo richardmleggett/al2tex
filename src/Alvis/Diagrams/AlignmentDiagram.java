@@ -29,6 +29,7 @@ public class AlignmentDiagram {
     
     private static final int NUM_DIVIDERS = 8;
     private static final int MAX_OVERHANG = 200;
+    private static final int MAX_ALIGNMENTS_PER_PAGE = 43;
     
     private DiagramOptions options;
     private int targetCounter = 0;
@@ -68,9 +69,9 @@ public class AlignmentDiagram {
         
         if(o.getFilter())
         {
-            f.filterAlignments(new MinPropFilter(0.005));
+            m_alignmentFile.filterAlignments(new MinPropFilter(o.getMinAlignmentProp()));
         }
-        f.sort(new Sorter());
+        m_alignmentFile.sort(new Sorter());
     }
  
     public void writeOutputFile(String filename) 
@@ -78,6 +79,12 @@ public class AlignmentDiagram {
         String previousTarget = new String("");
         int page = 1;
         int row = 0;
+        
+        if(m_alignmentFile.getNumberOfAlignments() == 0)
+        {
+            System.out.println("Could not find alignments. Finishing...");
+            return;
+        }
 
         m_drawer.openFile();
         // Go through alignments
@@ -88,7 +95,7 @@ public class AlignmentDiagram {
             DetailedAlignment a = m_alignmentFile.getAlignment(i);            
             row++;
             
-            if(a.getQueryName().equals(lastQuery))
+            if(a.getQueryName().equals(lastQuery) && alignmentsForQuery.size() < MAX_ALIGNMENTS_PER_PAGE)
             {
                 alignmentsForQuery.add(a);
             }
@@ -273,7 +280,7 @@ public class AlignmentDiagram {
         String contigName = options.filterName(alignments.get(0).getQueryName()); 
 
         // Filter velvet contig names, if neccessary
-        // this should probably be done by the alignmentfile object
+        // this should probably be done by the alignmentFile object
         if (contigName.matches("NODE_(\\d+)_length_(\\S+)_cov_(\\S+)")) 
         {
             String subs[] = contigName.split("_");
@@ -332,6 +339,11 @@ public class AlignmentDiagram {
             
         public ArrayList<DetailedAlignment> sort(ArrayList<DetailedAlignment> alignments)
         {
+            if(alignments.isEmpty())
+            {
+                System.out.println("No alignments to sort.");
+                return alignments;
+            }
             // first sort into groups of query and target
             alignments.sort(compareForAlignmentDiagram);
 
@@ -354,6 +366,10 @@ public class AlignmentDiagram {
                     lastQuery = alignment.getQueryName();
                     currentQueryGroup.add(alignment);
                 }
+            }
+            if(!currentQueryGroup.isEmpty())
+            {
+                metaList.add(currentQueryGroup);
             }
             // sort
             metaList.sort(compareGroups);
