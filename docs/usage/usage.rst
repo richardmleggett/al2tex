@@ -3,7 +3,7 @@ Usage
 
 Alvis can be run from the command line using the .jar file. In the terminal, navigate to the dist directory in the Alvis project, and type e.g: ::
 
-	Java -jar alvis.jar -type alignment -inputfmt paf -outputfmt tex \
+	Java -jar Alvis.jar -type alignment -inputfmt paf -outputfmt tex \
 		-in /path/to/alignments/alignments.paf -outdir /path/to/out/ -out prefix
 
 This will create the file prefix_alignment.tex in the directory /path/to/out. The file prefix_alignment.tex can then be compiled by your favourite tex compiler and viewed as a pdf. The options used in this command form the minimum set required for Alvis to work, and are described in the following table.
@@ -93,7 +93,7 @@ Blast
 
 If blast is given as the format, the input file must have been created by blast using the tabular option. By default, Alvis will assume that the blast file was not created with a user defined format, but with just ``-outfmt 6``. If a user defined format was used, the parameter passed to blast after the ``-outfmt`` option must also be given to Alvis after the -blastfmt option. For example, the following command could be used: ::
 
-	Java -jar alvis.jar -type alignment -inputfmt blast -outputfmt tex \
+	Java -jar Alvis.jar -type alignment -inputfmt blast -outputfmt tex \
 		-in /path/to/alignments/alignments.blast -outdir /path/to/out/ -out prefix \
 		-blastfmt '6 qseqid sseqid qstart qend sstart ssend'
 
