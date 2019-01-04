@@ -259,7 +259,7 @@ public class ContigAlignmentDiagram
         else
         {
             // Should we iterate through an array of reference names so that the references are always in alphabetical order?
-            ArrayList<String> drawn = new ArrayList();
+            HashSet<String> drawn = new HashSet();
             int totalQueries = m_alignmentMap.size();
             while(drawn.size() < totalQueries)
             {
