@@ -185,8 +185,8 @@ public class ContigAlignmentDiagram
         BufferedImage chimeraImg = null;
         try 
         {
-            chimeraImg = ImageIO.read(new File("al2tex/Resources/chimera.png")); 
-            File outputfile = new File("images/chimera.png");
+            chimeraImg = ImageIO.read(new File("Resources/chimera.png")); 
+            File outputfile = new File(options.getOutputDirectory() + "/images/chimera.png");
             ImageIO.write(chimeraImg, "png", outputfile);
         } 
         catch (IOException e) 
