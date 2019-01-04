@@ -1,0 +1,26 @@
+<project>
+
+    <target name="clean">
+        <delete dir="build"/>
+        <delete dir="dist" />
+    </target>
+
+    <target name="compile">
+        <mkdir dir="build"/>
+        <javac srcdir="src/Alvis" destdir="build"/>
+    </target>
+
+    <target name="jar">
+        <mkdir dir="dist"/>
+        <jar destfile="dist/Alvis.jar" basedir="build">
+            <manifest>
+                <attribute name="Main-Class" value="Alvis.Alvis"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run">
+        <java jar="dist/Alvis.jar" fork="true"/>
+    </target>
+
+</project>
