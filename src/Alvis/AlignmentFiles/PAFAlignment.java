@@ -45,8 +45,7 @@ public class PAFAlignment implements DetailedAlignment, Comparable
         quality             = Integer.parseInt(fields[11]);
 
         rName=rName.replace("|", "");
-        rName=rName.replace(".", "");
-        rName=rName.replace("_", "");        
+        rName=rName.replace(".", "");        
         
     }
     

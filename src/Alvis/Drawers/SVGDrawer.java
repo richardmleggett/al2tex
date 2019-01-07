@@ -33,6 +33,7 @@ public class SVGDrawer implements Drawer
     
     private static int m_longPageLength;
     private static int m_shortPageLength;
+    private static int m_borderSize;
     private int m_pageHeight;
     
     public SVGDrawer(String f, boolean landscape, double scale, int longPageLength, int shortPageLength) 
@@ -47,6 +48,8 @@ public class SVGDrawer implements Drawer
         
         m_longPageLength = longPageLength;
         m_shortPageLength = shortPageLength;
+        
+        m_borderSize = 200;
     }
     
     public void openFile() 
@@ -149,6 +152,9 @@ public class SVGDrawer implements Drawer
             x2 *= m_scale;
             y2 *= m_scale;
             
+            x1 += m_borderSize;
+            x2 += m_borderSize;
+            
             y1 = m_pageHeight - y1;
             y2 = m_pageHeight - y2;
             
@@ -185,6 +191,8 @@ public class SVGDrawer implements Drawer
             y = m_pageHeight - y;
             y -= height;
             
+            x += m_borderSize;
+            
             Color colour =  m_colourMap.get(borderColour);
             String colourString = borderColour;
             if(colour != null)
@@ -216,6 +224,8 @@ public class SVGDrawer implements Drawer
             
             y = m_pageHeight - y;
             y -= height;
+            
+            x += m_borderSize;
             
             Color bColour =  m_colourMap.get(borderColour);
             String colourString = borderColour;
@@ -255,6 +265,7 @@ public class SVGDrawer implements Drawer
             y *= m_scale;
             
             y = m_pageHeight - y;
+            x += m_borderSize;
             
             String anchorString = "";
             switch(anchor)
@@ -293,6 +304,7 @@ public class SVGDrawer implements Drawer
             x *= m_scale;
             y *= m_scale;
             y = m_pageHeight - y;
+            x += m_borderSize;
             
             String anchorString = "";
             switch(anchor)
@@ -336,6 +348,7 @@ public class SVGDrawer implements Drawer
             
             y = m_pageHeight - y;
             y -= height;
+            x += m_borderSize;
             
             m_bw.write("<image href='" + filename + "' x='" + Double.toString(x) + "' y='" + Double.toString(y) + "'" + 
                         " width='" + Double.toString(width) + "' height='" + Double.toString(height) + "'" +
@@ -380,6 +393,8 @@ public class SVGDrawer implements Drawer
             
             y = m_pageHeight - y;
             y -= height;
+            
+            x += m_borderSize;
             
             Color colour = m_colourMap.get(fillColour);
             int r = colour.getRed();
@@ -444,6 +459,12 @@ public class SVGDrawer implements Drawer
             controly1 = m_pageHeight - controly1;
             controly2 = m_pageHeight - controly2;
             
+            startx += m_borderSize;
+            endx += m_borderSize;
+            controlx1 += m_borderSize;
+            controlx2 += m_borderSize;
+            
+            
             m_bw.write("<path d='M" + Double.toString(startx) + " " + Double.toString(starty) + 
                         " C " + Double.toString(controlx1) + " " + Double.toString(controly1) + 
                         ", " + Double.toString(controlx2) + " " + Double.toString(controly2) + 
@@ -460,7 +481,7 @@ public class SVGDrawer implements Drawer
 
     public int  getMaxAlignmentsPerPage()
     {
-        return 14;
+        return 12;
     }
     
     public void drawCoverageMap(CoverageMapImage coverageMap, double x, double y)
@@ -474,6 +495,8 @@ public class SVGDrawer implements Drawer
         int width = 100;
         
         x += 10;
+        
+        x += m_borderSize;
 
         // draw x-axis labels
         double rowSize = (double)targetSize / (double)nRows;

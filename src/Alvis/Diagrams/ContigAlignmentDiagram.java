@@ -47,7 +47,7 @@ public class ContigAlignmentDiagram
     private Drawer m_drawer;
     private boolean m_detailedDiagram = false;
     private boolean m_constantKey = true;
-    private final int m_keyOffset = 100;
+    private final int m_keyOffset = 150;
     private boolean m_drawChimeraIcon = true;
     
     public ContigAlignmentDiagram(DetailedAlignmentFile alignmentFile, DiagramOptions options)
@@ -289,7 +289,7 @@ public class ContigAlignmentDiagram
                             drawn.add(queryName);
                             i++;                         
                             int y = m_keyOffset + i * 175;
-                            if((y > m_drawer.getPageHeight() && i > m_drawer.getMaxAlignmentsPerPage()))
+                            if((y + m_contigDrawHeight > m_drawer.getPageHeight() && i > m_drawer.getMaxAlignmentsPerPage()))
                             {                 
                                 break;
                             }
@@ -374,7 +374,7 @@ public class ContigAlignmentDiagram
 
         // draw the contig rectangle
         m_drawer.drawRectangle(x, y, m_contigDrawLength, m_contigDrawHeight, "black");
-        m_drawer.drawText(x - 100, (y + m_contigDrawHeight/2), contigName, Drawer.Anchor.ANCHOR_MIDDLE, "black");
+        m_drawer.drawText(x - 5, (y + m_contigDrawHeight/2), contigName, Drawer.Anchor.ANCHOR_RIGHT, "black");
         for(int i = 0; i <= NUM_COORD_MARKS; i++)
         {
             double xMark = x + i * (m_contigDrawLength / NUM_COORD_MARKS);
@@ -405,7 +405,9 @@ public class ContigAlignmentDiagram
 
         int i = 0;
         int j = -1;
-        double delta = (double)m_contigDrawLength / m_numKeysPerLine;
+        double delta = 10 + (double)m_contigDrawLength / m_coloursMap.size();
+        double height = m_contigDrawHeight / 2.;
+        double length = m_contigDrawLength / m_coloursMap.size() - 30;
         for(Map.Entry<String, String> entry : m_coloursMap.entrySet())
         {
             if(i % m_numKeysPerLine == 0)
@@ -417,8 +419,8 @@ public class ContigAlignmentDiagram
             double xPos = x + i * delta;
             double yPos = y + j * m_contigDrawHeight;
             String colour = entry.getValue();
-            String name = entry.getKey().replace("_", "\\_");
-            m_drawer.drawKeyContig(xPos, yPos, 75, 15, colour, name);
+            String name = entry.getKey();
+            m_drawer.drawKeyContig(xPos, yPos, length, height, colour, name);
             i++;
         }
     }
@@ -553,7 +555,7 @@ public class ContigAlignmentDiagram
         }
                             
         // draw the key
-        drawKey(200,25);
+        drawKey(100,25);
         // draw the alignments
         int j = 0;
         for(String key : queryNames)

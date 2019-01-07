@@ -264,17 +264,10 @@ public class TikzDrawer implements Drawer
     
     public void drawKeyContig(double x, double y, double width, double height, String colour, String name)
     {
-        try
-        {
-            bw.write("\\node (rect) at (" + x + "," + y + ") " + 
-                            "[shade, left color=white, right color=" + colour + ", draw=" + colour + 
-                            ", minimum width=" + width + ", minimum height=" + height + ", label=below:"+ name + "]{};");
-            bw.newLine();
-        }
-        catch (IOException e) 
-        {
-            System.out.println(e);
-        }   
+        name = name.replace("_", "\\string_");
+        drawAlignment( x, y, width, height, colour, colour, 0, 100);
+        double textx = x + width/2;
+        drawText((int)textx, y - 25, name, Anchor.ANCHOR_MIDDLE, "black");
     }
     
     public void drawCurve(double startx, double starty, double endx, double endy, double controlx1, double controly1, double controlx2, double controly2)
