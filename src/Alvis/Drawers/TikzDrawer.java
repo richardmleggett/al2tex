@@ -348,6 +348,7 @@ public class TikzDrawer implements Drawer
         int nRows = coverageMap.getNumberOfRows();
         int targetSize = coverageMap.getTargetSize();
         String targetName = coverageMap.getTargetName();
+        targetName = targetName.replace("_", "\\string_");
         String filename = coverageMap.getFilename();
         
         int height = 100;
@@ -382,6 +383,7 @@ public class TikzDrawer implements Drawer
     {
         int targetSize = coverageMap.getTargetSize();
         String targetName = coverageMap.getTargetName();
+        targetName = targetName.replace("_", "\\string_");
         String filename = coverageMap.getFilename();
         double unit = (double)imageWidth / targetSize;                
 
