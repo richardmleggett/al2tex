@@ -104,3 +104,9 @@ docs/_build/html/_images/genome_coverage_example.png
 docs/_build/html/_images/chimera_example.png
 docs/_build/html/_images/coverage_map_long_example.png
 *.class
+docs/_build/doctrees/usage/example.doctree
+docs/_build/html/_images/alignment_tutorial.png
+docs/_build/html/_images/chimeras_tutorial.png
+docs/_build/html/_images/coverage_map_tutorial.png
+docs/_build/html/_sources/usage/example.rst.txt
+docs/_build/html/usage/example.html
