@@ -61,16 +61,15 @@ public class DiagramOptions {
             System.exit(1);
         }
         
-        while (i < (args.length-1)) {
+        while (i < (args.length)) {
             if (args[i].equalsIgnoreCase("-type")) {
                 diagramType = args[i+1].toLowerCase();
-                if((!diagramType.equals("coverage")) &&
-                   (!diagramType.equals("coveragemap")) &&
+                if((!diagramType.equals("coveragemap")) &&
                    (!diagramType.equals("alignment")) &&
                    (!diagramType.equals("contigalignment")) &&
                    (!diagramType.equals("genomecoverage")) &&
                    (!diagramType.equals("all"))) {
-                    System.out.println("Error: type must be 'all', 'coverage', 'coveragemap', 'contigalignment','alignment' or 'genomecoverage'.");
+                    System.out.println("Error: type must be 'coveragemap', 'contigalignment','alignment' or 'genomecoverage'.");
                     System.exit(0);
                 }
                                 
