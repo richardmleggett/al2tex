@@ -21,7 +21,7 @@ Now we will look for chimeric reads from a subsample of the alignments, using Al
 
 	Java -jar Alvis.jar -inputfmt paf -outputfmt tex -type contigAlignment -chimeras -in /Users/…/Alvis-data/alignments_sample.paf  -outdir /Users/…/Alvis-data/output/ -out test
 
-A file called “test_contigAlignment.tex” is created in the output directory. This file contains a contig alignment diagram for each query that ALvis thinks could be a chimera. The user may then inspect the alignments for each of these reads. Note that these alignments could also have been caused by similarity in the reference sequences.
+A file called “test_contigAlignment.tex” is created in the output directory. This file contains a contig alignment diagram for each query that Alvis thinks could be a chimera. The user may then inspect the alignments for each of these reads. Note that these alignments could also have been caused by similarity in the reference sequences.
 
 .. image:: images/chimeras_tutorial.png
 
