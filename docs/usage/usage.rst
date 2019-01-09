@@ -95,10 +95,10 @@ Tiling
 
 Similarly, a tiling file can be created from a mummer .delta file using the ``show-tiling`` command. In this case, the ``-a`` option must be specified (see `here <http://mummer.sourceforge.net/manual/#tiling/>`_ for more details).
 
-Blast
+BLAST
 .....
 
-If blast is given as the format, the input file must have been created by blast using the tabular option. By default, Alvis will assume that the blast file was not created with a user defined format, but with just ``-outfmt 6``. If a user defined format was used, the parameter passed to blast after the ``-outfmt`` option must also be given to Alvis after the -blastfmt option. For example, the following command could be used: ::
+If BLAST is given as the format, the input file must have been created by BLAST using the tabular option. By default, Alvis will assume that the BLAST file was not created with a user defined format, but with just ``-outfmt 6``. If a user defined format was used, the parameter passed to blast after the ``-outfmt`` option must also be given to Alvis after the -blastfmt option. For example, the following command could be used: ::
 
 	Java -jar Alvis.jar -type alignment -inputfmt blast -outputfmt tex \
 		-in /path/to/alignments/alignments.blast -outdir /path/to/out/ -out prefix \
@@ -124,7 +124,7 @@ When using a SAM file, Alvis will attempt to find the target contig sizes from t
 Output Formats
 --------------
 
-alvis can currently output most diagrams in two formats: SVG and laTeX. These are specified by the ``-outputfmt <format>`` option, where ``<format>`` is one of ``tex`` and ``svg``. Note that if ``tex`` is specified, the user must compile the .tex file that is created to obtain a pdf. Currently the diagrams are drawn with the tikz library, so the user must have this installed.
+Alvis can currently output most diagrams in two formats: SVG and laTeX. These are specified by the ``-outputfmt <format>`` option, where ``<format>`` is one of ``tex`` and ``svg``. Note that if ``tex`` is specified, the user must compile the .tex file that is created to obtain a PDF. Currently the diagrams are drawn with the tikz library, so the user must have this installed.
 
 The following table shows the accepted input and output formats for each diagram.
 
@@ -153,7 +153,7 @@ When using the ``-chimera`` option in conjunction with the contig alignment diag
 
 .. image:: images/chimera_example.png
 
-Additionally, when the ``-printChimeras`` option is specified as well, a text file named ``chimeras.txt`` is written to the output directory. This is a tab-seperated values file with the following fields.
+Additionally, when the ``-printChimeras`` option is specified as well, a text file named ``chimeras.txt`` is written to the output directory. This is a tab-seperated values file, where each line describes a potential chimera. Each line has the following fields.
 
 +----------+---------+--------------------------------------------------+
 | Column   | Type    | Description                                      |
