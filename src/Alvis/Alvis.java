@@ -52,8 +52,7 @@ public class Alvis
             System.out.println("\nOpening SAM file");
             SAMFile samFile = new SAMFile(options.getInputFilename(), options.getTargetSizes());
 
-            if ((options.getDiagramType().equals("coveragemap"))  ||
-                (options.getDiagramType().equals("all"))) 
+            if ((options.getDiagramType().equals("coveragemap"))) 
             {
                 System.out.println("Building coverage map diagram");
                 CoverageMapDiagram coverageDiagram = new CoverageMapDiagram(options);
@@ -62,8 +61,7 @@ public class Alvis
                 System.out.println("Writing " + options.getOutputFormat() + " files");
                 coverageDiagram.writeOutputFile();
             }       
-            if((options.getDiagramType().equals("genomecoverage"))||
-                (options.getDiagramType().equals("all"))) 
+            else if((options.getDiagramType().equals("genomecoverage"))) 
             {
                 System.out.println("Building genome coverage diagram");
                 GenomeCoverageDiagram genomeCoverageDiagram = new GenomeCoverageDiagram(options);
@@ -151,6 +149,12 @@ public class Alvis
                     genomeCoverageDiagram.makeBitmapsFromFile(alignmentFile);
                     genomeCoverageDiagram.writeOutputFile();
                     break;
+                }
+                default:
+                {
+                    System.out.println("Did not recognise diagram type" + options.getDiagramType());
+                    System.exit(2);
+                    return;
                 }
             }
         }

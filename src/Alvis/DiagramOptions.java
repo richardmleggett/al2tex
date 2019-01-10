@@ -172,6 +172,7 @@ public class DiagramOptions {
             if (!(diagramType.equals("coveragemap") || diagramType.equals("genomecoveragemap"))) {
                 System.err.println("Error: SAM files can only produce coverage maps");
             }
+            System.exit(0);
         }
 
         if (inputFormat.equals("pileup")) {
