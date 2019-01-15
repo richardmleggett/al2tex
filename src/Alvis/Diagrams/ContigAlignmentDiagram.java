@@ -185,6 +185,7 @@ public class ContigAlignmentDiagram
         BufferedImage chimeraImg = null;
         try 
         {
+            // this doesn't work...
             chimeraImg = ImageIO.read(new File("Resources/chimera.png")); 
             File outputfile = new File(options.getOutputDirectory() + "/images/chimera.png");
             ImageIO.write(chimeraImg, "png", outputfile);
@@ -384,7 +385,7 @@ public class ContigAlignmentDiagram
         }
         
         // Draw the Chimera logo
-        if(m_drawChimeraIcon && m_chimeras.contains(alignments.get(0).getQueryName()))
+        if(m_chimeras.contains(alignments.get(0).getQueryName()))
         {
             int chimerax = x + m_contigDrawLength + 30;
             int chimeray = y + (m_contigDrawHeight / 2);
@@ -394,7 +395,14 @@ public class ContigAlignmentDiagram
                 size = 40;
                 chimeray -= 20;
             }
-            m_drawer.drawImage(chimerax, chimeray, size, size, "images/chimera.png", "");
+            if(m_drawChimeraIcon)
+            {
+                m_drawer.drawImage(chimerax, chimeray, size, size, "images/chimera.png", "");
+            }
+            else
+            {
+                m_drawer.drawText(chimerax, chimeray, "C", Drawer.Anchor.ANCHOR_LEFT, "black");
+            }
         }
     }
     
