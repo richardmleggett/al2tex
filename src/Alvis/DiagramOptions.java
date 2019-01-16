@@ -110,9 +110,9 @@ public class DiagramOptions {
                 System.out.println("Domains filename: "+domainsFilename);
             } else if (args[i].equalsIgnoreCase("-outdir")) {                
                 outputDirectory = args[i+1];
-                if(!outputDirectory.endsWith("/"))
+                if(!outputDirectory.endsWith(File.separator))
                 {
-                    outputDirectory = outputDirectory = "\"";
+                    outputDirectory = outputDirectory + File.separator;
                 }
                 System.out.println("Output directory: "+outputDirectory);
             } else if (args[i].equalsIgnoreCase("-out")) {                
