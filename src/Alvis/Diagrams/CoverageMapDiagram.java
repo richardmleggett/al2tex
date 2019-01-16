@@ -98,7 +98,7 @@ public class CoverageMapDiagram
 
         System.out.println("          Heatmap size was: " + heatMapScale.getHeatMapSize());
         System.out.println("Largest coverage value was: " + largestCoverage);
-        heatMapScale.saveHeatmap(outputDirectory + "/heatmap.png");
+        heatMapScale.saveHeatmap(outputDirectory + "images/heatmap.png");
     }
     
     public void writeOutputFile() 

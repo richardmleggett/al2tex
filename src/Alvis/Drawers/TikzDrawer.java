@@ -411,7 +411,7 @@ public class TikzDrawer implements Drawer
         int width = 50;
         
         openPicture(1,1);
-        drawImage(x, y, width, height, "heatmap.png", "[anchor=south west, inner sep=0pt, outer sep=0pt]");
+        drawImage(x, y, width, height, "images/heatmap.png", "[anchor=south west, inner sep=0pt, outer sep=0pt]");
         drawText(x + (width/2), y + 5, "Coverage", Drawer.Anchor.ANCHOR_MIDDLE, "black");
         drawText(x, y + 5, "0", Drawer.Anchor.ANCHOR_MIDDLE, "black");
         drawText(x + width, y + 5, Integer.toString(heatMapScale.getHeatMapSize()), Drawer.Anchor.ANCHOR_MIDDLE, "black");
