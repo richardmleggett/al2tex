@@ -56,7 +56,7 @@ public class CoverageMapDiagram
     
     public void makeBitmapsFromFile(AlignmentFile alignmentFile, String outputDirectory) 
     {             
-        File imagesDir = new File(outputDirectory+"/images");
+        File imagesDir = new File(outputDirectory+"images");
         imagesDir.mkdir();
         
         // NOOOOOOOOOO!!!!
@@ -66,7 +66,7 @@ public class CoverageMapDiagram
         }
         
         alignmentFile.sort(AlignmentFile.compareByTargetName);
-        String filenamePrefix = outputDirectory + "/images/";
+        String filenamePrefix = outputDirectory + "images/";
         String previousTarget = "";
         for (int i = 0; i < alignmentFile.getNumberOfAlignments(); i++) 
         {              

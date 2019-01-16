@@ -98,7 +98,7 @@ public class ContigAlignmentDiagram
         }
         if(options.getPrintChimeras())
         {
-            chimeraFilter.writeChimeraFile(options.getOutputDirectory() + "/chimeras.txt");
+            chimeraFilter.writeChimeraFile(options.getOutputDirectory() + "chimeras.txt");
         }
         
         // Iterate through all the alignments and group by contig name.
@@ -187,7 +187,7 @@ public class ContigAlignmentDiagram
         {
             // this doesn't work...
             chimeraImg = ImageIO.read(new File("Resources/chimera.png")); 
-            File outputfile = new File(options.getOutputDirectory() + "/images/chimera.png");
+            File outputfile = new File(options.getOutputDirectory() + "images/chimera.png");
             ImageIO.write(chimeraImg, "png", outputfile);
         } 
         catch (IOException e) 

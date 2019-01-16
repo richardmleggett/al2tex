@@ -82,7 +82,7 @@ public class GenomeCoverageImage
     public void saveImageFile() 
     {
         //m_heatMapScale.setHeatMapSize(m_highestCoverage);
-        m_heatMapScale.saveHeatmap(m_options.getOutputDirectory() + "/images/genome_coverage_heatmap_scale.png");
+        m_heatMapScale.saveHeatmap(m_options.getOutputDirectory() + "images/genome_coverage_heatmap_scale.png");
         
         m_width = 8000;
         Object[] targetNames = m_coverages.keySet().toArray();

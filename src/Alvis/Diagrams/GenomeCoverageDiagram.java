@@ -42,7 +42,7 @@ public class GenomeCoverageDiagram
         File imagesDir = new File(outputDirectory+"/images");
         imagesDir.mkdir();
 
-        String filenamePrefix = outputDirectory + "/images/";
+        String filenamePrefix = outputDirectory + "images/";
         String filename = filenamePrefix + "genome_coverage_image.png";
         m_genomeCoverageImage = new GenomeCoverageImage(m_options, filename);
         

@@ -110,6 +110,10 @@ public class DiagramOptions {
                 System.out.println("Domains filename: "+domainsFilename);
             } else if (args[i].equalsIgnoreCase("-outdir")) {                
                 outputDirectory = args[i+1];
+                if(!outputDirectory.endsWith("/"))
+                {
+                    outputDirectory = outputDirectory = "\"";
+                }
                 System.out.println("Output directory: "+outputDirectory);
             } else if (args[i].equalsIgnoreCase("-out")) {                
                 outputFilename = args[i+1];
@@ -276,7 +280,7 @@ public class DiagramOptions {
     }
     
     public String getOutputFilePath() {
-        return outputDirectory + File.separator + outputFilename;
+        return outputDirectory + outputFilename;
     }
     
     public boolean isNewHeatMapForEachContig() {

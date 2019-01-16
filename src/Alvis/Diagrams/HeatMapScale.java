@@ -113,6 +113,7 @@ public class HeatMapScale {
     }
     
     public String getFilename() {
-        return filename;
+        String[] filenamePath = filename.split("/");
+        return "images/" + filenamePath[filenamePath.length - 1];
     }
 }

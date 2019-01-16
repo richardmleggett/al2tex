@@ -165,7 +165,8 @@ public class CoverageMapImage {
     }
     
     public String getFilename() {
-        return outputFilename;
+        String[] filename = outputFilename.split("/");
+        return "images/" + filename[filename.length - 1];
     }
     
     public int getTargetSize() {
