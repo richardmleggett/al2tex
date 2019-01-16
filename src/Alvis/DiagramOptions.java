@@ -41,22 +41,28 @@ public class DiagramOptions {
         int i=0;
         
         if (args.length <= 1) {
-            System.out.println("Syntax alvis [options]");
+            System.out.println("Alvis - ALignment VISualisation tool");
+            System.out.println("Syntax: Java -jar .../Alvis.jar [options]");
             System.out.println("");
             System.out.println("Options:");
-            System.out.println("    -type alignment|contigalignment|coveragemap|genomecoverage|pileup");
-            System.out.println("    -inputfmt psl|coords|pileup|tiling|sam|paf|blast");
-            System.out.println("    -in <filename>");
-            System.out.println("    -outdir <directory>");
-            System.out.println("    -out <leafname>");
-            System.out.println("    -maxtargets <int>");
-            System.out.println("    -maxcoverage <int>");
-            System.out.println("    -tsize <int>");
-            System.out.println("    -blastfmt <format string>");
-            System.out.println("    -alignmentQueryName <query sequence id>");
-            System.out.println("    -alignmentTargetName <target sequence id>");
-            System.out.println("    -filter");
-            System.out.println("    -chimeras");
+            System.out.println("    -type alignment|contigalignment|coveragemap|genomecoverage \t\t Type of diagram to draw.");
+            System.out.println("    -inputfmt psl|coords|tiling|sam|paf|blast \t\t\t\t Format of alignment file to use.");
+            System.out.println("    -in <filename> \t\t\t\t\t\t\t Filename for alignment file.");
+            System.out.println("    -outdir <directory> \t\t\t\t\t\t Output directory - where the diagrams go.");
+            System.out.println("    -out <prefix> \t\t\t\t\t\t\t Prefix for output file.");
+            //System.out.println("    -maxtargets <int>");
+            //System.out.println("    -maxcoverage <int>");
+            System.out.println("    -tsizes <int> \t\t\t\t\t\t\t The sizes of target contigs. To be used when inputfmt is sam and values are not provided "
+                                + " in the header of the SAM file.");
+            System.out.println("    -blastfmt <format string> \t\t\t\t\t\t The format of blast file. To be used when inputfmt is blast and format of "
+                                + " blast file is user-defined.");
+            System.out.println("    -alignmentQueryName <query sequence> \t\t\t\t Name of query sequence for detailed contig alignment diagram.");
+            System.out.println("    -alignmentTargetName <target sequence> \t\t\t\t Name of target sequence for detailed contig alignment diagram.");
+            System.out.println("    -coverageType square|long \t\t\t\t\t\t Type of coverage map to draw for coveragemap diagram.");
+            System.out.println("    -binSize <int> \t\t\t\t\t\t\t Size of bin for coveragemap and genomecoverage diagrams.");
+            System.out.println("    -filter \t\t\t\t\t\t\t\t Filter small alignments.");
+            System.out.println("    -chimeras \t\t\t\t\t\t\t\t Only draw potentially chimeric contigs in contig alignment diagram.");
+            System.out.println("    -printChimeras \t\t\t\t\t\t\t Output a file containing coordinate information for chimeric contigs.");
             System.out.println("");
             System.exit(1);
         }
@@ -207,7 +213,13 @@ public class DiagramOptions {
             if (outputDirectory == null) {
                 System.out.println("Error: you must specify a -outdir parameter.");
                 System.exit(0);
-            }               
+            }
+            File f = new File(outputDirectory);
+            if(!f.isDirectory())
+            {
+                System.out.println("Error: outdir " + outputDirectory + " does not exist.");
+                System.exit(0);
+            }
         }
     }        
     
