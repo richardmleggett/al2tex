@@ -58,6 +58,7 @@ public class SVGDrawer implements Drawer
         {
             m_bw = new BufferedWriter(new FileWriter(m_filename));
             writeSVGHeader();
+            writeContigAlignmentScript();
         } 
         catch (IOException e) 
         {
@@ -99,7 +100,9 @@ public class SVGDrawer implements Drawer
             m_bw.newLine();
             m_bw.write("<style>");
             m_bw.newLine();
-            m_bw.write("\t.default { font-family: sans-serif; }");
+            m_bw.write("\t.default { font-family: sans-serif;");
+            m_bw.newLine();
+            m_bw.write("\t           font-size: 24px; }");
             m_bw.newLine();
             m_bw.write("</style>");
             m_bw.newLine();
@@ -384,6 +387,60 @@ public class SVGDrawer implements Drawer
     
     public void drawAlignment(double x, double y, double width, double height, String fillColour, String borderColour, int fillLeftPC, int fillRightPC)
     {
+           try
+        {
+            x *= m_scale;
+            y *= m_scale;
+            width *= m_scale;
+            height *= m_scale;
+            
+            y = m_pageHeight - y;
+            y -= height;
+            
+            x += m_borderSize;
+            
+            Color colour = m_colourMap.get(fillColour);
+            int r = colour.getRed();
+            int g = colour.getGreen();
+            int b = colour.getBlue();
+            
+            int rightRed = r + ((255 - r) * (100 - fillRightPC)/100);
+            int rightGreen = g + ((255 - g) * (100 - fillRightPC)/100);
+            int rightBlue = b + ((255 - b) * (100 - fillRightPC)/100);
+            
+            int leftRed = r + ((255 - r) * (100 - fillLeftPC)/100);
+            int leftGreen = g + ((255 - g) * (100 - fillLeftPC)/100);
+            int leftBlue = b + ((255 - b) * (100 - fillLeftPC)/100);           
+            
+            String gradientName = "grad" + Integer.toString(m_gradientCounter++);
+            
+            m_bw.write("<defs>");
+            m_bw.newLine();
+            m_bw.write("\t<linearGradient id='" + gradientName + "' x1='" + 0 + "%' y1='0%' x2='" + 100 + "%' y2='0%'>");
+            m_bw.newLine();
+            m_bw.write("\t\t<stop offset='0%' style='stop-color:rgb(" + leftRed + "," + leftGreen + "," + leftBlue + ");stop-opacity:1' />");
+            m_bw.newLine();
+            m_bw.write("\t\t<stop offset='100%' style='stop-color:rgb(" + rightRed + "," + rightGreen + "," + rightBlue + ");stop-opacity:1' />");
+            m_bw.newLine();
+            m_bw.write("\t</linearGradient>");
+            m_bw.newLine();
+            m_bw.write("</defs>");
+            m_bw.newLine();
+            m_bw.write("<rect x='" + Double.toString(x) + "' y='" + Double.toString(y) + 
+                         "' width='" + Double.toString(width) + "' height='" + Double.toString(height) + 
+                         "' stroke='rgb(" + Integer.toString(r) + "," + Integer.toString(g) + "," + Integer.toString(b) +
+                         ")' stroke-width='2' fill='url(#" + gradientName + ")' />");
+            m_bw.newLine();
+        } 
+        catch (IOException e) 
+        {
+            System.out.println(e);
+        }       
+    }
+    
+    // TODO: Remove this code duplication!
+    public void drawAlignment(double x, double y, double width, double height, String fillColour, String borderColour, int fillLeftPC, int fillRightPC, String alignmentID)
+    {
          try
         {
             x *= m_scale;
@@ -425,8 +482,10 @@ public class SVGDrawer implements Drawer
             m_bw.newLine();
             m_bw.write("<rect x='" + Double.toString(x) + "' y='" + Double.toString(y) + 
                          "' width='" + Double.toString(width) + "' height='" + Double.toString(height) + 
-                         "' style='stroke:rgb(" + Integer.toString(r) + "," + Integer.toString(g) + "," + Integer.toString(b) +
-                         ");stroke-width:2' fill='url(#" + gradientName + ")'/>");
+                         "' stroke='rgb(" + Integer.toString(r) + "," + Integer.toString(g) + "," + Integer.toString(b) +
+                         ")' stroke-width='2' fill='url(#" + gradientName + ")'" + 
+                         " id='alignment" + alignmentID +"'" + 
+                         " onclick=\"showAlignment('box" + alignmentID + "', 'alignment" + alignmentID + "')\" />");
             m_bw.newLine();
         } 
         catch (IOException e) 
@@ -438,7 +497,7 @@ public class SVGDrawer implements Drawer
     public void drawKeyContig(double x, double y, double width, double height, String colour, String name)
     {
         drawAlignment(x, y, width, height, colour, colour, 0, 100);
-        drawText(x + (width/2), y + 1.5 * height, name, Drawer.Anchor.ANCHOR_MIDDLE, "black");
+        drawText(x + (width/2), y + 1.3 * height, name, Drawer.Anchor.ANCHOR_MIDDLE, "black");
     }
     
     public void drawCurve(double startx, double starty, double endx, double endy, double controlx1, double controly1, double controlx2, double controly2)
@@ -556,11 +615,103 @@ public class SVGDrawer implements Drawer
     {
         if(m_landscape)
         {
-            return (int)(m_shortPageLength / m_scale);
+            return (int)(m_shortPageLength / m_scale) - 2 * m_borderSize;
         }
         else
         {
-            return (int)(m_longPageLength / m_scale);
+            return (int)(m_longPageLength / m_scale) - 2 * m_borderSize;
         }
+    }
+    
+    private void writeContigAlignmentScript()
+    {
+        try
+        {
+            m_bw.write( "<script type='text/javascript'><![CDATA[\n" +
+                        "var currentBox = null;\n" +
+                        "var currentAlignment = null;\n" +
+                        "var currentBoxid = null;\n" + 
+                        "document.addEventListener(\"click\", function() { \n" +
+                        "   if(currentBox) {\n" +
+                        "       currentBox.setAttribute('visibility', 'hidden');\n" +
+                        "   }\n" +
+                        "   currentBox = null;\n" +
+                        "   currentBoxid = null;\n" +
+                        "   if(currentAlignment) {\n" + 
+                        "       currentAlignment.setAttribute('stroke-width', '2');\n" +
+                        "   }\n" +
+                        "   currentAlignment = null;\n" + 
+                        "})\n" +
+                        "function showAlignment(boxid, alignmentid) { \n" +
+                        "   if(currentBox) {\n" +
+                        "       currentBox.setAttribute('visibility', 'hidden');\n" +
+                        "   }\n" +
+                        "   if(currentAlignment) {\n" + 
+                        "       currentAlignment.setAttribute('stroke-width', '2');\n" +
+                        "   }\n" + 
+                        "   if(boxid === currentBoxid) {\n" +
+                        "       currentBoxid = null;\n" +
+                        "       return;\n" +
+                        "   }\n" + 
+                        "   currentBoxid = boxid;\n" +
+                        "   currentBox = document.getElementById(boxid);\n" +
+                        "   currentBox.setAttribute('visibility', 'visible');\n" +
+                        "   currentAlignment = document.getElementById(alignmentid);\n" + 
+                        "   currentAlignment.setAttribute('stroke-width', '10');\n" + 
+                        "   event.stopPropagation();\n" +
+                        "}\n" +
+                        "]]>\n" +
+                        "</script>");
+            m_bw.newLine();
+        } 
+        catch (IOException e) 
+        {
+            System.out.println(e);
+        }  
+    }
+    
+    public void writeContigAlignmentBox(int x, int y, String alignmentID, String queryName, int queryStartPos, int queryEndPos, String targetName, int targetStartPos, int targetEndPos, String orientation)
+    {
+        try
+        {
+            y = m_pageHeight - y;
+            int dy = 22;
+            y -= 200;
+            m_bw.write("<g id='box" + alignmentID + "' visibility='hidden'>");
+            m_bw.newLine();
+            m_bw.write("\t<rect x='" + x + "' y='" + y + "' width='400' height='210' style='fill:rgb(255,219,88);stroke-width:2;stroke:rgb(0,0,0)'"
+                     + " rx='15' ry='15' /> ");
+            m_bw.newLine();
+            x += 10;
+            y += 15;
+            m_bw.write("\t<text x='" + x + "' y='" + (y + dy) + "' width='300' class='default' text-anchor='left'>Query ID: " + queryName + " </text>");
+            m_bw.newLine();
+            m_bw.write("\t<text x='" + x + "' y='" + (y + 2 * dy) + "' width='300' class='default' text-anchor='left'>Query Start pos: " + 
+                       queryStartPos + " </text>");
+            m_bw.newLine();
+            m_bw.write("\t<text x='" + x + "' y='" + (y + 3 * dy) + "' width='300' class='default' text-anchor='left'>Query End  pos: " + 
+                        queryEndPos + " </text>");
+            m_bw.newLine();
+            y -= 10;
+            m_bw.write("\t<text x='" + x + "' y='" + (y + 5 * dy) + "' width='300' class='default' text-anchor='left'>Target ID: " + 
+                        targetName + " </text>");
+            m_bw.newLine();
+            m_bw.write("\t<text x='" + x + "' y='" + (y + 6 * dy) + "' width='300' class='default' text-anchor='left'>Target Start pos: " + 
+                        targetStartPos + " </text>");
+            m_bw.newLine();
+            m_bw.write("\t<text x='" + x + "' y='" + (y + 7 * dy) + "' width='300' class='default' text-anchor='left'>Target End  pos: " + 
+                        targetEndPos + " </text>");
+            m_bw.newLine();
+            y -= 10;
+            m_bw.write("\t<text x='" + x + "' y='" + (y + 9 * dy) + "' width='300' class='default' text-anchor='left'>Orientation: " + 
+                        orientation + " </text>");
+            m_bw.newLine();
+            m_bw.write("</g>");
+            m_bw.newLine();
+        }
+        catch (IOException e) 
+        {
+            System.out.println(e);
+        }  
     }
 }

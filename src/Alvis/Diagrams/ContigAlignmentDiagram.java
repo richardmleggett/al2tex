@@ -34,6 +34,7 @@ public class ContigAlignmentDiagram
     private final static int MAX_NUM_KEYS_PER_PAGE = 7;
  
     private TreeMap<String, ArrayList<DetailedAlignment>> m_alignmentMap;
+    private TreeMap<DetailedAlignment, String> m_alignmentIDs;
     Set<String> m_refNames;
     Set<String> m_chimeras;
     private double m_minAlignmentProp;
@@ -53,6 +54,7 @@ public class ContigAlignmentDiagram
     public ContigAlignmentDiagram(DetailedAlignmentFile alignmentFile, DiagramOptions options)
     {
         m_alignmentMap = new TreeMap();
+        m_alignmentIDs = new TreeMap();
         m_minAlignmentProp = options.getMinAlignmentProp();
         m_refNames = new LinkedHashSet();
         m_chimeras = new LinkedHashSet();
@@ -77,7 +79,7 @@ public class ContigAlignmentDiagram
         else
         {
             int width = m_detailedDiagram ? 2500 : 3508;
-            int height = m_detailedDiagram ? 1400 : 2480;
+            int height = m_detailedDiagram ? 1400 : 2580;
             m_drawer = new SVGDrawer(filename, true, 1, width, height);
         }
        
@@ -106,6 +108,7 @@ public class ContigAlignmentDiagram
         for(int i = 0; i < alignmentFile.getNumberOfAlignments(); ++i)
         {
             DetailedAlignment alignment = alignmentFile.getAlignment(i);
+            m_alignmentIDs.put(alignment, Integer.toString(i));
             
             String queryName = alignment.getQueryName();
             if(!m_alignmentMap.containsKey(queryName))
@@ -212,7 +215,6 @@ public class ContigAlignmentDiagram
             System.exit(0);
         }
         m_drawer.openFile();
-        
         if(m_constantKey || m_detailedDiagram)
         {
             // generate and write the colours
@@ -347,6 +349,17 @@ public class ContigAlignmentDiagram
 
         String contigName = alignments.get(0).getQueryName().replace("_", "\\_");
         int contigLength = alignments.get(0).getQuerySize();
+        
+        // draw the contig rectangle first, so that it has lowest z value in SVG's
+        m_drawer.drawRectangle(x, y, m_contigDrawLength, m_contigDrawHeight, "black");
+        m_drawer.drawText(x - 5, (y + m_contigDrawHeight/2), contigName, Drawer.Anchor.ANCHOR_RIGHT, "black");
+        for(int i = 0; i <= NUM_COORD_MARKS; i++)
+        {
+            double xMark = x + i * (m_contigDrawLength / NUM_COORD_MARKS);
+            String coord = Integer.toString(i * (contigLength / NUM_COORD_MARKS));
+            m_drawer.drawLine(xMark, y - 5, xMark, y + 5, "black", false);
+            m_drawer.drawText(xMark, y - 25, coord, Drawer.Anchor.ANCHOR_MIDDLE, "black");
+        }
 
         // fill in the alignments
         //int bpLength = alignments.get(0).getQueryContigLength();
@@ -370,18 +383,7 @@ public class ContigAlignmentDiagram
             }
 
             String colour = m_coloursMap.get(alignment.getTargetName());
-            m_drawer.drawAlignment(x + start, y + (i * alignmentHeight), width, height, colour, colour, (int)refStartPC, (int)refEndPC);
-        }
-
-        // draw the contig rectangle
-        m_drawer.drawRectangle(x, y, m_contigDrawLength, m_contigDrawHeight, "black");
-        m_drawer.drawText(x - 5, (y + m_contigDrawHeight/2), contigName, Drawer.Anchor.ANCHOR_RIGHT, "black");
-        for(int i = 0; i <= NUM_COORD_MARKS; i++)
-        {
-            double xMark = x + i * (m_contigDrawLength / NUM_COORD_MARKS);
-            String coord = Integer.toString(i * (contigLength / NUM_COORD_MARKS));
-            m_drawer.drawLine(xMark, y - 5, xMark, y + 5, "black", false);
-            m_drawer.drawText(xMark, y - 15, coord, Drawer.Anchor.ANCHOR_MIDDLE, "black");
+            m_drawer.drawAlignment(x + start, y + (i * alignmentHeight), width, height, colour, colour, (int)refStartPC, (int)refEndPC, getAlignmentID(alignment));
         }
         
         // Draw the Chimera logo
@@ -572,6 +574,48 @@ public class ContigAlignmentDiagram
             int drawY = m_keyOffset + j * 175;
             drawContig(detailedAlignments, 150, drawY);
             j++;
-        }      
+        }
+         
+        if(m_drawer instanceof SVGDrawer)
+        {
+            j = 0;
+            //draw the info boxes after everything else
+            for(String key : queryNames)
+            {
+                ArrayList<DetailedAlignment> alignments = m_alignmentMap.get(key);           
+                int x = 150;
+                int y = m_keyOffset + j * 175;
+                int contigLength = alignments.get(0).getQuerySize();
+                double alignmentHeight = (double)m_contigDrawHeight / alignments.size();
+                for(int i = 0; i < alignments.size(); i++)
+                {
+                    DetailedAlignment alignment = alignments.get(i);
+                    double start = (double)alignment.getQueryStart() * m_contigDrawLength / contigLength;
+                    double end = (double)alignment.getQueryEnd() * m_contigDrawLength / contigLength;
+                    double width = end - start;
+
+                    int boxx = (int)(x + start + (width/2));
+                    int boxy = (int)(y + (i * alignmentHeight) + 40);
+                    String id = getAlignmentID(alignment);
+                    String orientation = alignment.isReverseAlignment() ? "-" : "+";
+                    // is this okay?
+                    SVGDrawer svgDrawer = (SVGDrawer)m_drawer;
+                    svgDrawer.writeContigAlignmentBox(  boxx, boxy, id, 
+                                                        alignment.getQueryName(), 
+                                                        alignment.getQueryStart(),
+                                                        alignment.getQueryEnd(),
+                                                        alignment.getTargetName(),
+                                                        alignment.getTargetStart(),
+                                                        alignment.getTargetEnd(),
+                                                        orientation);
+                }
+                j++;
+            }
+        }
+    }
+    
+    private String getAlignmentID(DetailedAlignment alignment)
+    {
+        return m_alignmentIDs.get(alignment);
     }
 }

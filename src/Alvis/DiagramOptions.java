@@ -43,7 +43,7 @@ public class DiagramOptions {
         if (args.length <= 1) {
             System.out.println("Alvis - ALignment VISualisation tool");
             System.out.println("Syntax: Java -jar .../Alvis.jar [options]");
-            System.out.println("");
+            System.out.println();
             System.out.println("Options:");
             System.out.println("    -type alignment|contigalignment|coveragemap|genomecoverage \t\t Type of diagram to draw.");
             System.out.println("    -inputfmt psl|coords|tiling|sam|paf|blast \t\t\t\t Format of alignment file to use.");

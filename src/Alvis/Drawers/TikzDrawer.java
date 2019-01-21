@@ -190,6 +190,11 @@ public class TikzDrawer implements Drawer
         }        
     }
     
+    public void drawAlignment(double x, double y, double width, double height, String fillColour, String borderColour, int fillLeftPC, int fillRightPC, String alignmentID)
+    {
+        drawAlignment(x,y,width,height, fillColour, borderColour, fillLeftPC, fillRightPC);
+    }
+    
     public void drawText(double x, double y, String text, Anchor anchor, String colour)
     {
         try

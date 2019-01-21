@@ -47,6 +47,7 @@ public interface Drawer
     // Detailed Alignment Diagram
     abstract int  getMaxAlignmentsPerPage(); 
     abstract void drawAlignment(double x, double y, double width, double height, String fillColour, String borderColour, int fillLeftPC, int fillRightPC);
+    abstract void drawAlignment(double x, double y, double width, double height, String fillColour, String borderColour, int fillLeftPC, int fillRightPC, String alignmentID);
     abstract void drawKeyContig(double x, double y, double width, double height, String colour, String name);
     
     // Coverage Map Diagram
