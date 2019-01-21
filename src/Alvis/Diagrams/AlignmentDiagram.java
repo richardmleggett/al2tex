@@ -28,7 +28,7 @@ import java.util.ArrayList;
 public class AlignmentDiagram {
     
     private static final int NUM_DIVIDERS = 8;
-    private static final int MAX_OVERHANG = 200;
+    private static final int MAX_OVERHANG = 100;
     private static final int MAX_ALIGNMENTS_PER_PAGE = 43;
     
     private DiagramOptions options;
@@ -213,13 +213,13 @@ public class AlignmentDiagram {
         if (x1 < -MAX_OVERHANG) 
         {
             x1 = -MAX_OVERHANG;
-            m_drawer.drawText(m_xOffset - MAX_OVERHANG-10, m_yOffset + y1, "+" + Integer.toString(-from), Drawer.Anchor.ANCHOR_MIDDLE, "black");
+            m_drawer.drawText(m_xOffset + x1 - 5, m_yOffset + y1, "+" + Integer.toString(-from), Drawer.Anchor.ANCHOR_RIGHT, "black");
         }
         
         if (x2 > (m_targetWidth + MAX_OVERHANG)) 
         {
             x2 = m_targetWidth + MAX_OVERHANG;
-            m_drawer.drawText(m_xOffset + m_targetWidth + MAX_OVERHANG + 10, m_yOffset + y1, "+" + Integer.toString(to - m_targetSize), Drawer.Anchor.ANCHOR_MIDDLE, "black");
+            m_drawer.drawText(m_xOffset + x2 + 5, m_yOffset + y1, "+" + Integer.toString(to - m_targetSize), Drawer.Anchor.ANCHOR_LEFT, "black");
         }
     
         m_drawer.drawLine(m_xOffset + x1, m_yOffset + y1, m_xOffset + x2, m_yOffset + y1, "black", false);
