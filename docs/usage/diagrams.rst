@@ -42,7 +42,11 @@ and outputs the following formats
 - tex
 - svg.
 
-If in addition, the user specifies a query contig and a reference contig, a detailed diagram containing only these alignments is produced.
+If the user chooses svg as the output format, the diagram produced contains embedded javascript to make it interactive. In an internet browser, the user may click alignments to highlight them and see further details about the alignment.
+
+.. image:: images/contig_alignment_svg_example.png
+
+Finally, if the user specifies a query contig and a reference contig by using the ``-alignmentQueryName`` and ``-alignmentTargetName`` options, a detailed diagram containing only these alignments is produced.
 
 .. image:: images/detailed_contig_alignment_example.png
 
