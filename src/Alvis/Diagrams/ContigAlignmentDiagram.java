@@ -80,7 +80,7 @@ public class ContigAlignmentDiagram
         {
             int width = m_detailedDiagram ? 2500 : 3508;
             int height = m_detailedDiagram ? 1400 : 2580;
-            m_drawer = new SVGDrawer(filename, true, 1, width, height);
+            m_drawer = new SVGDrawer(filename, true, 1, width, height, 200);
         }
        
         // filter out really small alignments

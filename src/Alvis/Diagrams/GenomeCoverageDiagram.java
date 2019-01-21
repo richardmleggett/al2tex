@@ -75,7 +75,7 @@ public class GenomeCoverageDiagram
         }
         else
         {
-            m_drawer = new SVGDrawer(filename, false, 1, height + 100, 2 * width);
+            m_drawer = new SVGDrawer(filename, false, 1, height + 100, 2 * width, 100);
         }
         
         

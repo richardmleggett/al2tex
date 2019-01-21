@@ -61,7 +61,7 @@ public class AlignmentDiagram {
         }
         else
         {
-            m_drawer = new SVGDrawer(filename, true, 1, 2408, 1580);
+            m_drawer = new SVGDrawer(filename, true, 1, 2408, 1580, 200);
             m_xOffset = 50;
             m_yOffset = 50;
             m_isTexOut = false;

@@ -36,7 +36,7 @@ public class SVGDrawer implements Drawer
     private static int m_borderSize;
     private int m_pageHeight;
     
-    public SVGDrawer(String f, boolean landscape, double scale, int longPageLength, int shortPageLength) 
+    public SVGDrawer(String f, boolean landscape, double scale, int longPageLength, int shortPageLength, int borderSize) 
     {
         m_pageNumber = 1;
         m_filenamePrefix = f;
@@ -49,7 +49,7 @@ public class SVGDrawer implements Drawer
         m_longPageLength = longPageLength;
         m_shortPageLength = shortPageLength;
         
-        m_borderSize = 200;
+        m_borderSize = borderSize;
     }
     
     public void openFile() 
@@ -552,10 +552,7 @@ public class SVGDrawer implements Drawer
         
         int height = 100;
         int width = 100;
-        
-        x += 10;
-        
-        x += m_borderSize;
+        x += 30;
 
         // draw x-axis labels
         double rowSize = (double)targetSize / (double)nRows;
@@ -575,7 +572,7 @@ public class SVGDrawer implements Drawer
         int textxPos = width / 2;
         drawText(x + textxPos, y - 5, "Each row represents "+(int)rowSize+" nt", Drawer.Anchor.ANCHOR_MIDDLE, "black");
         drawText(x + textxPos, y - 10, targetName, Drawer.Anchor.ANCHOR_MIDDLE, "black");
-        drawTextRotated(x - 25, y + (height/2), "Position in genome (nt)", 90, Drawer.Anchor.ANCHOR_MIDDLE);
+        drawTextRotated(x - 35, y + (height/2), "Position in genome (nt)", 90, Drawer.Anchor.ANCHOR_MIDDLE);
         closePicture();  
     }
     
@@ -601,8 +598,8 @@ public class SVGDrawer implements Drawer
     
     public void drawScale(HeatMapScale heatMapScale, double x, double y)
     {
-        int height = 7;//heatMapScale.getHeatMapHeight();
-        int width = 100;//heatMapScale.getHeatMapWidth();
+        int height = heatMapScale.getHeatMapHeight();
+        int width = heatMapScale.getHeatMapWidth();
         String filename = heatMapScale.getFilename();
         
         drawImage(x, y, width, height, filename, "[anchor=south west, inner sep=0pt, outer sep=0pt]");
