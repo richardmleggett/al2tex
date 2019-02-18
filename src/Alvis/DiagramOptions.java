@@ -47,6 +47,7 @@ public class DiagramOptions {
             System.out.println("Options:");
             System.out.println("    -type alignment|contigalignment|coveragemap|genomecoverage \t\t Type of diagram to draw.");
             System.out.println("    -inputfmt psl|coords|tiling|sam|paf|blast \t\t\t\t Format of alignment file to use.");
+            System.out.println("    -outputfmt tex|svg \t\t\t\t\t\t\t Format for output.");
             System.out.println("    -in <filename> \t\t\t\t\t\t\t Filename for alignment file.");
             System.out.println("    -outdir <directory> \t\t\t\t\t\t Output directory - where the diagrams go.");
             System.out.println("    -out <prefix> \t\t\t\t\t\t\t Prefix for output file.");
@@ -176,7 +177,12 @@ public class DiagramOptions {
         if (inputFormat == null) {
             System.out.println("Error: You must specify an input format");
             System.exit(0);
-        }      
+        }
+
+        if (outputFormat == null) {
+            System.out.println("Error: You must specify an output format");
+            System.exit(0);
+        }  
         
         if (inputFormat.equals("sam")) {
             if (!(diagramType.equals("coveragemap") || diagramType.equals("genomecoveragemap"))) {
