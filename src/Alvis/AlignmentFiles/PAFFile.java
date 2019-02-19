@@ -41,16 +41,7 @@ public class PAFFile implements DetailedAlignmentFile
                         alignments.add(a);
                         
                         // increment hit count for alignments target
-                        Integer count = targetHits.get(a.getTargetName());
-                        if (count == null) 
-                        {
-                            count = new Integer(1);
-                        }
-                        else 
-                        {
-                            count = new Integer(count.intValue() + 1);
-                        }
-                        targetHits.put(a.getTargetName(), count);
+                        addTargetHit(a.getTargetName());
                     }
                 } 
                 else 
@@ -99,6 +90,13 @@ public class PAFFile implements DetailedAlignmentFile
     public void filterAlignments(AlignmentFilter filter)
     {
         alignments = filter.filterAlignments(alignments);
+        
+        //update targetHits:
+        targetHits = new Hashtable();
+        for(Alignment a : alignments)
+        {
+            addTargetHit(a.getTargetName());
+        }
     }
     
     public void sort(Comparator<? super Alignment> comparator)
@@ -114,5 +112,20 @@ public class PAFFile implements DetailedAlignmentFile
     public LinkedHashSet<String> getChimeras(ChimeraFilter filter)
     {
         return filter.getChimericContigs(alignments);
+    }
+    
+    private void addTargetHit(String targetName)
+    {
+        // increment hit count for alignments target
+       Integer count = targetHits.get(targetName);
+       if (count == null) 
+       {
+           count = new Integer(1);
+       }
+       else 
+       {
+           count = new Integer(count.intValue() + 1);
+       }
+       targetHits.put(targetName, count);       
     }
 }

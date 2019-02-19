@@ -9,6 +9,7 @@
 
 package Alvis;
 
+import Alvis.Diagrams.AlignmentDiagram;
 import Alvis.Diagrams.CoverageMapImage;
 import java.io.*;
 
@@ -36,6 +37,7 @@ public class DiagramOptions {
     private boolean filter = false;
     private boolean findChimeras = false;
     private boolean printChimeras = false;
+    private AlignmentDiagram.SortMethod alignmentDiagramSortMethod = AlignmentDiagram.SortMethod.SORT_BY_TARGET_POS;
     
     public void parseArgs(String[] args) {
         int i=0;
@@ -140,8 +142,9 @@ public class DiagramOptions {
                 rowSpacer = Integer.parseInt(args[i+1]);
                 System.out.println("      Row spacer: " + rowSpacer);
             } else if (args[i].equalsIgnoreCase("-minAlignmentProp")) {
-                minContigAlignmentProp = Double.parseDouble(args[i+1]);
-                System.out.println("      Min alignment proportion for filtering: " + minContigAlignmentProp);
+                double minContigAlignmentPC = Double.parseDouble(args[i+1]);
+                minContigAlignmentProp = minContigAlignmentPC / 100;
+                System.out.println("      Min alignment percent for filtering: " + minContigAlignmentPC + "%");
             } else if (args[i].equalsIgnoreCase("-alignmentQueryName")) {
                 alignmentQueryName = args[i+1];
                 System.out.println("   Query name for alignment diagram: " + alignmentQueryName);
@@ -339,5 +342,9 @@ public class DiagramOptions {
     
     public boolean getPrintChimeras() {
         return printChimeras;
+    }
+    
+    public AlignmentDiagram.SortMethod getAlignmentDiagramSortMethod() {
+        return alignmentDiagramSortMethod;
     }
 }

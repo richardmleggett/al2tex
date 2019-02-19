@@ -31,7 +31,7 @@ public class AlignmentDiagram {
     private static final int MAX_OVERHANG = 100;
     private static final int MAX_ALIGNMENTS_PER_PAGE = 43;
     
-    private DiagramOptions options;
+    private static DiagramOptions options;
     private int targetCounter = 0;
     private DetailedAlignmentFile m_alignmentFile;
     private Drawer m_drawer;
@@ -48,6 +48,10 @@ public class AlignmentDiagram {
     private int m_yOffset = 0;
     private boolean m_isTexOut = true;
     
+    public static enum SortMethod {
+        SORT_BY_TARGET_POS,
+        SORT_BY_QUERY_POS
+    }; 
     
     public AlignmentDiagram(DiagramOptions o, DetailedAlignmentFile f) 
     {
@@ -61,7 +65,7 @@ public class AlignmentDiagram {
         }
         else
         {
-            m_drawer = new SVGDrawer(filename, true, 1, 2408, 1580, 200);
+            m_drawer = new SVGDrawer(filename, true, 1, 2608, 1580, 200);
             m_xOffset = 50;
             m_yOffset = 50;
             m_isTexOut = false;
@@ -76,7 +80,6 @@ public class AlignmentDiagram {
  
     public void writeOutputFile(String filename) 
     {
-        String previousTarget = new String("");
         int page = 1;
         int row = 0;
         
@@ -90,40 +93,41 @@ public class AlignmentDiagram {
         // Go through alignments
         ArrayList<DetailedAlignment> alignmentsForQuery = new ArrayList();
         String lastQuery = m_alignmentFile.getAlignment(0).getQueryName();
+        String lastTarget = m_alignmentFile.getAlignment(0).getTargetName();
         for (int i=0; i<m_alignmentFile.getNumberOfAlignments(); i++) 
         {
             DetailedAlignment a = m_alignmentFile.getAlignment(i);            
             row++;
-            
-            if(a.getQueryName().equals(lastQuery) && alignmentsForQuery.size() < MAX_ALIGNMENTS_PER_PAGE)
+            if(a.getTargetName().equals(lastTarget) && alignmentsForQuery.size() < MAX_ALIGNMENTS_PER_PAGE)
             {
-                alignmentsForQuery.add(a);
+                if(a.getQueryName().equals(lastQuery))
+                {
+                    alignmentsForQuery.add(a);
+                }
+                else
+                {
+                    drawAlignmentsForQuery(alignmentsForQuery);
+                    alignmentsForQuery.clear();
+                    alignmentsForQuery.add(a);
+                    lastQuery = a.getQueryName();
+                }
             }
-            else
+            else 
             {
                 drawAlignmentsForQuery(alignmentsForQuery);
                 alignmentsForQuery.clear();
                 alignmentsForQuery.add(a);
                 lastQuery = a.getQueryName();
-            }
-
-            // Look for different target - in which case, start a new page
-            if ((i > 0) && (a.getTargetName().compareTo(previousTarget) != 0)) 
-            {
+                
                 row = 1;
                 page++;
-                targetCounter++;
-
-                if ((options.getMaxTargets() > 0) && (targetCounter >= options.getMaxTargets())) 
-                {
-                    break;
-                }
-            }
-            // We put the reference genome on the top of every page
-            else if (row > m_rowsPerPage)
-            {
-                row = 1;
-                page++;
+                
+                
+//                targetCounter++;
+//                if ((options.getMaxTargets() > 0) && (targetCounter >= options.getMaxTargets())) 
+//                {
+//                    break;
+//                }
             }
 
             if (row == 1) 
@@ -140,12 +144,12 @@ public class AlignmentDiagram {
                 m_drawer.openPicture(0.1, 0.1);
                 
                 drawDividers(NUM_DIVIDERS);
-                String targetName = options.filterName(a.getTargetName());
+                String targetName = a.getTargetName();
                 
                 drawTargetBar(targetName);                
             }
 
-            previousTarget = a.getTargetName();
+            lastTarget = a.getTargetName();
         }
         drawAlignmentsForQuery(alignmentsForQuery);
 
@@ -199,8 +203,9 @@ public class AlignmentDiagram {
         m_y -= m_yStep;
     }
     
-    private void drawAlignmentLine(int from, int to) 
+    private boolean drawAlignmentLine(int from, int to) 
     {
+        boolean overhangRight = false;
         float x1 = (float)from * m_unit;
         float x2 = (float)to * m_unit;
         float y1 = (float)m_y - ((float)m_targetHeight / 2);
@@ -219,10 +224,12 @@ public class AlignmentDiagram {
         if (x2 > (m_targetWidth + MAX_OVERHANG)) 
         {
             x2 = m_targetWidth + MAX_OVERHANG;
+            overhangRight = true;
             m_drawer.drawText(m_xOffset + x2 + 5, m_yOffset + y1, "+" + Integer.toString(to - m_targetSize), Drawer.Anchor.ANCHOR_LEFT, "black");
         }
     
         m_drawer.drawLine(m_xOffset + x1, m_yOffset + y1, m_xOffset + x2, m_yOffset + y1, "black", false);
+        return overhangRight;
     }
     
     public void drawAlignmentBox(int from, int to) 
@@ -230,6 +237,9 @@ public class AlignmentDiagram {
         double x1 = (float)from * m_unit;
         double x2 = (float)to * m_unit;
         double y1 = m_y - m_targetHeight;
+        
+        assert(x1 >= 0);
+        assert(x2 <= m_targetWidth);
         
         double width = x2 - x1;
         double height = m_targetHeight;
@@ -246,12 +256,16 @@ public class AlignmentDiagram {
     private void drawAlignmentsForQuery(ArrayList<DetailedAlignment> alignments)
     {
         int maxY = m_y;
+        boolean overhangRight = false;
         for(DetailedAlignment a : alignments)
         {
             // Draw line representing the whole contig
             int contigStart = a.getTargetStart() - a.getQueryStart();
             int contigEnd = a.getTargetEnd() + (a.getQuerySize() - a.getQueryEnd());
-            drawAlignmentLine(contigStart, contigEnd);
+            if(drawAlignmentLine(contigStart, contigEnd))
+            {
+                overhangRight = true;
+            }
 
             // Now draw the box
             for (int j=0; j<a.getBlockCount(); j++) 
@@ -277,7 +291,7 @@ public class AlignmentDiagram {
              m_y -= m_yStep;
         }
         
-        String contigName = options.filterName(alignments.get(0).getQueryName()); 
+        String contigName = alignments.get(0).getQueryName(); 
 
         // Filter velvet contig names, if neccessary
         // this should probably be done by the alignmentFile object
@@ -286,10 +300,13 @@ public class AlignmentDiagram {
             String subs[] = contigName.split("_");
             contigName="NODE\\_"+subs[1];
         }
-        contigName = contigName.replace("\\_", "\\string_");
         
         int minY = m_y;
         float x = m_xOffset + m_targetWidth + 5;
+        if(overhangRight)
+        {
+            x += 300;
+        }
         float y = ((minY + maxY) / 2) - (m_targetHeight / 2) + (m_yStep/2);
         m_drawer.drawText(x, m_yOffset + y, contigName, Drawer.Anchor.ANCHOR_LEFT, "blue");
         
@@ -305,7 +322,7 @@ public class AlignmentDiagram {
     
     // sorting is hard
     private static class Sorter implements AlignmentSorter
-    {
+    {   
         public static Comparator compareGroups = new Comparator<ArrayList<DetailedAlignment>>()
         {
             public int compare(ArrayList<DetailedAlignment> list1, ArrayList<DetailedAlignment> list2) {
@@ -329,7 +346,14 @@ public class AlignmentDiagram {
                     result = alignment1.getQueryName().compareTo(alignment2.getQueryName());
                     if(result == 0)
                     {
-                        result = alignment1.getTargetStart() - alignment2.getTargetStart();
+                        if(options.getAlignmentDiagramSortMethod() == SortMethod.SORT_BY_TARGET_POS)
+                        {
+                            result = alignment1.getTargetStart() - alignment2.getTargetStart();
+                        }
+                        else
+                        {
+                            result = alignment1.getQueryStart() - alignment2.getQueryStart();
+                        }
                     }
                 }
 

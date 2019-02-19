@@ -49,7 +49,6 @@ public class ContigAlignmentDiagram
     private boolean m_detailedDiagram = false;
     private boolean m_constantKey = true;
     private final int m_keyOffset = 150;
-    private boolean m_drawChimeraIcon = true;
     
     public ContigAlignmentDiagram(DetailedAlignmentFile alignmentFile, DiagramOptions options)
     {
@@ -78,9 +77,9 @@ public class ContigAlignmentDiagram
         }
         else
         {
-            int width = m_detailedDiagram ? 2500 : 3508;
+            int width = m_detailedDiagram ? 2700 : 3708;
             int height = m_detailedDiagram ? 1400 : 2580;
-            m_drawer = new SVGDrawer(filename, true, 1, width, height, 200);
+            m_drawer = new SVGDrawer(filename, true, 1, width, height, 400);
         }
        
         // filter out really small alignments
@@ -182,21 +181,7 @@ public class ContigAlignmentDiagram
                 detailedAlignments.removeAll(entriesToRemove);
             }
             Collections.sort(detailedAlignments, DetailedAlignment.compareByQueryStart);
-        }
-        
-        // Copy the chimera image
-        BufferedImage chimeraImg = null;
-        try 
-        {
-            // this doesn't work...
-            chimeraImg = ImageIO.read(new File("Resources/chimera.png")); 
-            File outputfile = new File(options.getOutputDirectory() + "images/chimera.png");
-            ImageIO.write(chimeraImg, "png", outputfile);
-        } 
-        catch (IOException e) 
-        {
-            m_drawChimeraIcon = false;
-        }             
+        }                 
     }
     
     public void writeOutputFile(DiagramOptions options)
@@ -347,7 +332,7 @@ public class ContigAlignmentDiagram
         }
         assert(m_coloursSet);
 
-        String contigName = alignments.get(0).getQueryName().replace("_", "\\_");
+        String contigName = alignments.get(0).getQueryName();
         int contigLength = alignments.get(0).getQuerySize();
         
         // draw the contig rectangle first, so that it has lowest z value in SVG's
@@ -386,25 +371,17 @@ public class ContigAlignmentDiagram
             m_drawer.drawAlignment(x + start, y + (i * alignmentHeight), width, height, colour, colour, (int)refStartPC, (int)refEndPC, getAlignmentID(alignment));
         }
         
-        // Draw the Chimera logo
+        // Draw the Chimera "C"
         if(m_chimeras.contains(alignments.get(0).getQueryName()))
         {
-            int chimerax = x + m_contigDrawLength + 30;
+            int chimerax = x + m_contigDrawLength + 5;
             int chimeray = y + (m_contigDrawHeight / 2);
-            int size = 5;
             if(m_drawer instanceof SVGDrawer)
             {
-                size = 40;
                 chimeray -= 20;
             }
-            if(m_drawChimeraIcon)
-            {
-                m_drawer.drawImage(chimerax, chimeray, size, size, "images/chimera.png", "");
-            }
-            else
-            {
-                m_drawer.drawText(chimerax, chimeray, "C", Drawer.Anchor.ANCHOR_LEFT, "black");
-            }
+
+            m_drawer.drawText(chimerax, chimeray, "C", Drawer.Anchor.ANCHOR_LEFT, "black");
         }
     }
     

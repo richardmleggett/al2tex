@@ -36,6 +36,9 @@ public class SVGDrawer implements Drawer
     private static int m_borderSize;
     private int m_pageHeight;
     
+    private final static int HEATMAP_DRAW_SIZE_X = 50;
+    private final static int HEATMAP_DRAW_SIZE_Y = 6;
+    
     public SVGDrawer(String f, boolean landscape, double scale, int longPageLength, int shortPageLength, int borderSize) 
     {
         m_pageNumber = 1;
@@ -588,7 +591,7 @@ public class SVGDrawer implements Drawer
             int num = i == num_dividers ? targetSize: (int)((targetSize / num_dividers) * i);
             int pos = (int)((double)num * unit);
 
-            drawText(x + pos, y + imageHeight + 4, Integer.toString(num), Drawer.Anchor.ANCHOR_MIDDLE, "black");
+            drawText(x + pos, y + imageHeight + 3, Integer.toString(num), Drawer.Anchor.ANCHOR_MIDDLE, "black");
             drawLine(x + pos, y + imageHeight + 1, x + pos, y + imageHeight - 1, "black", false);
         }
 
@@ -598,8 +601,8 @@ public class SVGDrawer implements Drawer
     
     public void drawScale(HeatMapScale heatMapScale, double x, double y)
     {
-        int height = heatMapScale.getHeatMapHeight();
-        int width = heatMapScale.getHeatMapWidth();
+        int height = HEATMAP_DRAW_SIZE_Y;
+        int width = HEATMAP_DRAW_SIZE_X;
         String filename = heatMapScale.getFilename();
         
         drawImage(x, y, width, height, filename, "[anchor=south west, inner sep=0pt, outer sep=0pt]");

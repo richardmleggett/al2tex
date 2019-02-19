@@ -124,7 +124,7 @@ public class MummerAlignment implements Comparable, DetailedAlignment {
             System.out.println("Something went wrong: block number for MummerAlignment should always be 0!\n");
             System.exit(-1);
         }
-        return this.getTargetStart();
+        return referenceStart;
     }
     
     @Override

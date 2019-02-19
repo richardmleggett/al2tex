@@ -71,18 +71,8 @@ public class BlastFile implements DetailedAlignmentFile
                 m_alignments.add(a);
 
                 // increment hit count for alignments target
-                Integer count = m_targetHits.get(a.getTargetName());
-                if(count == null) 
-                {
-                    count = 1;
-                }
-                else 
-                {
-                    count = count + 1;
-                }
-                m_targetHits.put(a.getTargetName(), count);
-
-                
+                addTargetHit(a.getTargetName());
+              
                 line = br.readLine();
             } 
             br.close();
@@ -124,6 +114,13 @@ public class BlastFile implements DetailedAlignmentFile
     public void filterAlignments(AlignmentFilter filter)
     {
         m_alignments = filter.filterAlignments(m_alignments);
+        
+        //update targetHits:
+        m_targetHits = new Hashtable();
+        for(Alignment a : m_alignments)
+        {
+            addTargetHit(a.getTargetName());
+        }
     }
     
     public void sort(Comparator<? super Alignment> comparator)
@@ -139,5 +136,20 @@ public class BlastFile implements DetailedAlignmentFile
     public LinkedHashSet<String> getChimeras(ChimeraFilter filter)
     {
         return filter.getChimericContigs(m_alignments);
+    }
+    
+    private void addTargetHit(String targetName)
+    {
+        // increment hit count for alignments target
+       Integer count = m_targetHits.get(targetName);
+       if (count == null) 
+       {
+           count = new Integer(1);
+       }
+       else 
+       {
+           count = new Integer(count.intValue() + 1);
+       }
+       m_targetHits.put(targetName, count);       
     }
 }

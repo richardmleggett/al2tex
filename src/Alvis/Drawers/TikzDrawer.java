@@ -202,7 +202,7 @@ public class TikzDrawer implements Drawer
             String strx = String.format("%.1f", x);
             String stry = String.format("%.1f", y);
             
-            text = text.replace("\\_", "\\string_");
+            text = text.replace("_", "\\_");
             String anchorString = "";
             switch(anchor)
             {
@@ -353,7 +353,6 @@ public class TikzDrawer implements Drawer
         int nRows = coverageMap.getNumberOfRows();
         int targetSize = coverageMap.getTargetSize();
         String targetName = coverageMap.getTargetName();
-        targetName = targetName.replace("_", "\\string_");
         String filename = coverageMap.getFilename();
         
         int height = 100;
@@ -388,7 +387,6 @@ public class TikzDrawer implements Drawer
     {
         int targetSize = coverageMap.getTargetSize();
         String targetName = coverageMap.getTargetName();
-        targetName = targetName.replace("_", "\\string_");
         String filename = coverageMap.getFilename();
         double unit = (double)imageWidth / targetSize;                
 
