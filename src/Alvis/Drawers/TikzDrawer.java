@@ -226,6 +226,38 @@ public class TikzDrawer implements Drawer
         }         
     }
     
+    public void drawTextWithMaxWidth(double x, double y, String text, Anchor anchor, String colour, int maxWidth)
+    {
+        try
+        {
+            String strx = String.format("%.1f", x);
+            String stry = String.format("%.1f", y);
+            
+            text = text.replace("_", "\\_");
+            String anchorString = "";
+            switch(anchor)
+            {
+                case ANCHOR_LEFT:
+                {
+                    anchorString = "anchor=west";
+                    break;
+                }
+                case ANCHOR_RIGHT:
+                {
+                    anchorString = "anchor= east";
+                    break;
+                }
+            }
+            String maxWidthString = "text width=" + maxWidth;
+            bw.write("\\node " + "[" + anchorString + ", " + maxWidthString + "] at (" + strx + "," + stry + ") {\\color{" + colour + "}" + text + "};" ); 
+            bw.newLine();
+        } 
+        catch (IOException e) 
+        {
+            System.out.println(e);
+        }         
+    }
+    
     public void drawTextRotated(double x, double y, String text, int angle, Anchor anchor)
     {
          try

@@ -303,6 +303,12 @@ public class SVGDrawer implements Drawer
         }         
     }
     
+    public void drawTextWithMaxWidth(double x, double y, String text, Anchor anchor, String colour, int maxWidth)
+    {
+        //not available in SVG? (Without quite a lot of work...)
+        drawText(x,y,text,anchor, colour);
+    }
+    
     public void drawTextRotated(double x, double y, String text, int angle, Anchor anchor)
     {
         try

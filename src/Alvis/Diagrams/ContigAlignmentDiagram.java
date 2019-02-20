@@ -337,7 +337,7 @@ public class ContigAlignmentDiagram
         
         // draw the contig rectangle first, so that it has lowest z value in SVG's
         m_drawer.drawRectangle(x, y, m_contigDrawLength, m_contigDrawHeight, "black");
-        m_drawer.drawText(x - 5, (y + m_contigDrawHeight/2), contigName, Drawer.Anchor.ANCHOR_RIGHT, "black");
+        m_drawer.drawTextWithMaxWidth(x - 5, (y + m_contigDrawHeight/2), contigName, Drawer.Anchor.ANCHOR_RIGHT, "black", 125);
         for(int i = 0; i <= NUM_COORD_MARKS; i++)
         {
             double xMark = x + i * (m_contigDrawLength / NUM_COORD_MARKS);
