@@ -22,16 +22,18 @@ import java.util.*;
 public class ChimeraFilter implements AlignmentFilter
 {
     private float m_minCoverageForTarget;
+    private float m_minChimericAlignmentLengthProp;
     private float m_minTotalCoverage;
     private float m_maxQueryGapDistance;
     private float m_minTargetGapDistance;
     private ArrayList<DetailedAlignment> m_chimeras;
     private AlignmentFilter m_overlapFilter;
     
-    public ChimeraFilter(float minCoverageForTarget, float minTotalCoverage)
+    public ChimeraFilter(float minTotalCoverage, float minChimericAlignmentLengthProp)
     {
-        m_minCoverageForTarget = minCoverageForTarget;
+        m_minCoverageForTarget = 0.05f;
         m_minTotalCoverage = minTotalCoverage;
+        m_minChimericAlignmentLengthProp = minChimericAlignmentLengthProp;
         m_chimeras = new ArrayList();
         m_maxQueryGapDistance = 0.01f;
         m_minTargetGapDistance = 0.5f;
@@ -69,7 +71,11 @@ public class ChimeraFilter implements AlignmentFilter
             }
         
             // identify the chimeras
-            if(isChimera2(alignmentsForQuery))
+//            if(isChimera2(alignmentsForQuery))
+//            {
+//                filteredAlignments.addAll(alignmentsForQuery);
+//            }
+            if(alignmentsForQuery.size() == 2 && isChimera3(alignmentsForQuery))
             {
                 filteredAlignments.addAll(alignmentsForQuery);
             }
@@ -143,6 +149,10 @@ public class ChimeraFilter implements AlignmentFilter
             System.out.println("No chimeras to report");
             return;
         }
+        
+        // these alignments should be pairs, where each pair represents a chimera.
+        assert(m_chimeras.size() % 2 == 0);
+        
         // order alignments by query and then by query start
         m_chimeras.sort(chimeraComparator);
         
@@ -150,29 +160,16 @@ public class ChimeraFilter implements AlignmentFilter
         try
         {
             BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-            String lastRef = m_chimeras.get(0).getTargetName();
-            String lastQuery = m_chimeras.get(0).getQueryName();
-            int lastQueryEnd = m_chimeras.get(0).getQueryEnd();
-            for(DetailedAlignment alignment : m_chimeras)
+            for(int i = 0; i < m_chimeras.size(); i+=2)
             {
-                String queryName = alignment.getQueryName();
-                String refName = alignment.getTargetName();
-                if(queryName.equals(lastQuery))
-                {
-                    if(!refName.equals(lastRef))
-                    {
-                        //write the Chimera
-                        int chimeraPos = (lastQueryEnd + alignment.getQueryStart()) / 2;
-                        writer.write(queryName + "\t" + chimeraPos + "\t" + lastRef + "\t" + refName + "\n");
-                        lastRef = alignment.getTargetName();
-                    }
-                }
-                else
-                {
-                    // move on to the next query
-                    lastQuery = queryName;
-                }
-                lastQueryEnd = alignment.getQueryEnd();
+                DetailedAlignment alignment1 = m_chimeras.get(i);
+                DetailedAlignment alignment2 = m_chimeras.get(i + 1);
+                assert(alignment1.getQueryName().equals(alignment2.getQueryName()));
+                assert(alignment2.getQueryStart() > alignment1.getQueryEnd());
+                
+                //write the Chimera
+                int chimeraPos = (alignment1.getQueryEnd() + alignment1.getQueryStart()) / 2;
+                writer.write(alignment1.getQueryName() + "\t" + chimeraPos + "\t" + alignment1.getTargetName() + "\t" + alignment2.getTargetName() + "\n");
             }
             
             writer.flush();
@@ -189,14 +186,10 @@ public class ChimeraFilter implements AlignmentFilter
     {
         public int compare(DetailedAlignment alignment1, DetailedAlignment alignment2) 
         {
-            int result = alignment1.getTargetName().compareTo(alignment2.getTargetName());
+            int result = alignment1.getQueryName().compareTo(alignment2.getQueryName());
             if(result == 0)
             {
-                result = alignment1.getQueryName().compareTo(alignment2.getQueryName());
-                if(result == 0)
-                {
-                    result = alignment1.getQueryStart() - alignment2.getQueryStart();
-                }
+                result = alignment1.getQueryStart() - alignment2.getQueryStart();
             }
             return result;
         }
@@ -244,6 +237,58 @@ public class ChimeraFilter implements AlignmentFilter
             lastQueryEnd = alignment.getQueryEnd();
             lastTargetEnd = alignment.getTargetEnd();
             lastOrientation = alignment.isReverseAlignment();
+        }
+        return false;
+    }
+    
+    private boolean isChimera3(ArrayList<DetailedAlignment> alignments)
+    {
+        assert(alignments.size() == 2);
+        alignments.sort(DetailedAlignment.compareByQueryStart);
+        DetailedAlignment first = alignments.get(0);
+        DetailedAlignment second = alignments.get(1);
+      
+        // alignments do not overlap
+        if(first.getQueryEnd() < second.getQueryStart())
+        {
+            int firstLength = Math.abs(first.getQueryEnd() - first.getQueryStart());
+            int secondLength = Math.abs(second.getQueryEnd() - second.getQueryStart());
+            float minLength = first.getQuerySize() * m_minChimericAlignmentLengthProp;
+            
+            if(firstLength < minLength || secondLength < minLength)
+            {
+                return false;
+            }
+            
+            double totalLength = firstLength + secondLength;
+            //alignments cover most of the query read
+            if(totalLength/first.getQuerySize() > m_minTotalCoverage)
+            {
+                // alignments not from same target
+                if(!first.getTargetName().equals(second.getTargetName()))
+                {
+                    return true;
+                }
+                else
+                {
+                    // alignments have different orientations
+                    if(first.isReverseAlignment() != second.isReverseAlignment())
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        // is the distance on the target between the alignments more or less the same as the distance on the queries?
+                        if(Math.abs(second.getTargetStart() - first.getTargetEnd()) <= 3 * Math.abs(second.getQueryStart() - first.getQueryEnd()))
+                        {
+                            return false;
+                        }
+                        
+                        return true;
+                    }
+                }
+            }
+            
         }
         return false;
     }
