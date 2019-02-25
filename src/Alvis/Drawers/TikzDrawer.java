@@ -63,7 +63,7 @@ public class TikzDrawer implements Drawer
             bw.write("\\usepackage{rotating}"); bw.newLine();
             bw.write("\\usepackage{xcolor}"); bw.newLine();
             bw.write("\\usepackage{tikz}"); bw.newLine();
-            bw.write("\\usepackage[" + pageOrientation + ",top=3cm, bottom=3cm, left=3cm, right=3cm]{geometry}"); bw.newLine();
+            bw.write("\\usepackage[" + pageOrientation + ",top=2.5cm, bottom=2.5cm, left=3cm, right=3cm]{geometry}"); bw.newLine();
             bw.write("\\begin{document}"); bw.newLine();
             bw.write("\\sffamily"); bw.newLine();
             bw.write("\\scriptsize"); bw.newLine();
@@ -195,7 +195,7 @@ public class TikzDrawer implements Drawer
         drawAlignment(x,y,width,height, fillColour, borderColour, fillLeftPC, fillRightPC);
     }
     
-    public void drawText(double x, double y, String text, Anchor anchor, String colour)
+    public void drawText(double x, double y, String text, Anchor anchor, Align align, String colour)
     {
         try
         {
@@ -203,21 +203,40 @@ public class TikzDrawer implements Drawer
             String stry = String.format("%.1f", y);
             
             text = text.replace("_", "\\_");
-            String anchorString = "";
+            String propertiesString = "[";
             switch(anchor)
             {
                 case ANCHOR_LEFT:
                 {
-                    anchorString = "[anchor=west]";
+                    propertiesString += "anchor=west";
                     break;
                 }
                 case ANCHOR_RIGHT:
                 {
-                    anchorString = "[anchor= east]";
+                    propertiesString += "anchor=east";
                     break;
                 }
             }
-            bw.write("\\node " + anchorString + " at (" + strx + "," + stry + ") {\\color{" + colour + "}" + text + "};" ); 
+            switch(align)
+            {
+                case ALIGN_LEFT:
+                {
+                    propertiesString += ", align=left";
+                    break;
+                }
+                case ALIGN_MIDDLE:
+                {
+                    propertiesString += ", align=center";
+                    break;
+                }
+                case ALIGN_RIGHT:
+                {
+                    propertiesString += ", align=right";
+                    break;
+                }
+            }
+            propertiesString += "]";
+            bw.write("\\node " + propertiesString + " at (" + strx + "," + stry + ") {\\color{" + colour + "}" + text + "};" ); 
             bw.newLine();
         } 
         catch (IOException e) 
@@ -226,7 +245,7 @@ public class TikzDrawer implements Drawer
         }         
     }
     
-    public void drawTextWithMaxWidth(double x, double y, String text, Anchor anchor, String colour, int maxWidth)
+    public void drawTextWithMaxWidth(double x, double y, String text, Anchor anchor, Align align, String colour, int maxWidth)
     {
         try
         {
@@ -234,22 +253,41 @@ public class TikzDrawer implements Drawer
             String stry = String.format("%.1f", y);
             
             text = text.replace("_", "\\_");
-            String anchorString = "";
+            String propertiesString = "[";
             switch(anchor)
             {
                 case ANCHOR_LEFT:
                 {
-                    anchorString = "anchor=west";
+                    propertiesString += "anchor=west";
                     break;
                 }
                 case ANCHOR_RIGHT:
                 {
-                    anchorString = "anchor= east";
+                    propertiesString += "anchor=east";
                     break;
                 }
             }
-            String maxWidthString = "text width=" + maxWidth;
-            bw.write("\\node " + "[" + anchorString + ", " + maxWidthString + "] at (" + strx + "," + stry + ") {\\color{" + colour + "}" + text + "};" ); 
+            switch(align)
+            {
+                case ALIGN_LEFT:
+                {
+                    propertiesString += ", align=left";
+                    break;
+                }
+                case ALIGN_MIDDLE:
+                {
+                    propertiesString += ", align=center";
+                    break;
+                }
+                case ALIGN_RIGHT:
+                {
+                    propertiesString += ", align=right";
+                    break;
+                }
+            }
+            propertiesString += ", text width=" + maxWidth;
+            propertiesString += "]";
+            bw.write("\\node " + propertiesString + " at (" + strx + "," + stry + ") {\\color{" + colour + "}" + text + "};" ); 
             bw.newLine();
         } 
         catch (IOException e) 
@@ -301,10 +339,19 @@ public class TikzDrawer implements Drawer
     
     public void drawKeyContig(double x, double y, double width, double height, String colour, String name)
     {
-        name = name.replace("_", "\\string_");
         drawAlignment( x, y, width, height, colour, colour, 0, 100);
-        double textx = x + width/2;
-        drawText((int)textx, y - 25, name, Anchor.ANCHOR_MIDDLE, "black");
+        String textx = String.format("%.1f", x + width/2);
+        String texty = String.format("%.1f", y - 10) ;
+        name = name.replace("_", " ");
+        try 
+        {
+            bw.write("\\node[anchor=north, align=center, text width=75] at (" + textx + "," + texty + ") {\\color{black}" + name + "};" ); 
+            bw.newLine();
+        }
+        catch (IOException e) 
+        {
+            System.out.println(e);
+        }  
     }
     
     public void drawCurve(double startx, double starty, double endx, double endy, double controlx1, double controly1, double controlx2, double controly2)
@@ -397,19 +444,19 @@ public class TikzDrawer implements Drawer
         for(int r=0; r<nRows; r+=50) 
         {
             int rowY = height - (int)((double)r * ((double)height / (double)nRows));
-            drawText(x - 10, y + rowY, Integer.toString((int)(r*rowSize)), Drawer.Anchor.ANCHOR_MIDDLE, "black");
+            drawText(x - 10, y + rowY, Integer.toString((int)(r*rowSize)), Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");
         }
 
         int rowY = height - (int)((double)(nRows) * ((double)height / (double)nRows));
-        drawText(x - 10, y + rowY, Integer.toString(targetSize), Drawer.Anchor.ANCHOR_MIDDLE, "black");
+        drawText(x - 10, y + rowY, Integer.toString(targetSize), Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");
         
         // draw the image
         drawImage(x, y, width, height, filename, "[anchor=south west, inner sep=0pt, outer sep=0pt]");
 
         // draw the text labels
         int textxPos = width / 2;
-        drawText(x + textxPos, y - 5, "Each row represents "+(int)rowSize+" nt", Drawer.Anchor.ANCHOR_MIDDLE, "black");
-        drawText(x + textxPos, y - 10, targetName, Drawer.Anchor.ANCHOR_MIDDLE, "black");
+        drawText(x + textxPos, y - 5, "Each row represents "+(int)rowSize+" nt", Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");
+        drawText(x + textxPos, y - 10, targetName, Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");
         drawTextRotated(x - 20, y + (height/2), "Position in genome (nt)", 90, Drawer.Anchor.ANCHOR_MIDDLE);
         closePicture();
         drawHorizontalGap(10);
@@ -429,12 +476,12 @@ public class TikzDrawer implements Drawer
             int num = i == num_dividers ? targetSize: (int)((targetSize / num_dividers) * i);
             int pos = (int)((double)num * unit);
 
-            drawText(x + pos, y + imageHeight + 2, Integer.toString(num), Drawer.Anchor.ANCHOR_MIDDLE, "black");
+            drawText(x + pos, y + imageHeight + 2, Integer.toString(num), Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");
             drawLine(x + pos, y + imageHeight + 1, x + pos, y + imageHeight - 1, "black", false);
         }
 
         drawImage(x, y, imageWidth, imageHeight, filename, "[anchor=south west, inner sep=0pt, outer sep=0pt]");
-        drawText(x + imageWidth + 5, y + (imageHeight/2), targetName, Drawer.Anchor.ANCHOR_LEFT, "black");
+        drawText(x + imageWidth + 5, y + (imageHeight/2), targetName, Drawer.Anchor.ANCHOR_LEFT, Drawer.Align.ALIGN_MIDDLE, "black");
         closePicture();
         drawVerticalGap(5);
         drawNewline();        
@@ -447,9 +494,9 @@ public class TikzDrawer implements Drawer
         
         openPicture(1,1);
         drawImage(x, y, width, height, "images/heatmap.png", "[anchor=south west, inner sep=0pt, outer sep=0pt]");
-        drawText(x + (width/2), y + 5, "Coverage", Drawer.Anchor.ANCHOR_MIDDLE, "black");
-        drawText(x, y + 5, "0", Drawer.Anchor.ANCHOR_MIDDLE, "black");
-        drawText(x + width, y + 5, Integer.toString(heatMapScale.getHeatMapSize()), Drawer.Anchor.ANCHOR_MIDDLE, "black");
+        drawText(x + (width/2), y + 5, "Coverage", Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");
+        drawText(x, y + 5, "0", Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");
+        drawText(x + width, y + 5, Integer.toString(heatMapScale.getHeatMapSize()), Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");
         closePicture();
         drawVerticalGap(5);
         drawNewline();          

@@ -75,14 +75,14 @@ public class GenomeCoverageDiagram
         }
         else
         {
-            m_drawer = new SVGDrawer(filename, false, 1, height + 100, 2 * width, 100);
+            m_drawer = new SVGDrawer(filename, false, 1, height + 100, 2 * width, 100, 12);
         }
         
         
         m_drawer.openFile();
-        m_drawer.drawScale(m_genomeCoverageImage.getScale(), 10, 10);
         String imageFilename = m_genomeCoverageImage.getFilename();
         m_drawer.openPicture(0.1, 0.1);
+        m_drawer.drawScale(m_genomeCoverageImage.getScale(), 10, 10);
         double yStart = 70;
         double xStart = width/4;
         m_drawer.drawImage(xStart, yStart, width, height, imageFilename, "");
@@ -97,15 +97,15 @@ public class GenomeCoverageDiagram
             int numRows = (length / m_genomeCoverageImage.getWidth() ) + 1;
             int targetSize = m_genomeCoverageImage.getTargetSize(key.toString());
             double y = (totalRows + (numRows/2));
-            m_drawer.drawText(xStart - 10, yStart + height - totalRows, "0", Drawer.Anchor.ANCHOR_RIGHT, "black");
-            m_drawer.drawText(xStart + 10 + width, yStart + height - totalRows - numRows, Integer.toString(targetSize), Drawer.Anchor.ANCHOR_LEFT, "black");
-            m_drawer.drawText(xStart - 30, yStart + height - y, key.toString(), Drawer.Anchor.ANCHOR_RIGHT, "black");
+            m_drawer.drawText(xStart - 10, yStart + height - totalRows, "0", Drawer.Anchor.ANCHOR_RIGHT, Drawer.Align.ALIGN_RIGHT, "black");
+            m_drawer.drawText(xStart + 10 + width, yStart + height - totalRows - numRows, Integer.toString(targetSize), Drawer.Anchor.ANCHOR_LEFT, Drawer.Align.ALIGN_LEFT, "black");
+            m_drawer.drawText(xStart - 30, yStart + height - y, key.toString(), Drawer.Anchor.ANCHOR_RIGHT, Drawer.Align.ALIGN_RIGHT, "black");
             totalRows += numRows;
             totalRows += m_genomeCoverageImage.getRowsBetweenTargets();
         }
         
         int basesPerRow = m_options.getBinSize() * m_genomeCoverageImage.getWidth();
-        m_drawer.drawText(xStart + width/2, 10, "Each row represents " + Integer.toString(basesPerRow) + " nt", Drawer.Anchor.ANCHOR_MIDDLE, "black");
+        m_drawer.drawText(xStart + width/2, 10, "Each row represents " + Integer.toString(basesPerRow) + " nt", Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");
         
         m_drawer.closePicture();
         m_drawer.closeFile();

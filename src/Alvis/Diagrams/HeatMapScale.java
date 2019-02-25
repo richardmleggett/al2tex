@@ -19,6 +19,8 @@ public class HeatMapScale {
     private final static int HEATMAPLIMIT=10240;
     private int heatMapLength = 70;
     private int heatMapHeight = 8;
+    private int heatMapDrawLength = 50;
+    private int heatMapDrawHeight = 6;
     private double ratio = 8./70;
     private Color[] heatMap = new Color[HEATMAPLIMIT];
     private String filename;
@@ -115,5 +117,21 @@ public class HeatMapScale {
     public String getFilename() {
         String[] filenamePath = filename.split("/");
         return "images/" + filenamePath[filenamePath.length - 1];
+    }
+    
+    public int getHeatMapDrawLength() {
+        return heatMapDrawLength;
+    }
+    
+    public int getHeatMapDrawHeight() {
+        return heatMapDrawHeight;
+    }
+    
+    public void setHeatMapDrawLength(int length) {
+        heatMapDrawLength = length;
+    }
+    
+    public void setHeatMapDrawHeight(int height) {
+        heatMapDrawHeight = height;
     }
 }

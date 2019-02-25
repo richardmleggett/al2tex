@@ -65,7 +65,7 @@ public class AlignmentDiagram {
         }
         else
         {
-            m_drawer = new SVGDrawer(filename, true, 1, 2608, 1580, 200);
+            m_drawer = new SVGDrawer(filename, true, 1, 2608, 1580, 200, 24);
             m_xOffset = 50;
             m_yOffset = 50;
             m_isTexOut = false;
@@ -190,7 +190,7 @@ public class AlignmentDiagram {
             m_drawer.drawLine(xpos, y1, xpos, y2, "black", true);
             
             double y3 = m_yOffset + m_y-(m_targetHeight / 2);
-            m_drawer.drawText(xpos, y3, Integer.toString(num), Drawer.Anchor.ANCHOR_MIDDLE, "black");
+            m_drawer.drawText(xpos, y3, Integer.toString(num), Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");
         }
         m_y -= m_yStep;
     }
@@ -199,7 +199,7 @@ public class AlignmentDiagram {
     {
         m_drawer.drawFilledRectangle(m_xOffset, m_yOffset + m_y - m_targetHeight, m_targetWidth, m_targetHeight, "red", "red");
         double texty = m_yOffset + m_y - (m_targetHeight / 2);
-        m_drawer.drawText(m_xOffset + m_targetWidth + 5, texty, name, Drawer.Anchor.ANCHOR_LEFT, "red");
+        m_drawer.drawText(m_xOffset + m_targetWidth + 5, texty, name, Drawer.Anchor.ANCHOR_LEFT, Drawer.Align.ALIGN_LEFT, "red");
         m_y -= m_yStep;
     }
     
@@ -218,14 +218,14 @@ public class AlignmentDiagram {
         if (x1 < -MAX_OVERHANG) 
         {
             x1 = -MAX_OVERHANG;
-            m_drawer.drawText(m_xOffset + x1 - 5, m_yOffset + y1, "+" + Integer.toString(-from), Drawer.Anchor.ANCHOR_RIGHT, "black");
+            m_drawer.drawText(m_xOffset + x1 - 5, m_yOffset + y1, "+" + Integer.toString(-from), Drawer.Anchor.ANCHOR_RIGHT, Drawer.Align.ALIGN_RIGHT, "black");
         }
         
         if (x2 > (m_targetWidth + MAX_OVERHANG)) 
         {
             x2 = m_targetWidth + MAX_OVERHANG;
             overhangRight = true;
-            m_drawer.drawText(m_xOffset + x2 + 5, m_yOffset + y1, "+" + Integer.toString(to - m_targetSize), Drawer.Anchor.ANCHOR_LEFT, "black");
+            m_drawer.drawText(m_xOffset + x2 + 5, m_yOffset + y1, "+" + Integer.toString(to - m_targetSize), Drawer.Anchor.ANCHOR_LEFT, Drawer.Align.ALIGN_LEFT, "black");
         }
     
         m_drawer.drawLine(m_xOffset + x1, m_yOffset + y1, m_xOffset + x2, m_yOffset + y1, "black", false);
@@ -308,7 +308,7 @@ public class AlignmentDiagram {
             x += 300;
         }
         float y = ((minY + maxY) / 2) - (m_targetHeight / 2) + (m_yStep/2);
-        m_drawer.drawText(x, m_yOffset + y, contigName, Drawer.Anchor.ANCHOR_LEFT, "blue");
+        m_drawer.drawText(x, m_yOffset + y, contigName, Drawer.Anchor.ANCHOR_LEFT, Drawer.Align.ALIGN_MIDDLE, "blue");
         
         float dividerLineY = m_y + 5;
         if(!m_isTexOut)

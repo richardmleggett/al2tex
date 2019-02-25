@@ -40,7 +40,7 @@ public class GenomeCoverageImage
         m_options = options;
         m_coverages = new HashMap();
         m_contigLengths = new HashMap();
-        m_heatMapScale = new HeatMapScale(200);
+        m_heatMapScale = new HeatMapScale();
         m_outputFilename = outputFilename;
         m_highestCoverage = 0;
         m_binSize = m_options.getBinSize();
@@ -81,7 +81,9 @@ public class GenomeCoverageImage
     
     public void saveImageFile() 
     {
-        //m_heatMapScale.setHeatMapSize(m_highestCoverage);
+        m_heatMapScale.setHeatMapSize(m_highestCoverage);
+        m_heatMapScale.setHeatMapDrawHeight(15);
+        m_heatMapScale.setHeatMapDrawLength(150);
         m_heatMapScale.saveHeatmap(m_options.getOutputDirectory() + "images/genome_coverage_heatmap_scale.png");
         
         m_width = 8000;

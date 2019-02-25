@@ -46,7 +46,8 @@ public class CoverageMapDiagram
         
         if(o.getOutputFormat().equals("svg"))
         {
-            m_drawer = new SVGDrawer(filename, true, 4, 1700, 700, 20);
+            int textSize = 16;                  
+            m_drawer = new SVGDrawer(filename, true, 4, 1700, 700, 20, textSize);
         }
         else
         {

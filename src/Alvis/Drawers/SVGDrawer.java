@@ -30,16 +30,14 @@ public class SVGDrawer implements Drawer
     private boolean m_landscape;
     private int m_pageNumber;
     private String m_filenamePrefix;
+    private int m_fontSize;
     
     private static int m_longPageLength;
     private static int m_shortPageLength;
     private static int m_borderSize;
-    private int m_pageHeight;
+    private int m_pageHeight;  
     
-    private final static int HEATMAP_DRAW_SIZE_X = 50;
-    private final static int HEATMAP_DRAW_SIZE_Y = 6;
-    
-    public SVGDrawer(String f, boolean landscape, double scale, int longPageLength, int shortPageLength, int borderSize) 
+    public SVGDrawer(String f, boolean landscape, double scale, int longPageLength, int shortPageLength, int borderSize, int fontSize) 
     {
         m_pageNumber = 1;
         m_filenamePrefix = f;
@@ -48,6 +46,7 @@ public class SVGDrawer implements Drawer
         m_filename = m_filenamePrefix + m_pageNumber + ".svg";
         m_colourMap = new HashMap();
         m_scale = scale;
+        m_fontSize = fontSize;
         
         m_longPageLength = longPageLength;
         m_shortPageLength = shortPageLength;
@@ -105,7 +104,7 @@ public class SVGDrawer implements Drawer
             m_bw.newLine();
             m_bw.write("\t.default { font-family: sans-serif;");
             m_bw.newLine();
-            m_bw.write("\t           font-size: 24px; }");
+            m_bw.write("\t           font-size: " + m_fontSize + "px; }");
             m_bw.newLine();
             m_bw.write("</style>");
             m_bw.newLine();
@@ -263,7 +262,7 @@ public class SVGDrawer implements Drawer
         }    
     }
     
-    public void drawText(double x, double y, String text, Anchor anchor, String colour)
+    public void drawText(double x, double y, String text, Anchor anchor, Align align, String colour)
     {
         try
         {
@@ -274,19 +273,19 @@ public class SVGDrawer implements Drawer
             x += m_borderSize;
             
             String anchorString = "";
-            switch(anchor)
+            switch(align)
             {
-                case ANCHOR_LEFT:
+                case ALIGN_LEFT:
                 {
                     anchorString = "text-anchor='start'";
                     break;
                 }
-                case ANCHOR_MIDDLE:
+                case ALIGN_MIDDLE:
                 {
                     anchorString = "text-anchor='middle'";
                     break;
                 }
-                case ANCHOR_RIGHT:
+                case ALIGN_RIGHT:
                 {
                     anchorString = "text-anchor='end'";
                     break;
@@ -303,10 +302,10 @@ public class SVGDrawer implements Drawer
         }         
     }
     
-    public void drawTextWithMaxWidth(double x, double y, String text, Anchor anchor, String colour, int maxWidth)
+    public void drawTextWithMaxWidth(double x, double y, String text, Anchor anchor, Align align, String colour, int maxWidth)
     {
         //not available in SVG? (Without quite a lot of work...)
-        drawText(x,y,text,anchor, colour);
+        drawText(x,y,text,anchor, align, colour);
     }
     
     public void drawTextRotated(double x, double y, String text, int angle, Anchor anchor)
@@ -506,7 +505,7 @@ public class SVGDrawer implements Drawer
     public void drawKeyContig(double x, double y, double width, double height, String colour, String name)
     {
         drawAlignment(x, y, width, height, colour, colour, 0, 100);
-        drawText(x + (width/2), y + 1.3 * height, name, Drawer.Anchor.ANCHOR_MIDDLE, "black");
+        drawText(x + (width/2), y + 1.3 * height, name, Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");
     }
     
     public void drawCurve(double startx, double starty, double endx, double endy, double controlx1, double controly1, double controlx2, double controly2)
@@ -568,20 +567,20 @@ public class SVGDrawer implements Drawer
         for (int r=0; r<nRows; r+=50) 
         {
             int rowY = height - (int)((double)r * ((double)height / (double)nRows));
-            drawText(x - 2, y + rowY, Integer.toString((int)(r*rowSize)), Drawer.Anchor.ANCHOR_RIGHT, "black");
+            drawText(x - 2, y + rowY, Integer.toString((int)(r*rowSize)), Drawer.Anchor.ANCHOR_RIGHT, Drawer.Align.ALIGN_RIGHT, "black");
         }
 
         int rowY = height - (int)((double)(nRows) * ((double)height / (double)nRows));
-        drawText(x - 2, y + rowY, Integer.toString(targetSize), Drawer.Anchor.ANCHOR_RIGHT, "black");
+        drawText(x - 2, y + rowY, Integer.toString(targetSize), Drawer.Anchor.ANCHOR_RIGHT, Drawer.Align.ALIGN_RIGHT, "black");
         
         // draw the image
         drawImage(x, y, width, height, filename, "");
 
         // draw the text labels
         int textxPos = width / 2;
-        drawText(x + textxPos, y - 5, "Each row represents "+(int)rowSize+" nt", Drawer.Anchor.ANCHOR_MIDDLE, "black");
-        drawText(x + textxPos, y - 10, targetName, Drawer.Anchor.ANCHOR_MIDDLE, "black");
-        drawTextRotated(x - 35, y + (height/2), "Position in genome (nt)", 90, Drawer.Anchor.ANCHOR_MIDDLE);
+        drawText(x + textxPos, y - 5, "Each row represents "+(int)rowSize+" nt", Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");
+        drawText(x + textxPos, y - 10, targetName, Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");
+        drawTextRotated(x - 25, y + (height/2), "Position in genome (nt)", 90, Drawer.Anchor.ANCHOR_MIDDLE);
         closePicture();  
     }
     
@@ -597,24 +596,24 @@ public class SVGDrawer implements Drawer
             int num = i == num_dividers ? targetSize: (int)((targetSize / num_dividers) * i);
             int pos = (int)((double)num * unit);
 
-            drawText(x + pos, y + imageHeight + 3, Integer.toString(num), Drawer.Anchor.ANCHOR_MIDDLE, "black");
+            drawText(x + pos, y + imageHeight + 3, Integer.toString(num), Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");
             drawLine(x + pos, y + imageHeight + 1, x + pos, y + imageHeight - 1, "black", false);
         }
 
         drawImage(x, y, imageWidth, imageHeight, filename, "[anchor=south west, inner sep=0pt, outer sep=0pt]");
-        drawText(x + imageWidth + 2, y, targetName, Drawer.Anchor.ANCHOR_LEFT, "black");   
+        drawText(x + imageWidth + 2, y, targetName, Drawer.Anchor.ANCHOR_LEFT, Drawer.Align.ALIGN_LEFT, "black");   
     }
     
     public void drawScale(HeatMapScale heatMapScale, double x, double y)
     {
-        int height = HEATMAP_DRAW_SIZE_Y;
-        int width = HEATMAP_DRAW_SIZE_X;
+        int height = heatMapScale.getHeatMapDrawHeight();
+        int width = heatMapScale.getHeatMapDrawLength();
         String filename = heatMapScale.getFilename();
         
         drawImage(x, y, width, height, filename, "[anchor=south west, inner sep=0pt, outer sep=0pt]");
-        drawText(x + (width/2), y + height + 1, "Coverage", Drawer.Anchor.ANCHOR_MIDDLE, "black");
-        drawText(x, y + height + 1, "0", Drawer.Anchor.ANCHOR_MIDDLE, "black");
-        drawText(x + width, y + height + 1, Integer.toString(heatMapScale.getHeatMapSize()), Drawer.Anchor.ANCHOR_MIDDLE, "black");           
+        drawText(x + (width/2), y + height + 1, "Coverage", Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");
+        drawText(x, y + height + 1, "0", Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");
+        drawText(x + width, y + height + 1, Integer.toString(heatMapScale.getHeatMapSize()), Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");           
     }
     
     public int getPageHeight()

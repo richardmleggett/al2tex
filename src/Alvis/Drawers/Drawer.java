@@ -26,6 +26,13 @@ public interface Drawer
         ANCHOR_RIGHT 
     }
     
+    public enum Align
+    {
+        ALIGN_LEFT,
+        ALIGN_MIDDLE,
+        ALIGN_RIGHT
+    }
+    
     abstract void openFile();
     abstract void closeFile();
     abstract void openPicture(double x, double y);
@@ -35,8 +42,8 @@ public interface Drawer
     abstract void drawCurve(double startx, double starty, double endx, double endy, double controlx1, double controly1, double controlx2, double controly2);
     abstract void drawRectangle(double x, double y, double width, double height, String borderColour);
     abstract void drawFilledRectangle(double x, double y, double width, double height, String fillColour, String borderColour);
-    abstract void drawText(double x, double y, String text, Anchor anchor, String colour);
-    abstract void drawTextWithMaxWidth(double x, double y, String text, Anchor anchor, String colour, int maxWidth);
+    abstract void drawText(double x, double y, String text, Anchor anchor, Align align, String colour);
+    abstract void drawTextWithMaxWidth(double x, double y, String text, Anchor anchor, Align align, String colour, int maxWidth);
     abstract void drawTextRotated(double x, double y, String text, int angle, Anchor anchor);
     abstract void drawImage(double x, double y, double width, double height, String filename, String optionsString);
     abstract void defineColour(String name, int red, int green, int blue);

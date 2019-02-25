@@ -48,7 +48,7 @@ public class ContigAlignmentDiagram
     private Drawer m_drawer;
     private boolean m_detailedDiagram = false;
     private boolean m_constantKey = true;
-    private final int m_keyOffset = 150;
+    private final int m_keyOffset = 170;
     
     public ContigAlignmentDiagram(DetailedAlignmentFile alignmentFile, DiagramOptions options)
     {
@@ -79,7 +79,7 @@ public class ContigAlignmentDiagram
         {
             int width = m_detailedDiagram ? 2700 : 3708;
             int height = m_detailedDiagram ? 1400 : 2580;
-            m_drawer = new SVGDrawer(filename, true, 1, width, height, 400);
+            m_drawer = new SVGDrawer(filename, true, 1, width, height, 400, 24);
         }
        
         // filter out really small alignments
@@ -337,13 +337,13 @@ public class ContigAlignmentDiagram
         
         // draw the contig rectangle first, so that it has lowest z value in SVG's
         m_drawer.drawRectangle(x, y, m_contigDrawLength, m_contigDrawHeight, "black");
-        m_drawer.drawTextWithMaxWidth(x - 5, (y + m_contigDrawHeight/2), contigName, Drawer.Anchor.ANCHOR_RIGHT, "black", 125);
+        m_drawer.drawTextWithMaxWidth(x - 10, (y + m_contigDrawHeight/2), contigName, Drawer.Anchor.ANCHOR_RIGHT, Drawer.Align.ALIGN_RIGHT, "black", 100);
         for(int i = 0; i <= NUM_COORD_MARKS; i++)
         {
             double xMark = x + i * (m_contigDrawLength / NUM_COORD_MARKS);
             String coord = Integer.toString(i * (contigLength / NUM_COORD_MARKS));
             m_drawer.drawLine(xMark, y - 5, xMark, y + 5, "black", false);
-            m_drawer.drawText(xMark, y - 25, coord, Drawer.Anchor.ANCHOR_MIDDLE, "black");
+            m_drawer.drawText(xMark, y - 25, coord, Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");
         }
 
         // fill in the alignments
@@ -381,7 +381,7 @@ public class ContigAlignmentDiagram
                 chimeray -= 20;
             }
 
-            m_drawer.drawText(chimerax, chimeray, "C", Drawer.Anchor.ANCHOR_LEFT, "black");
+            m_drawer.drawText(chimerax, chimeray, "C", Drawer.Anchor.ANCHOR_LEFT, Drawer.Align.ALIGN_MIDDLE, "black");
         }
     }
     
@@ -453,8 +453,8 @@ public class ContigAlignmentDiagram
         double maxRefX = (double)maxRef * refContigDrawLength / refLength;
         m_drawer.drawLine(x, zoomRefContigYStart, (refContigXStart + minRefX), refContigYEnd, "black", true);
         m_drawer.drawLine(x + m_contigDrawLength, zoomRefContigYStart, (refContigXStart + maxRefX), refContigYEnd, "black", true);
-        m_drawer.drawText(x, zoomRefContigYStart - 20, Integer.toString(minRef), Drawer.Anchor.ANCHOR_MIDDLE, "black");
-        m_drawer.drawText(x + m_contigDrawLength, zoomRefContigYStart - 20, Integer.toString(maxRef), Drawer.Anchor.ANCHOR_MIDDLE, "black");
+        m_drawer.drawText(x, zoomRefContigYStart - 20, Integer.toString(minRef), Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");
+        m_drawer.drawText(x + m_contigDrawLength, zoomRefContigYStart - 20, Integer.toString(maxRef), Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");
 
         double zoomRefLength = maxRef - minRef;
         int queryLength = alignments.get(0).getQuerySize();
@@ -518,9 +518,9 @@ public class ContigAlignmentDiagram
         m_drawer.drawRectangle(x, y, drawLength, m_refContigDrawHeight, "black");
         if(drawLabels)
         {
-            m_drawer.drawText(x, y - 20, Integer.toString(refStart), Drawer.Anchor.ANCHOR_MIDDLE, "black");
-            m_drawer.drawText(x +  drawLength, y - 20, Integer.toString(refEnd), Drawer.Anchor.ANCHOR_MIDDLE, "black");
-            m_drawer.drawText(x - 50, (y + m_refContigDrawHeight/2), refName, Drawer.Anchor.ANCHOR_MIDDLE, "black");
+            m_drawer.drawText(x, y - 20, Integer.toString(refStart), Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");
+            m_drawer.drawText(x +  drawLength, y - 20, Integer.toString(refEnd), Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");
+            m_drawer.drawText(x - 50, (y + m_refContigDrawHeight/2), refName, Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");
         }
     }   
     
@@ -548,7 +548,7 @@ public class ContigAlignmentDiagram
         for(String key : queryNames)
         {
             ArrayList<DetailedAlignment> detailedAlignments = m_alignmentMap.get(key);
-            int drawY = m_keyOffset + j * 175;
+            int drawY = m_keyOffset + j * 170;
             drawContig(detailedAlignments, 150, drawY);
             j++;
         }
