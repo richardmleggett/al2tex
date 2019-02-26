@@ -128,28 +128,27 @@ Alvis can currently output most diagrams in two formats: SVG and laTeX. These ar
 
 The following table shows the accepted input and output formats for each diagram.
 
-+---------------------------+----------------------------------------------------+-------------------+
-|                           |                      Input Formats                 |  Output Formats   |
-|                           +-------+--------+--------+-----+--------+-----+-----+---------+---------+
-|                           | blast | coords | tiling | paf | pileup | psl | sam |   svg   |   tex   |
-+===========================+=======+========+========+=====+========+=====+=====+=========+=========+
-| Alignment Diagram         |   ✓   |   ✓    |   ✓    |  ✓  |        |  ✓  |     |    ✓    |    ✓    |
-+---------------------------+-------+--------+--------+-----+--------+-----+-----+---------+---------+
-| Contig Alignment Diagram  |   ✓   |   ✓    |   ✓    |  ✓  |        |  ✓  |     |    ✓    |    ✓    |
-+---------------------------+-------+--------+--------+-----+--------+-----+-----+---------+---------+
-| Coverage Map Diagram      |   ✓   |   ✓    |   ✓    |  ✓  |        |  ✓  |  ✓  |    ✓    |    ✓    |
-+---------------------------+-------+--------+--------+-----+--------+-----+-----+---------+---------+
-| Genome Coverage Diagram   |   ✓   |   ✓    |   ✓    |  ✓  |        |  ✓  |  ✓  |    ✓    |         |
-+---------------------------+-------+--------+--------+-----+--------+-----+-----+---------+---------+
-| Pileup Coverage Diagram   |       |        |        |     |    ✓   |     |     |         |    ✓    |
-+---------------------------+-------+--------+--------+-----+--------+-----+-----+---------+---------+
++---------------------------+-------------------------------------------+-------------------+
+|                           |                      Input Formats        |  Output Formats   |
+|                           +-------+--------+--------+-----+-----+-----+---------+---------+
+|                           | blast | coords | tiling | paf | psl | sam |   svg   |   tex   |
++===========================+=======+========+========+=====+=====+=====+=========+=========+
+| Alignment Diagram         |   ✓   |   ✓    |   ✓    |  ✓  |  ✓  |     |    ✓    |    ✓    |
++---------------------------+-------+--------+--------+-----+-----+-----+---------+---------+
+| Contig Alignment Diagram  |   ✓   |   ✓    |   ✓    |  ✓  |  ✓  |     |    ✓    |    ✓    |
++---------------------------+-------+--------+--------+-----+-----+-----+---------+---------+
+| Coverage Map Diagram      |   ✓   |   ✓    |   ✓    |  ✓  |  ✓  |  ✓  |    ✓    |    ✓    |
++---------------------------+-------+--------+--------+-----+-----+-----+---------+---------+
+| Genome Coverage Diagram   |   ✓   |   ✓    |   ✓    |  ✓  |  ✓  |  ✓  |    ✓    |         |
++---------------------------+-------+--------+--------+-----+-----+-----+---------+---------+
+
 
 Filtering
 ----------
 
 The user can filter alignments using the ``-filter`` option. This will cause alvis to ignore all alignments with length less than ``-minAlignmentProp`` % of the reference contig size (set to 0.5% by default). Note that this option is currently only used by the alignment diagram and the contig alignment diagram.
 
-When using the ``-chimera`` option in conjunction with the contig alignment diagram, alvis will display only those alignments that it thinks could be a chimera.
+When using the ``-chimera`` option in conjunction with the contig alignment diagram, alvis will display only those alignments that it thinks could be a chimera. These are chosen when a query sequence is at least 90% covered by exactly two non-overlapping alignments, either from different reference sequences, or different loci of the same reference sequence. Each of these alignments must have a length of at least 10% of the query sequence. The user should be aware that chimeras are determined using only the alignment data; sequence similarity in the reference sequences may also cause the above conditions to be met.
 
 .. image:: images/chimera_example.png
 
