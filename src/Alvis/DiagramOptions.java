@@ -37,6 +37,8 @@ public class DiagramOptions {
     private boolean filter = false;
     private boolean findChimeras = false;
     private boolean printChimeras = false;
+    private double minChimeraCoverageProp = 0.9;
+    private double minChimeraAlignmentProp = 0.1;
     private AlignmentDiagram.SortMethod alignmentDiagramSortMethod = AlignmentDiagram.SortMethod.SORT_BY_TARGET_POS;
     
     public void parseArgs(String[] args) {
@@ -64,6 +66,7 @@ public class DiagramOptions {
             System.out.println("    -coverageType square|long \t\t\t\t\t\t Type of coverage map to draw for coveragemap diagram.");
             System.out.println("    -binSize <int> \t\t\t\t\t\t\t Size of bin for coveragemap and genomecoverage diagrams.");
             System.out.println("    -filter \t\t\t\t\t\t\t\t Filter small alignments.");
+            System.out.println("    -minAlignmentPC \t\t\t\t\t\t\t Minimum size of alignments, as a percent of the query length, to keep when filtering.");
             System.out.println("    -chimeras \t\t\t\t\t\t\t\t Only draw potentially chimeric contigs in contig alignment diagram.");
             System.out.println("    -printChimeras \t\t\t\t\t\t\t Output a file containing coordinate information for chimeric contigs.");
             System.out.println("");
@@ -141,10 +144,33 @@ public class DiagramOptions {
             } else if (args[i].equalsIgnoreCase("-rowspacer")) {
                 rowSpacer = Integer.parseInt(args[i+1]);
                 System.out.println("      Row spacer: " + rowSpacer);
-            } else if (args[i].equalsIgnoreCase("-minAlignmentProp")) {
+            } else if (args[i].equalsIgnoreCase("-minAlignmentPC")) {
                 double minContigAlignmentPC = Double.parseDouble(args[i+1]);
-                minContigAlignmentProp = minContigAlignmentPC / 100;
-                System.out.println("      Min alignment percent for filtering: " + minContigAlignmentPC + "%");
+                if( minContigAlignmentPC >= 0 && minContigAlignmentPC <= 100) {
+                    minContigAlignmentProp = minContigAlignmentPC / 100;
+                    System.out.println("      Min alignment percent for filtering: " + minContigAlignmentPC + "%");
+                }
+                else {
+                    System.out.println(" -minAlignmentPC must be between 0 and 100. Using default value of " + (minContigAlignmentProp * 100) + "%" );
+                }
+            } else if(args[i].equalsIgnoreCase("-minChimeraCoveragePC")) {
+                double minChimeraCoveragePC = Double.parseDouble(args[i+1]);
+                if( minChimeraCoveragePC >= 0 && minChimeraCoveragePC <= 100) {
+                    minChimeraCoverageProp = minChimeraCoveragePC / 100;
+                    System.out.println("      Min query coverage percent for chimeras: " + minChimeraCoveragePC + "%");
+                }
+                else {
+                    System.out.println(" -minChimeraCoveragePC must be between 0 and 100. Using default value of " + (minChimeraCoverageProp * 100) + "%" );
+                }   
+            } else if(args[i].equalsIgnoreCase("-minChimeraAlignmentPC")) {
+                double minChimeraAlignmentPC = Double.parseDouble(args[i+1]);
+                if( minChimeraAlignmentPC >= 0 && minChimeraAlignmentPC <= 100) {
+                    minChimeraAlignmentProp = minChimeraAlignmentPC / 100;
+                    System.out.println("      Min alignment length as percent of query for chimera alignments: " + minChimeraAlignmentPC + "%");
+                }
+                else {
+                    System.out.println(" -minChimeraAlignmentPC must be between 0 and 100. Using default value of " + (minChimeraAlignmentProp * 100) + "%" );
+                } 
             } else if (args[i].equalsIgnoreCase("-alignmentQueryName")) {
                 alignmentQueryName = args[i+1];
                 System.out.println("   Query name for alignment diagram: " + alignmentQueryName);
@@ -346,5 +372,13 @@ public class DiagramOptions {
     
     public AlignmentDiagram.SortMethod getAlignmentDiagramSortMethod() {
         return alignmentDiagramSortMethod;
+    }
+    
+    public double getMinChimeraCoverageProp() {
+        return minChimeraCoverageProp;
+    }
+    
+    public double getMinChimeraAlignmentProp() {
+        return minChimeraAlignmentProp;
     }
 }

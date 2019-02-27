@@ -31,13 +31,19 @@ The following are optional.
 +==============================================+=============================================+
 | ``-filter``                                  | Filter small alignments to remove noise.    |
 +----------------------------------------------+---------------------------------------------+
-| ``-minAlignmentProp <int>``                  | Minimum size of alignments, as a percent of |
-|                                              | the query length, to keep when filtering.   |
+| ``-minAlignmentPC <int>``                    | Minimum size of alignments (as % of the     |
+|                                              | query length) to keep when filtering.       |
 +----------------------------------------------+---------------------------------------------+
 | ``-chimeras``                                | Only display alignments from chimeras.      |
 +----------------------------------------------+---------------------------------------------+
 |``-printChimeras``                            | Output a text file containing alignments    |
 |                                              | belonging to chimeras.                      |
++----------------------------------------------+---------------------------------------------+
+| ``-minChimeraCoveragePC <int>``              | Minimum coverage of query (as % of the      |
+|                                              | query length) for identifying chimeras.     |
++----------------------------------------------+---------------------------------------------+
+|  ``-minChimeraAlignmentPC <int>``            | Minimum size of alignments (as % of the     |
+|                                              | query length) for identifying chimeras.     |
 +----------------------------------------------+---------------------------------------------+
 | ``-alignmentQueryName <query sequence id>``  | ID of query sequence for exapnded contig    |
 |                                              | alignment diagram.                          |
@@ -68,7 +74,6 @@ The type of diagram is specified with the ``-type <diagram>`` option etc. The cu
 - ``contigAlignment``
 - ``coveragemap``
 - ``genomecoverage``
-- ``pileup``
 
 Detailed information for each diagram can be found in the :doc:`diagrams` section.
 
@@ -83,7 +88,6 @@ Alvis accepts a variety of alignment formats. These are specified by the option 
 - ``coords``
 - ``tiling``
 - ``sam``
-- ``pileup``
 
 Coords
 ......
@@ -146,9 +150,9 @@ The following table shows the accepted input and output formats for each diagram
 Filtering
 ----------
 
-The user can filter alignments using the ``-filter`` option. This will cause alvis to ignore all alignments with length less than ``-minAlignmentProp`` % of the reference contig size (set to 0.5% by default). Note that this option is currently only used by the alignment diagram and the contig alignment diagram.
+The user can filter alignments using the ``-filter`` option. This will cause alvis to ignore all alignments with length less than ``-minAlignmentPC`` % of the reference contig size (set to 0.5% by default). Note that this option is currently only used by the alignment diagram and the contig alignment diagram.
 
-When using the ``-chimera`` option in conjunction with the contig alignment diagram, alvis will display only those alignments that it thinks could be a chimera. These are chosen when a query sequence is at least 90% covered by exactly two non-overlapping alignments, either from different reference sequences, or different loci of the same reference sequence. Each of these alignments must have a length of at least 10% of the query sequence. The user should be aware that chimeras are determined using only the alignment data; sequence similarity in the reference sequences may also cause the above conditions to be met.
+When using the ``-chimera`` option in conjunction with the contig alignment diagram, alvis will display only those alignments that it thinks could be a chimera. These are chosen when a query sequence is at least 90% covered by exactly two non-overlapping alignments, either from different reference sequences, or different loci of the same reference sequence. Each of these alignments must have a length of at least 10% of the query sequence. These values may be adjusted by the user with the ``-minChimeraCoveragePC`` and ``-minChimeraAlignmentPC`` options.  The user should be aware that sequences are assumed to be non-circular; chimeras may be found when a read covers the join of a circular sequence.
 
 .. image:: images/chimera_example.png
 

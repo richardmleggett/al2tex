@@ -88,7 +88,7 @@ public class ContigAlignmentDiagram
             alignmentFile.filterAlignments(new MinPropFilter(m_minAlignmentProp));
         }
         
-        ChimeraFilter chimeraFilter = new ChimeraFilter(0.9f, 0.1f);
+        ChimeraFilter chimeraFilter = new ChimeraFilter(options.getMinChimeraCoverageProp(), options.getMinChimeraAlignmentProp());
         if(options.getFindChimeras())
         {
             alignmentFile.filterAlignments(chimeraFilter);

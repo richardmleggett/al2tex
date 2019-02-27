@@ -21,15 +21,15 @@ import java.util.*;
  */
 public class ChimeraFilter implements AlignmentFilter
 {
-    private float m_minCoverageForTarget;
-    private float m_minChimericAlignmentLengthProp;
-    private float m_minTotalCoverage;
-    private float m_maxQueryGapDistance;
-    private float m_minTargetGapDistance;
+    private double m_minCoverageForTarget;
+    private double m_minChimericAlignmentLengthProp;
+    private double m_minTotalCoverage;
+    private double m_maxQueryGapDistance;
+    private double m_minTargetGapDistance;
     private ArrayList<DetailedAlignment> m_chimeras;
     private AlignmentFilter m_overlapFilter;
     
-    public ChimeraFilter(float minTotalCoverage, float minChimericAlignmentLengthProp)
+    public ChimeraFilter(double minTotalCoverage, double minChimericAlignmentLengthProp)
     {
         m_minCoverageForTarget = 0.05f;
         m_minTotalCoverage = minTotalCoverage;
@@ -253,7 +253,7 @@ public class ChimeraFilter implements AlignmentFilter
         {
             int firstLength = Math.abs(first.getQueryEnd() - first.getQueryStart());
             int secondLength = Math.abs(second.getQueryEnd() - second.getQueryStart());
-            float minLength = first.getQuerySize() * m_minChimericAlignmentLengthProp;
+            double minLength = first.getQuerySize() * m_minChimericAlignmentLengthProp;
             
             if(firstLength < minLength || secondLength < minLength)
             {
@@ -287,8 +287,7 @@ public class ChimeraFilter implements AlignmentFilter
                         return true;
                     }
                 }
-            }
-            
+            }           
         }
         return false;
     }
