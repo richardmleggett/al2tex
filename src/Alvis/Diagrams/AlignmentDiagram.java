@@ -98,7 +98,7 @@ public class AlignmentDiagram {
         {
             DetailedAlignment a = m_alignmentFile.getAlignment(i);            
             row++;
-            if(a.getTargetName().equals(lastTarget) && alignmentsForQuery.size() < MAX_ALIGNMENTS_PER_PAGE)
+            if(a.getTargetName().equals(lastTarget) && row < MAX_ALIGNMENTS_PER_PAGE)
             {
                 if(a.getQueryName().equals(lastQuery))
                 {
@@ -121,13 +121,6 @@ public class AlignmentDiagram {
                 
                 row = 1;
                 page++;
-                
-                
-//                targetCounter++;
-//                if ((options.getMaxTargets() > 0) && (targetCounter >= options.getMaxTargets())) 
-//                {
-//                    break;
-//                }
             }
 
             if (row == 1) 
