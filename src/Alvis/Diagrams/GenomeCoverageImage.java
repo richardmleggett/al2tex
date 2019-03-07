@@ -70,10 +70,18 @@ public class GenomeCoverageImage
             for (int i=from; i<to; i++) 
             {
                 int coverageIndex = i/m_binSize;
-                coverage[coverageIndex]++;               
-                if (coverage[coverageIndex] > m_highestCoverage) 
+                try
                 {
-                    m_highestCoverage = coverage[coverageIndex];
+                    coverage[coverageIndex]++;               
+                    if (coverage[coverageIndex] > m_highestCoverage) 
+                    {
+                        m_highestCoverage = coverage[coverageIndex];
+                    }
+                }
+                catch(ArrayIndexOutOfBoundsException e)
+                {
+                    System.out.println("WARNING: Out of bounds alignment for target " + a.getTargetName() + ":  " + i + "/" + a.getTargetSize());
+                    break;
                 }
             }
         }

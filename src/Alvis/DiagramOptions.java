@@ -214,10 +214,10 @@ public class DiagramOptions {
         }  
         
         if (inputFormat.equals("sam")) {
-            if (!(diagramType.equals("coveragemap") || diagramType.equals("genomecoveragemap"))) {
+            if (!(diagramType.equals("coveragemap") || diagramType.equals("genomecoverage"))) {
                 System.err.println("Error: SAM files can only produce coverage maps");
+                System.exit(0);
             }
-            System.exit(0);
         }
 
         if (inputFormat.equals("pileup")) {
