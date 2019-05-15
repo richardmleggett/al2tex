@@ -64,7 +64,7 @@ public class DiagramOptions {
             System.out.println("    -alignmentQueryName <query sequence> \t\t\t\t Name of query sequence for detailed contig alignment diagram.");
             System.out.println("    -alignmentTargetName <target sequence> \t\t\t\t Name of target sequence for detailed contig alignment diagram.");
             System.out.println("    -coverageType square|long \t\t\t\t\t\t Type of coverage map to draw for coveragemap diagram.");
-            System.out.println("    -binSize <int> \t\t\t\t\t\t\t Size of bin for coveragemap and genomecoverage diagrams.");
+            System.out.println("    -binSize <int> \t\t\t\t\t\t\t Size of bin for genomecoverage diagrams.");
             System.out.println("    -filter \t\t\t\t\t\t\t\t Filter small alignments.");
             System.out.println("    -minAlignmentPC \t\t\t\t\t\t\t Minimum size of alignments, as a percent of the query length, to keep when filtering.");
             System.out.println("    -chimeras \t\t\t\t\t\t\t\t Only draw potentially chimeric contigs in contig alignment diagram.");

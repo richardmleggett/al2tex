@@ -58,7 +58,8 @@ The following are optional.
 |                                              | whitespace. Required if ``inputfmt`` is     |
 |                                              | ``sam``.                                    |
 +----------------------------------------------+---------------------------------------------+
-| ``-binsize <int>``                           | Size (in bp) of bins for coverage diagrams. |
+| ``-binsize <int>``                           | Size (in bp) of bins for genome coverage    | 
+|                                              | diagrams.                                   |
 +----------------------------------------------+---------------------------------------------+
 | ``-coverageType  <type>``                    | The type of coverage heatmap to produce.    |
 |                                              | Must be either "square" or "long".          |

@@ -53,7 +53,7 @@ Finally, if the user specifies a query contig and a reference contig by using th
 Coverage Map Diagram
 --------------------
 
-Alignments are binned based on their position in the target contigs, and counted to calculate the coverage of each bin. By default, the bin size is 30 bp, but this can be set using the ``-binsize`` option. To avoid counting the same query region multiple times, alignments with overalpping query coordinates are filtered by choosing the longest alignment. For each target contig a heatmap image is produced in which each pixel represents the coverage of a bin. These are arranged in a tex or svg file. Note that each heatmap image is a fixed size, so the pixel scale is adjusted to fit. By default, square images are produced where the rows are read top to bottom, from left to right, as below.
+Coverage of each target contig is counted by alignment for each query contig. To avoid counting the same query region multiple times, alignments with overlapping query coordinates are filtered by choosing the longest alignment. For each target contig a heatmap image is produced in which each pixel represents the coverage of a single position in the target contig. These are arranged in a tex or svg file. Note that each heatmap image is a fixed size, so the pixel scale is adjusted to fit. By default, square images are produced where the rows are read top to bottom, from left to right, as below.
 
 .. image:: images/coverage_map_example.png
 
@@ -78,7 +78,7 @@ and outputs the following formats
 Genome Coverage Diagram
 -----------------------
 
-As in the Coverage Map diagram, alignments are binned based on their position in the target contigs. By default, the bin size is 30 bp, but this can be set using the ``-binsize`` option. One heatmap is produced showing the coverage over all the target contigs. Unlike the Coverage Map Diagram, the scale for the heatmaps remains the same across all the target contigs.
+Alignments are binned based on their position in the target contigs, and counted to calculate the coverage of each bin. By default, the bin size is 30 bp, but this can be set using the ``-binsize`` option. As in the Coverage Map diagram, alignments that overlap in the query contig are filtered. One heatmap is produced showing the coverage over all the target contigs. Unlike the Coverage Map Diagram, the scale for the heatmaps remains the same across all the target contigs.
 
 .. image:: images/genome_coverage_example.png
 
