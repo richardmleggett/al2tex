@@ -604,7 +604,7 @@ public class SVGDrawer implements Drawer
         drawText(x + imageWidth + 2, y, targetName, Drawer.Anchor.ANCHOR_LEFT, Drawer.Align.ALIGN_LEFT, "black");   
     }
     
-    public void drawScale(HeatMapScale heatMapScale, double x, double y)
+    public void drawScale(HeatMapScale heatMapScale, double x, double y, int coverage)
     {
         int height = heatMapScale.getHeatMapDrawHeight();
         int width = heatMapScale.getHeatMapDrawLength();
@@ -613,7 +613,7 @@ public class SVGDrawer implements Drawer
         drawImage(x, y, width, height, filename, "[anchor=south west, inner sep=0pt, outer sep=0pt]");
         drawText(x + (width/2), y + height + 1, "Coverage", Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");
         drawText(x, y + height + 1, "0", Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");
-        drawText(x + width, y + height + 1, Integer.toString(heatMapScale.getHeatMapSize()), Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");           
+        drawText(x + width, y + height + 1, Integer.toString(coverage), Drawer.Anchor.ANCHOR_MIDDLE, Drawer.Align.ALIGN_MIDDLE, "black");           
     }
     
     public int getPageHeight()

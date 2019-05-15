@@ -200,4 +200,9 @@ public class GenomeCoverageImage
             return -1;
         }
     }
+    
+    public int getMaxCoverage()
+    {
+        return m_highestCoverage / m_binSize;
+    }
 }

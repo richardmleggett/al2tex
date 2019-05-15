@@ -105,7 +105,7 @@ public class CoverageMapDiagram
     public void writeOutputFile() 
     {
         m_drawer.openFile();
-        m_drawer.drawScale(heatMapScale, 10, 5);
+        m_drawer.drawScale(heatMapScale, 10, 5, largestCoverage);
         switch(mapType)
         {
             case SQUARE_MAP:
@@ -123,7 +123,7 @@ public class CoverageMapDiagram
                         if(y + targetWidth > m_drawer.getPageHeight())
                         {
                             m_drawer.newPage();
-                            m_drawer.drawScale(heatMapScale, 10, 5);
+                            m_drawer.drawScale(heatMapScale, 10, 5, largestCoverage);
                             y = 40;
                         }
                     }
@@ -140,7 +140,7 @@ public class CoverageMapDiagram
                     if(y + 15 > m_drawer.getPageHeight())
                     {
                         m_drawer.newPage();
-                        m_drawer.drawScale(heatMapScale, 10, 5);   
+                        m_drawer.drawScale(heatMapScale, 10, 5, largestCoverage);   
                         multiplier = 0;
                         y = 25;
                     }             

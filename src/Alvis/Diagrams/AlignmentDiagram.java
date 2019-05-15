@@ -47,6 +47,7 @@ public class AlignmentDiagram {
     private int m_xOffset = 0;
     private int m_yOffset = 0;
     private boolean m_isTexOut = true;
+    private boolean m_displayNames = true;
     
     public static enum SortMethod {
         SORT_BY_TARGET_POS,
@@ -298,10 +299,13 @@ public class AlignmentDiagram {
         float x = m_xOffset + m_targetWidth + 5;
         if(overhangRight)
         {
-            x += 300;
+            x += 250;
         }
         float y = ((minY + maxY) / 2) - (m_targetHeight / 2) + (m_yStep/2);
-        m_drawer.drawText(x, m_yOffset + y, contigName, Drawer.Anchor.ANCHOR_LEFT, Drawer.Align.ALIGN_MIDDLE, "blue");
+        if(m_displayNames)
+        {
+            m_drawer.drawText(x, m_yOffset + y, contigName, Drawer.Anchor.ANCHOR_LEFT, Drawer.Align.ALIGN_LEFT, "blue");
+        }
         
         float dividerLineY = m_y + 5;
         if(!m_isTexOut)

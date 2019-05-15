@@ -24,6 +24,7 @@ public class HeatMapScale {
     private double ratio = 8./70;
     private Color[] heatMap = new Color[HEATMAPLIMIT];
     private String filename;
+    private double scale = 1.0;
     
     public HeatMapScale() {
         this.setHeatMapSize(64);
@@ -34,7 +35,11 @@ public class HeatMapScale {
     }
     
     public void setHeatMapSize(int s) {
-        heatMapLength = s;
+        heatMapLength = Math.min(HEATMAPLIMIT, s);
+        if(heatMapLength != s)
+        {
+            scale = (double)HEATMAPLIMIT / s;
+        }
         heatMapHeight = Math.max((int)((double)s * ratio), 8);
         heatMap = new Color[heatMapLength+1];
         
@@ -87,6 +92,7 @@ public class HeatMapScale {
     }
     
     public Color getColour(int i) {
+        i *= scale;
         if (i >= heatMapLength) {
             return heatMap[heatMapLength -1];
         } else {
@@ -95,6 +101,7 @@ public class HeatMapScale {
     }
     
     public int getRGBColour(int i) {
+        i *= scale;
         if (i > heatMapLength) {
             return heatMap[heatMapLength].getRGB();            
         } else {
@@ -134,4 +141,5 @@ public class HeatMapScale {
     public void setHeatMapDrawHeight(int height) {
         heatMapDrawHeight = height;
     }
+    
 }

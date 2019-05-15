@@ -59,7 +59,7 @@ public interface Drawer
     abstract void drawKeyContig(double x, double y, double width, double height, String colour, String name);
     
     // Coverage Map Diagram
-    abstract void drawScale(HeatMapScale heatMapScale, double x, double y);
+    abstract void drawScale(HeatMapScale heatMapScale, double x, double y, int coverage);
     abstract void drawCoverageMap(CoverageMapImage coverageMap, double x, double y);
     abstract void drawCoverageLong(CoverageMapImage coverageMap, double x, double y, double imageWidth, double imageHeight, int num_dividers);
     

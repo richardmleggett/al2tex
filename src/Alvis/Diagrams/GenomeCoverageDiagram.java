@@ -82,7 +82,8 @@ public class GenomeCoverageDiagram
         m_drawer.openFile();
         String imageFilename = m_genomeCoverageImage.getFilename();
         m_drawer.openPicture(0.1, 0.1);
-        m_drawer.drawScale(m_genomeCoverageImage.getScale(), 10, 10);
+        int coverage = m_genomeCoverageImage.getMaxCoverage();
+        m_drawer.drawScale(m_genomeCoverageImage.getScale(), 10, 10, coverage);
         double yStart = 70;
         double xStart = width/4;
         m_drawer.drawImage(xStart, yStart, width, height, imageFilename, "");
