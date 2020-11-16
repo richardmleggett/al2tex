@@ -16,12 +16,12 @@ import java.io.*;
 public class DiagramOptions {
     private String diagramType = null;
     private String inputFilename = null;
-    private String outputDirectory = null;
+    private String outputDirectory = "./alvis_output/";
     private String outputFilename = "diagram.tex";
     private String listFilename = null;
     private String inputFormat = null;
     private String domainsFilename = null;
-    private String outputFormat = null;
+    private String outputFormat = "tex";
     private int maxCoverage = 0;
     private int maxTargets = 0;
     private String tSizes = "";
@@ -92,6 +92,7 @@ public class DiagramOptions {
                     (!inputFormat.equals("coords")) &&
                     (!inputFormat.equals("pileup")) &&
                     (!inputFormat.equals("sam")) &&
+                    (!inputFormat.equals("bam")) && 
                     (!inputFormat.equals("paf")) &&
                     (!inputFormat.equals("blast")) &&
                     (!inputFormat.equals("tiling"))) {
@@ -247,17 +248,16 @@ public class DiagramOptions {
             if (inputFilename == null) {
                 System.out.println("Error: you must specify a -in parameter.");
                 System.exit(0);
-            }        
-
-            if (outputDirectory == null) {
-                System.out.println("Error: you must specify a -outdir parameter.");
-                System.exit(0);
             }
-            File f = new File(outputDirectory);
-            if(!f.isDirectory())
+            File outdir = new File(outputDirectory);
+            if(!outdir.isDirectory())
             {
-                System.out.println("Error: outdir " + outputDirectory + " does not exist.");
-                System.exit(0);
+                outdir.mkdir();
+                if(!outdir.isDirectory())
+                {
+                    System.out.println("Error: Could not create directory " + outputDirectory + ".");
+                    System.exit(0);
+                }
             }
         }
     }        
