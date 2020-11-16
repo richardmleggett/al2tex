@@ -1,4 +1,4 @@
-<project>
+<project name="Alvis">
 
     <target name="clean">
         <delete dir="build"/>
@@ -10,9 +10,9 @@
         <javac srcdir="src/Alvis" destdir="build"/>
     </target>
 
-    <target name="jar">
+    <target name="jar" depends="compile">
         <mkdir dir="dist"/>
-        <jar destfile="dist/Alvis.jar" basedir="build">
+        <jar jarfile="dist/Alvis.jar" basedir="build">
             <manifest>
                 <attribute name="Main-Class" value="Alvis.Alvis"/>
             </manifest>
