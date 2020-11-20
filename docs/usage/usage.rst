@@ -8,21 +8,21 @@ Alvis can be run from the command line using the .jar file. In the terminal, nav
 
 This will create the file prefix_alignment.tex in the directory /path/to/out. The file prefix_alignment.tex can then be compiled by your favourite tex compiler and viewed as a pdf. The options used in this command form the minimum set required for Alvis to work, and are described in the following table.
 
-+-------------------------+---------------------------------------+
-| Option <argument>       | Description                           |
-+=========================+=======================================+
-| ``-type <diagram>``     |   Type of diagram to be produced.     |
-+-------------------------+---------------------------------------+
-| ``-inputfmt <format>``  |   Format of the alignment file to use.|
-+-------------------------+---------------------------------------+
-| ``-outputfmt <format>`` |   Format to output the diagram in.    |
-+-------------------------+---------------------------------------+
-| ``-in <path>``          |  Full file path to alignment file.    |
-+-------------------------+---------------------------------------+
-| ``-outdir <dir>``       |  Directory to write output to.        |
-+-------------------------+---------------------------------------+
-| ``-out <prefix>``       |  Prefix to use for output file names. |
-+-------------------------+---------------------------------------+
++-------------------------+----------------------------------------------------------------------------------------------------------------+
+| Option <argument>       | Description                                                                                                    |
++=========================+================================================================================================================+
+| ``-type <diagram>``     |  Type of diagram to be produced.                                                                               |
++-------------------------+----------------------------------------------------------------------------------------------------------------+
+| ``-inputfmt <format>``  |  Format of the alignment file to use.                                                                          |
++-------------------------+----------------------------------------------------------------------------------------------------------------+
+| ``-outputfmt <format>`` |  Format of the output diagram (default: tex).                                                                  |
++-------------------------+----------------------------------------------------------------------------------------------------------------+
+| ``-in <path>``          |  Full file path to alignment file.                                                                             |
++-------------------------+----------------------------------------------------------------------------------------------------------------+
+| ``-outdir <dir>``       |  Directory to write output to. Alvis will create this directory if it does not exist (default: ./alvis_output).|
++-------------------------+----------------------------------------------------------------------------------------------------------------+
+| ``-out <prefix>``       |  Prefix to use for output file names (default: diagram).                                                       |
++-------------------------+----------------------------------------------------------------------------------------------------------------+
 
 The following are optional.
 
@@ -51,8 +51,8 @@ The following are optional.
 | ``-alignmentTargetName <target sequence id>``| ID of target sequence for expanded contig   |
 |                                              | alignment diagram.                          |
 +----------------------------------------------+---------------------------------------------+
-| ``-blastfmt <format string>``                | Format string as given to blast. Can be used|
-|                                              | if ``-inputfmt`` is ``blast``.              |
+| ``-blastfmt <format string>``                | Format string as given to blast. Must be    |
+|                                              | used if ``-inputfmt`` is ``blast``.         |
 +----------------------------------------------+---------------------------------------------+
 | ``-tsizes <targets string>``                 | List of target names and sizes, separated by|
 |                                              | whitespace. Required if ``inputfmt`` is     |
@@ -103,24 +103,26 @@ Similarly, a tiling file can be created from a mummer .delta file using the ``sh
 BLAST
 .....
 
-If BLAST is given as the format, the input file must have been created by BLAST using the tabular option. By default, Alvis will assume that the BLAST file was not created with a user defined format, but with just ``-outfmt 6``. If a user defined format was used, the parameter passed to blast after the ``-outfmt`` option must also be given to Alvis after the -blastfmt option. For example, the following command could be used: ::
-
-	Java -jar Alvis.jar -type alignment -inputfmt blast -outputfmt tex \
-		-in /path/to/alignments/alignments.blast -outdir /path/to/out/ -out prefix \
-		-blastfmt '6 qseqid sseqid qstart qend sstart ssend'
-
-if the file alignment.blast was created with:: 
-
-	blastn -db nt -query query.fa -out alignments.blast -outfmt '6 qseqid sseqid qstart qend sstart ssend'
-
-If a user defined format is used, the following fields must be present in some order:
+If BLAST is given as the format, the input file must have been created by BLAST using the tabular option, and the following fields must be present in some order:
 
 - ``qseqid``
 - ``sseqid``
 - ``qstart``
 - ``qend``
+- ``qlen``
 - ``sstart``
 - ``send``
+- ``slen``
+
+The parameter passed to blast after the ``-outfmt`` option must also be given to Alvis after the ``-blastfmt`` option. For example, the following command could be used: ::
+
+	Java -jar Alvis.jar -type alignment -inputfmt blast -outputfmt tex \
+		-in /path/to/alignments/alignments.blast -outdir /path/to/out/ -out prefix \
+		-blastfmt '6 qseqid sseqid qstart qend qlen sstart ssend slen'
+
+if the file alignment.blast was created with:: 
+
+	blastn -db nt -query query.fa -out alignments.blast -outfmt '6 qseqid sseqid qstart qend qlen sstart ssend slen'
 
 SAM
 ....

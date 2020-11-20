@@ -25,9 +25,13 @@ and outputs the following formats
 Contig Alignment Diagram
 ------------------------
 
-For each query contig, the Contig Alignment Diagram draws a rectangle representing the query, containing the most prominent alignments to the reference contigs. These alignments are colour coded by target contig, and shaded to give an indication of the position in the target, and the orientation of the alignment. If the ``-filter`` option is not used, only the longest 20 alignments are drawn for each query contig. Query contigs that are identified as chimeric are indicated by a "C", as in tig00000007 below.
+For each query contig, the Contig Alignment Diagram draws a rectangle representing the query, containing the most prominent alignments to the reference contigs. These alignments are colour coded by target contig, and shaded to give an indication of the position in the target, and the orientation of the alignment. If the ``-filter`` option is not used, only the longest 20 alignments are drawn for each query contig.
 
 .. image:: images/contig_alignment_example2.png
+
+If the alignment file contains alignments of reads to references, Alvis will highlight reads that it thinks are chimeric with a "C". In the diagram below, the fifth read appears to be a chimera of K. pneumoniae and L. richardii.
+
+.. image:: images/contig_alignment_example3.png
 
 This diagram type accepts the following input formats
 
