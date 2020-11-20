@@ -145,6 +145,8 @@ public class SAMFile implements AlignmentFile {
         {
             System.out.println("Exception:");
             System.out.println(ioe);
+            System.out.println("Terminating...");
+            System.exit(0);
         }
         
         Collections.sort(alignments);        

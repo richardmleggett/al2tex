@@ -17,7 +17,7 @@ public class DiagramOptions {
     private String diagramType = null;
     private String inputFilename = null;
     private String outputDirectory = "./alvis_output/";
-    private String outputFilename = "diagram.tex";
+    private String outputFilename = "diagram";
     private String listFilename = null;
     private String inputFormat = null;
     private String domainsFilename = null;

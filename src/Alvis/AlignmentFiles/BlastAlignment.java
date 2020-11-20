@@ -31,42 +31,60 @@ public class BlastAlignment implements DetailedAlignment, Comparable
         formatString = formatString.toLowerCase();
         String[] format = formatString.split(" ");
         String[] fields = line.split("\\t");
-        for(int i = 1; i < format.length; i++)
+        try
         {
-            switch (format[i]) 
+            for(int i = 1; i < format.length; i++)
             {
-                case "qseqid":
-                    qName = fields[i-1];
-                    break;
-                case "qlen":
-                    qLength = Integer.parseInt(fields[i-1]);
-                    break;
-                case "qstart":
-                    qStart = Integer.parseInt(fields[i-1]);
-                    break;
-                case "qend":
-                    qEnd = Integer.parseInt(fields[i-1]);
-                    break;
-                case "sseqid":
-                    rName = fields[i-1];
-                    break;
-                case "slen":
-                    rLength = Integer.parseInt(fields[i-1]);
-                    break;
-                case "sstart":
-                    rStart = Integer.parseInt(fields[i-1]);
-                    break;
-                case "send":
-                    rEnd = Integer.parseInt(fields[i-1]);
-                    break;
-                default:
-                    break;
+                switch (format[i]) 
+                {
+                    case "qseqid":
+                        qName = fields[i-1];
+                        break;
+                    case "qlen":
+                        qLength = Integer.parseInt(fields[i-1]);
+                        break;
+                    case "qstart":
+                        qStart = Integer.parseInt(fields[i-1]);
+                        break;
+                    case "qend":
+                        qEnd = Integer.parseInt(fields[i-1]);
+                        break;
+                    case "sseqid":
+                        rName = fields[i-1];
+                        break;
+                    case "slen":
+                        rLength = Integer.parseInt(fields[i-1]);
+                        break;
+                    case "sstart":
+                        rStart = Integer.parseInt(fields[i-1]);
+                        break;
+                    case "send":
+                        rEnd = Integer.parseInt(fields[i-1]);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
+        catch(NumberFormatException e)
+        {  
+            System.out.println("Error: This file does not appear to be in the format specified. Terminating...");
+            System.exit(0);   
+        }
         
-        if((rStart < rEnd && qStart > qEnd) || (rStart> rEnd && qStart < qEnd))
+        if(rStart < rEnd && qStart > qEnd)
         {
             isReverseAlignment  = true;
+            int temp = qStart;
+            qStart = qEnd;
+            qEnd = temp;              
+        }
+        else if (rStart> rEnd && qStart < qEnd)
+        {
+            isReverseAlignment  = true;
+            int temp = rStart;
+            rStart = rEnd;
+            rEnd = temp;
         }
         else
         {

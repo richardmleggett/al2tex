@@ -49,15 +49,5 @@ public interface DetailedAlignment extends Comparable, Alignment
         public int compare(DetailedAlignment alignment1, DetailedAlignment alignment2) {
             return alignment1.getQueryName().compareTo(alignment2.getQueryName());
         }
-    };
-    
-    public static boolean overlapByQuery(DetailedAlignment alignment1, DetailedAlignment alignment2)
-    {
-        if(alignment1.getQueryStart() > alignment2.getQueryEnd() || alignment2.getQueryStart() > alignment1.getQueryEnd())
-        {
-            return false;
-        }
-        return true;
-    }
-       
+    };         
 }

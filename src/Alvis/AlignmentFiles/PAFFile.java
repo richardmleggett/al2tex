@@ -32,7 +32,7 @@ public class PAFFile implements DetailedAlignmentFile
             {
                 String[] fields = line.split("\\t");
 
-                if (fields.length >= 11) 
+                if (fields.length >= 12) 
                 {                
                     PAFAlignment a = new PAFAlignment(line);
                     if (a != null) 
@@ -46,7 +46,10 @@ public class PAFFile implements DetailedAlignmentFile
                 } 
                 else 
                 {
+                    System.out.println("Error: line does not appear to be in PAF format, too few fields.");
                     System.out.println("Line not recognised: "+line);
+                    System.out.println("Terminating...");
+                    System.exit(0);
                 }
 
                 line = br.readLine();

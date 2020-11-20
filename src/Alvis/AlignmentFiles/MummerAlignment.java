@@ -47,54 +47,72 @@ public class MummerAlignment implements Comparable, DetailedAlignment {
         String[] fields = line.split("\\t");
         
         if (fields.length != 21) {
-            System.out.println("Error in input Nucmer file - did you create with -B option?");
+            System.out.println("Error in input Nucmer file: expecting 21 fields - did you create with -B option?");
+            System.out.println(line);
             System.exit(0);
         }
         
-        queryId = fields[0];                           //  [0] query sequence ID
-        //  [1] date of alignment
-        queryLength = Integer.parseInt(fields[2]);     //  [2] length of query sequence
-        //  [3] alignment type
-        //  [4] reference file
-        referenceId = fields[5];                       //  [5] reference sequence ID
-        queryStart = Integer.parseInt(fields[6]);      //  [6] start of alignment in the query
-        queryEnd = Integer.parseInt(fields[7]);        //  [7] end of alignment in the query
-        referenceStart = Integer.parseInt(fields[8]);  //  [8] start of alignment in the reference
-        referenceEnd = Integer.parseInt(fields[9]);    //  [9] end of alignment in the reference
-        pcIdentity = Double.parseDouble(fields[10]);   // [10] percent identity
-        // [11] percent similarity
-        // [12] length of alignment in the query
-        // [13] 0 for compatibility
-        // [14] 0 for compatibility
-        // [15] NULL for compatibility
-        // [16] 0 for compatibility
-        // [17] strand of the query
-        referenceLength = Integer.parseInt(fields[18]); // [18] length of the reference sequence
-        // [19] 0 for compatibility
-        // [20] and 0 for compatibility. 
+        try
+        {
+            queryId = fields[0];                           //  [0] query sequence ID
+            //  [1] date of alignment
+            queryLength = Integer.parseInt(fields[2]);     //  [2] length of query sequence
+            //  [3] alignment type
+            //  [4] reference file
+            referenceId = fields[5];                       //  [5] reference sequence ID
+            queryStart = Integer.parseInt(fields[6]);      //  [6] start of alignment in the query
+            queryEnd = Integer.parseInt(fields[7]);        //  [7] end of alignment in the query
+            referenceStart = Integer.parseInt(fields[8]);  //  [8] start of alignment in the reference
+            referenceEnd = Integer.parseInt(fields[9]);    //  [9] end of alignment in the reference
+            pcIdentity = Double.parseDouble(fields[10]);   // [10] percent identity
+            // [11] percent similarity
+            // [12] length of alignment in the query
+            // [13] 0 for compatibility
+            // [14] 0 for compatibility
+            // [15] NULL for compatibility
+            // [16] 0 for compatibility
+            // [17] strand of the query
+            referenceLength = Integer.parseInt(fields[18]); // [18] length of the reference sequence
+            // [19] 0 for compatibility
+            // [20] and 0 for compatibility. 
+        }
+        catch(NumberFormatException e)
+        {  
+            System.out.println("Error: This file does not appear to be in Coords format. Terminating...");
+            System.exit(0);   
+        }
     }
     
     private void parseShowTilingAlignment(String line) {
         String[] fields = line.split("\\t");
         
         if (fields.length != 13) {
-            System.out.println("Error in input tiling file - did you create with -a option?");
+            System.out.println("Error in input tiling file, expecting 13 fields - did you create with -a option?");
+            System.out.println(line);
             System.exit(0);
         }
         
-        referenceStart = Integer.parseInt(fields[0]);
-        referenceEnd = Integer.parseInt(fields[1]);
-        queryStart = Integer.parseInt(fields[2]);
-        queryEnd = Integer.parseInt(fields[3]);
-        // [4] Length of alignment region in the reference sequence
-        // [5] Length of alignment region in the query sequence
-        pcIdentity = Double.parseDouble(fields[6]);
-        referenceLength = Integer.parseInt(fields[7]);
-        queryLength = Integer.parseInt(fields[8]);
-        // [9] % alignment coverage in the reference sequence
-        // [10] % alignment coverage in the query sequence
-        referenceId = fields[11];
-        queryId = fields[12];
+        try
+        {
+            referenceStart = Integer.parseInt(fields[0]);
+            referenceEnd = Integer.parseInt(fields[1]);
+            queryStart = Integer.parseInt(fields[2]);
+            queryEnd = Integer.parseInt(fields[3]);
+            // [4] Length of alignment region in the reference sequence
+            // [5] Length of alignment region in the query sequence
+            pcIdentity = Double.parseDouble(fields[6]);
+            referenceLength = Integer.parseInt(fields[7]);
+            queryLength = Integer.parseInt(fields[8]);
+            // [9] % alignment coverage in the reference sequence
+            // [10] % alignment coverage in the query sequence
+            referenceId = fields[11];
+            queryId = fields[12];
+        }
+        catch(NumberFormatException e)
+        {  
+            System.out.println("Error: This file does not appear to be in Tiling format. Terminating...");
+            System.exit(0);   
+        }
     }
         
     public double getPcIdentity() { return pcIdentity; }

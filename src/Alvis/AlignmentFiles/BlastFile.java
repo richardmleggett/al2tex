@@ -39,8 +39,9 @@ public class BlastFile implements DetailedAlignmentFile
             if(formatString == null || formatString.isEmpty())
             {
                 System.out.println("No format string provided for blast tabular file.");
-                System.out.println("Assuming default outfmt 6 was used.");
+                System.out.println("Assuming default outfmt 6 was used:");
                 formatString = "6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore";
+                System.out.println(formatString);
             }
             else
             {          
@@ -60,10 +61,18 @@ public class BlastFile implements DetailedAlignmentFile
                 }
             }
             
+            int num_columns = formatString.split(" ").length - 1;
             String line = br.readLine();
             while (line != null) 
             {
                 String[] fields = line.split("\\t");
+                if(fields.length != num_columns)
+                {
+                    System.out.println("BLAST line did not match format string.");
+                    System.out.println(line);
+                    System.out.println("Terminating...");
+                    System.exit(0);
+                }
              
                 BlastAlignment a = new BlastAlignment(line, formatString);
 

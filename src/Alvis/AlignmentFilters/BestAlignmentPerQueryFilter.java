@@ -71,7 +71,7 @@ public class BestAlignmentPerQueryFilter implements AlignmentFilter
                     boolean doesOverlap = false;
                     for(DetailedAlignment alignment2 : bestAlignments)
                     {
-                        if(DetailedAlignment.overlapByQuery(alignment, alignment2))
+                        if(overlapByQuery(alignment, alignment2))
                         {
                             doesOverlap = true;
                             break;
@@ -116,5 +116,14 @@ public class BestAlignmentPerQueryFilter implements AlignmentFilter
                             Integer.toString(alignment.getTargetSize()) + "\t" + 
                             Integer.toString(alignment.getTargetStart()) + "\t" + 
                             Integer.toString(alignment.getTargetEnd())  );
+    }
+    
+    private static boolean overlapByQuery(DetailedAlignment alignment1, DetailedAlignment alignment2)
+    {
+        if(alignment1.getQueryStart() > alignment2.getQueryEnd() || alignment2.getQueryStart() > alignment1.getQueryEnd())
+        {
+            return false;
+        }
+        return true;
     }
 }

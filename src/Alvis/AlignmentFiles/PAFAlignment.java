@@ -31,18 +31,37 @@ public class PAFAlignment implements DetailedAlignment, Comparable
     public PAFAlignment(String line) 
     {
         String[] fields = line.split("\\t");
+        
+        if(!fields[4].equals("-") && !fields[4].equals("+"))
+        {
+            System.out.println("Error: This file does not appear to be in PAF format. Terminating...");
+            System.out.println("Did not recognise " + fields[4] + " in line:");
+            System.out.println(line);
+            System.exit(0);  
+        }
 
         qName               = fields[0];
-        qLength             = Integer.parseInt(fields[1]);
-        qStart              = Integer.parseInt(fields[2]);
-        qEnd                = Integer.parseInt(fields[3]);
         isReverseAlignment  = fields[4].equals("-") ? true : false;
         rName               = fields[5];
-        rLength             = Integer.parseInt(fields[6]);
-        rStart              = Integer.parseInt(fields[7]);
-        rEnd                = Integer.parseInt(fields[8]);
-        blockLength         = Integer.parseInt(fields[10]);
-        quality             = Integer.parseInt(fields[11]);
+        
+        try
+        {
+            qLength             = Integer.parseInt(fields[1]);
+            qStart              = Integer.parseInt(fields[2]);
+            qEnd                = Integer.parseInt(fields[3]);
+            rLength             = Integer.parseInt(fields[6]);
+            rStart              = Integer.parseInt(fields[7]);
+            rEnd                = Integer.parseInt(fields[8]);
+            blockLength         = Integer.parseInt(fields[10]);
+            quality             = Integer.parseInt(fields[11]);
+        }
+        catch(NumberFormatException e)
+        {
+            System.out.println("Error: This file does not appear to be in PAF format.");
+            System.out.println("Error in line: " + line);         
+            System.out.println("Terminating...");
+            System.exit(0);   
+        }
 
         rName=rName.replace("|", "");
         rName=rName.replace(".", "");        
