@@ -249,6 +249,12 @@ public class ContigAlignmentDiagram
             // Should we iterate through an array of reference names so that the references are always in alphabetical order?
             HashSet<String> drawn = new HashSet();
             int totalQueries = m_alignmentMap.size();
+            if(options.getOutputFormat().equals("tex"))
+            {
+                int estimated_file_size = totalQueries;
+                System.out.println("Estimated output file size is in the order of " + estimated_file_size + "KB.");
+            }
+
             while(drawn.size() < totalQueries)
             {
                 int i = 0;
@@ -298,8 +304,7 @@ public class ContigAlignmentDiagram
                 }
                 else
                 {
-                    System.out.println("Error in ContigAlignmentDiagram:");
-                    System.out.println("Uh-oh, this shouldn't happen! Bailing...");
+                    System.out.println("Error in ContigAlignmentDiagram, terminating.");
                     System.exit(1);
                 }
             }

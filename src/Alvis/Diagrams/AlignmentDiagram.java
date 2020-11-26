@@ -77,6 +77,12 @@ public class AlignmentDiagram {
             m_alignmentFile.filterAlignments(new MinPropFilter(o.getMinAlignmentProp()));
         }
         m_alignmentFile.sort(new Sorter());
+        
+        if(options.getOutputFormat().equals("tex"))
+        {
+            int estimated_file_size = 2 * m_alignmentFile.getNumberOfAlignments()/10;
+            System.out.println("Estimated output file size is in the order of " + estimated_file_size + "KB.");
+        }
     }
  
     public void writeOutputFile(String filename) 
@@ -157,6 +163,7 @@ public class AlignmentDiagram {
         int targetHits = h;
 
         // Calculate unit length
+        assert(m_targetSize > 0 );
         m_unit = ((float)m_targetWidth / (float)m_targetSize);                
 
         // Calculate picture height
@@ -205,7 +212,7 @@ public class AlignmentDiagram {
         float y1 = (float)m_y - ((float)m_targetHeight / 2);
         
         if (from > to) {
-            System.out.println("Something went wrong - from > to!");
+            System.out.println("[drawAlignmentLine] Something went wrong - from > to!");
             System.exit(-1);
         }
         
@@ -240,7 +247,7 @@ public class AlignmentDiagram {
 
         if (from > to) 
         {
-            System.out.println("Something went wrong - from > to!");
+            System.out.println("[drawAlignmentBox] Something went wrong - from > to!");
             System.exit(-1);
         }
         
@@ -269,13 +276,13 @@ public class AlignmentDiagram {
 
                 if (from < a.getTargetStart()) 
                 {
-                    System.out.println("Something went wrong - from < tStart");
+                    System.out.println("[drawAlignmentsForQuery] Something went wrong - from < tStart");
                     System.exit(-1);
                 }
 
                 if (to > a.getTargetEnd()) 
                 {
-                    System.out.println("Something went wrong - to ("+to+") > tEnd ("+a.getTargetEnd()+") with from ("+from+")");
+                    System.out.println("[drawAlignmentsForQuery] Something went wrong - to ("+to+") > tEnd ("+a.getTargetEnd()+") with from ("+from+")");
                     System.exit(-1);
                 }
 
