@@ -151,7 +151,7 @@ public class GenomeCoverageImage
              
         try 
         {
-            ImageIO.write(bImage, "PNG", new File(m_outputFilename));
+            ImageIO.write(bImage, "PNG", new File(m_options.getOutputDirectory() + "/" + m_outputFilename));
         }
         catch(Exception e)
         {

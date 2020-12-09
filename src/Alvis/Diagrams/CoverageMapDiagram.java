@@ -74,7 +74,8 @@ public class CoverageMapDiagram
             Alignment a = alignmentFile.getAlignment(i);
             if(a.getTargetName().compareTo(previousTarget) != 0)
             {
-                String filename = filenamePrefix + a.getTargetName() + "_covmap.png";
+                String safeTargetName = a.getTargetName().replace('.', '_');
+                String filename = filenamePrefix + safeTargetName + "_covmap.png";
                 System.out.println("Making new CoverageMapImage: " + filename + " with size " + a.getTargetSize());
                 CoverageMapImage mapImage = new CoverageMapImage(options, a.getTargetSize(), filename, a.getTargetName()); 
                 coverageMaps.add(mapImage);

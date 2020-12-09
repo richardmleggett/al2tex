@@ -42,8 +42,7 @@ public class GenomeCoverageDiagram
         File imagesDir = new File(outputDirectory+"/images");
         imagesDir.mkdir();
 
-        String filenamePrefix = outputDirectory + "images/";
-        String filename = filenamePrefix + "genome_coverage_image.png";
+        String filename = "images/genome_coverage_image.png";
         m_genomeCoverageImage = new GenomeCoverageImage(m_options, filename);
         
         //TODO: write filter for overlaps so we don't get extra coverage.
