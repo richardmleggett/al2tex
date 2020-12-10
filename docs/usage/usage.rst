@@ -149,6 +149,7 @@ The following table shows the accepted input and output formats for each diagram
 | Genome Coverage Diagram   |   ✓   |   ✓    |   ✓    |  ✓  |  ✓  |  ✓  |    ✓    |         |
 +---------------------------+-------+--------+--------+-----+-----+-----+---------+---------+
 
+.. _filtering:
 
 Filtering
 ----------

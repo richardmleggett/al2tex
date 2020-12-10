@@ -116,3 +116,6 @@ docs/_build/html/_images/contig_alignment_svg_example.png
 nbproject/project.xml
 nbproject/private/private.xml
 docs/_build/html/_images/contig_alignment_example3.png
+docs/_build/html/_images/short_read_coverage.png
+docs/_build/html/_images/short_read_assembly.png
+docs/_build/html/_images/short_read_assembly_filter.png
