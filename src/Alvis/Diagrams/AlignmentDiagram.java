@@ -299,7 +299,7 @@ public class AlignmentDiagram {
         if (contigName.matches("NODE_(\\d+)_length_(\\S+)_cov_(\\S+)")) 
         {
             String subs[] = contigName.split("_");
-            contigName="NODE\\_"+subs[1];
+            contigName="NODE_"+subs[1];
         }
         
         int minY = m_y;
