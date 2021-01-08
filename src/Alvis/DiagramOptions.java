@@ -37,6 +37,7 @@ public class DiagramOptions {
     private boolean filter = false;
     private boolean findChimeras = false;
     private boolean printChimeras = false;
+    private boolean chimeraPositions = false;
     private double minChimeraCoverageProp = 0.9;
     private double minChimeraAlignmentProp = 0.1;
     private AlignmentDiagram.SortMethod alignmentDiagramSortMethod = AlignmentDiagram.SortMethod.SORT_BY_TARGET_POS;
@@ -69,6 +70,7 @@ public class DiagramOptions {
             System.out.println("    -minAlignmentPC \t\t\t\t\t\t\t Minimum size of alignments, as a percent of the query length, to keep when filtering.");
             System.out.println("    -chimeras \t\t\t\t\t\t\t\t Only draw potentially chimeric contigs in contig alignment diagram.");
             System.out.println("    -printChimeras \t\t\t\t\t\t\t Output a file containing coordinate information for chimeric contigs.");
+            System.out.println("    -chimeraPositions \t\t\t\t\t\t\t Include all position information of alignments in -printChimeras file.");
             System.out.println("");
             System.exit(1);
         }
@@ -192,6 +194,12 @@ public class DiagramOptions {
                 System.out.println("Looking for Chimeric reads only.");
             } else if(args[i].equalsIgnoreCase("-printchimeras")) {
                 printChimeras = true;
+            } else if(args[i].equalsIgnoreCase("-chimeraPositions")) {
+                chimeraPositions = true;
+                if(!printChimeras)
+                {
+                    System.out.println("Warning: You must also specify -printChimeras to include alignment positions in the chimera text file.");
+                }
             } else if(args[i].equalsIgnoreCase("-coverageType")) {
                 if(args[i+1].equalsIgnoreCase("square")) {
                     cmiType = CoverageMapImage.Type.SQUARE_MAP;
@@ -369,6 +377,11 @@ public class DiagramOptions {
     public boolean getPrintChimeras() {
         return printChimeras;
     }
+    
+    public boolean getChimeraPositions() {
+        return chimeraPositions;
+    }
+            
     
     public AlignmentDiagram.SortMethod getAlignmentDiagramSortMethod() {
         return alignmentDiagramSortMethod;

@@ -39,6 +39,9 @@ The following are optional.
 |``-printChimeras``                            | Output a text file containing alignments    |
 |                                              | belonging to chimeras.                      |
 +----------------------------------------------+---------------------------------------------+
+|``-chimeraPositions``                         | Include alignment start and end positions in|
+|                                              | the file created by ``-printChimeras``.     |
++----------------------------------------------+---------------------------------------------+
 | ``-minChimeraCoveragePC <int>``              | Minimum coverage of query (as % of the      |
 |                                              | query length) for identifying chimeras.     |
 +----------------------------------------------+---------------------------------------------+
@@ -160,7 +163,7 @@ When using the ``-chimera`` option in conjunction with the contig alignment diag
 
 .. image:: images/chimera_example.png
 
-Additionally, when the ``-printChimeras`` option is specified as well, a text file named ``chimeras.txt`` is written to the output directory. This is a tab-seperated values file, where each line describes a potential chimera. Each line has the following fields.
+Additionally, when the ``-printChimeras`` option is specified, a text file named ``chimeras.txt`` is written to the output directory. This is a tab-seperated values file, where each line describes a potential chimera. Each line has the following fields.
 
 +----------+---------+--------------------------------------------------+
 | Column   | Type    | Description                                      |
@@ -175,5 +178,34 @@ Additionally, when the ``-printChimeras`` option is specified as well, a text fi
 | 4        | String  | Target sequence name for second alignment.       |
 +----------+---------+--------------------------------------------------+
 
+If the option ``-chimeraPositions`` is also specified, then for each chimera, the start and end positions of the two alignments forming the chimera are also written to the file ``chimeras.txt``, relative to both the query sequence (i.e. the read) and the target sequence (i.e. the reference). In this case, each line has the following fields.
 
++----------+---------+--------------------------------------------------+
+| Column   | Type    | Description                                      |
++==========+=========+==================================================+
+| 1        | String  | Query sequence name.                             |
++----------+---------+--------------------------------------------------+
+| 2        | int     | Approximate position of chimera join on query    |
+|          |         | sequence.                                        |
++----------+---------+--------------------------------------------------+
+| 3        | String  | Target sequence name for first alignment.        |
++----------+---------+--------------------------------------------------+
+| 4        | String  | Target sequence name for second alignment.       |
++----------+---------+--------------------------------------------------+
+| 5        | int     | Start position on query of the first alignment.  |
++----------+---------+--------------------------------------------------+
+| 6        | int     | End position on query of the first alignment.    |
++----------+---------+--------------------------------------------------+
+| 7        | int     | Start position on query of the second alignment. |
++----------+---------+--------------------------------------------------+
+| 8        | int     | End position on query of the second alignment.   |
++----------+---------+--------------------------------------------------+
+| 9        | int     | Start position on target of the first alignment. |
++----------+---------+--------------------------------------------------+
+| 10       | int     | End position on target of the first alignment.   |
++----------+---------+--------------------------------------------------+
+| 11       | int     | Start position on target of the second alignment.|
++----------+---------+--------------------------------------------------+
+| 12       | int     | End position on target of the second alignment.  |
++----------+---------+--------------------------------------------------+
 

@@ -142,7 +142,7 @@ public class ChimeraFilter implements AlignmentFilter
         return names;
     }
     
-    public void writeChimeraFile(String filename)
+    public void writeChimeraFile(String filename, boolean chimeraPositions)
     {
         if(m_chimeras.isEmpty())
         {
@@ -168,8 +168,23 @@ public class ChimeraFilter implements AlignmentFilter
                 assert(alignment2.getQueryStart() > alignment1.getQueryEnd());
                 
                 //write the Chimera
-                int chimeraPos = (alignment1.getQueryEnd() + alignment1.getQueryStart()) / 2;
-                writer.write(alignment1.getQueryName() + "\t" + chimeraPos + "\t" + alignment1.getTargetName() + "\t" + alignment2.getTargetName() + "\n");
+                int chimeraPos = (alignment1.getQueryEnd() + alignment2.getQueryStart()) / 2;
+                String alignment_positions = "";
+                if(chimeraPositions)
+                {
+                    alignment_positions =   "\t" + alignment1.getQueryStart() + 
+                                            "\t" + alignment1.getQueryEnd() + 
+                                            "\t" + alignment2.getQueryStart() + 
+                                            "\t" + alignment2.getQueryEnd() + 
+                                            "\t" + alignment1.getTargetStart() + 
+                                            "\t" + alignment1.getTargetEnd() + 
+                                            "\t" + alignment2.getTargetStart() + 
+                                            "\t" + alignment2.getTargetEnd();
+                            
+                }
+                writer.write(alignment1.getQueryName() + "\t" + chimeraPos + "\t" 
+                        + alignment1.getTargetName() + "\t" + alignment2.getTargetName() 
+                        + alignment_positions + "\n");
             }
             
             writer.flush();

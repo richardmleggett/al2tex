@@ -99,7 +99,7 @@ public class ContigAlignmentDiagram
         }
         if(options.getPrintChimeras())
         {
-            chimeraFilter.writeChimeraFile(options.getOutputDirectory() + "chimeras.txt");
+            chimeraFilter.writeChimeraFile(options.getOutputDirectory() + "chimeras.txt", options.getChimeraPositions());
         }
         
         // Iterate through all the alignments and group by contig name.
